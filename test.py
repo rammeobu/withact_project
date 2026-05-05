@@ -1,29 +1,50 @@
-import os
-import requests
 from bs4 import BeautifulSoup
-import pandas as pd
 from playwright.sync_api import sync_playwright
 
-with sync_playwright() as p:
-    browser=p.chromium.launch(headless=False)
-    page=browser.new_page()
-    page.goto("https://linkareer.com/list/contest?filterBy_categoryIDs=35&filterBy_categoryIDs=33&filterType=CATEGORY&orderBy_direction=DESC&orderBy_field=CREATED_AT&page=1")
-    # page.wait_for_timeout(3000)
-    html = page.content()
-    with open("linkareer.html", "w", encoding="utf-8") as f:
-        f.write(html)
-    browser.close()
-    soup =BeautifulSoup(html,'html.parser')
-    cards = soup.select('div.ActivityListCardItem__StyledWrapper-sc-39989f6d-0')
-    date=[]
-    for card in cards:
-        title = card.select_one('h5.activity-title').text.strip()
-        org = card.select_one('.organization-name').text.strip()
-        img_tag = card.select_one('img.activity-image')
-        img_url = img_tag.get('src') if img_tag else ""
-        date.append({
-            'title': title,
-            'organization': org,
-            'image_url': img_url
-        })
-        print(f"{len(date)}개")
+# linkareer.html 읽기
+def crawl_detail_page(url):
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=False)
+        page = browser.new_page()
+        page.goto(url)
+        page.wait_for_timeout(2000)
+
+        html = page.content()
+        browser.close()
+
+        soup = BeautifulSoup(html, 'html.parser')
+
+        # 시작일 (end-at 다음 span)
+        start_tag = soup.select_one('span[class*="start-at"] + span')
+        start_date = start_tag.text.strip() if start_tag else None
+
+        # 종료일 (end-at 다음 span)
+        end_tag = soup.select_one('span[class*="end-at"] + span')
+        end_date = end_tag.text.strip() if end_tag else None
+
+        print(f"시작일: {start_date}")
+        print(f"종료일: {end_date}")
+
+        return {
+            'startDate': start_date,
+            'endDate': end_date
+        }
+
+
+with open("linkareer.html", "r", encoding="utf-8") as f:
+    html = f.read()
+
+soup = BeautifulSoup(html, 'html.parser')
+cards = soup.select('div.ActivityListCardItem__StyledWrapper-sc-39989f6d-0')
+
+print(f"총 {len(cards)}개 카드 발견\n")
+
+for i, card in enumerate(cards[:3], 1):  # 처음 3개만
+    link = card.select_one('a.image-link')
+    href = link.get('href') if link else ""
+    url = f"https://linkareer.com{href}" if href else ""
+
+    title = card.select_one('h5.activity-title').text.strip()
+    print(f"{i}.{title}")
+    print(crawl_detail_page(url))
+
