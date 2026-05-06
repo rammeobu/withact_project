@@ -9,6 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+
 public class ActivityService {
     private final ActivityRepository activityRepository;
     public List<Activity> findAll(){
