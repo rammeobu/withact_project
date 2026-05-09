@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class Activity {
     @Id
     @GeneratedValue
-    private int id;
+    private Long id;
     private String title;
     private String organization;
     private String category;

@@ -34,7 +34,7 @@ public class ActivityController {
             @ApiResponse(responseCode = "404",description = "대외활동 존제 안함")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Activity> getOne(@PathVariable Long id) {
+    public ResponseEntity<Activity> getOne(@PathVariable("id") Long id) {
         return ResponseEntity.ok(activityService.findById(id));
     }
 
@@ -52,7 +52,7 @@ public class ActivityController {
             @ApiResponse(responseCode = "404",description = "삭제할 파일 없음")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         activityService.delete(id);
         return ResponseEntity.noContent().build();
     }

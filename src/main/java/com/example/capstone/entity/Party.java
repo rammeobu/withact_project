@@ -19,5 +19,12 @@ public class Party {
 
     @OneToMany(mappedBy = "party",cascade = CascadeType.ALL)
     private List<PartyRole> roles = new ArrayList<>();
-
+    public  void approveMember(String roleName)
+    {
+        PartyRole targetRole = this.roles.stream().
+                filter(role -> role.getRoleName().equals(roleName)).
+                findFirst().
+                orElseThrow(()-> new RuntimeException("해당 직군 찾을수 없다"));
+        targetRole.addParticipant();
+    }
 }

@@ -1,12 +1,13 @@
 package com.example.capstone.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 
 @Entity
-@Data
-
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PartyRole {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,4 +19,11 @@ public class PartyRole {
     private String roleName;
     private Integer targetCount;
     private Integer currentCount;
+
+    public void addParticipant(){
+        if (this.currentCount >= this.targetCount){
+            throw new RuntimeException("이미 모집이 끝난 직군");
+        }
+        this.currentCount++;
+    }
 }
