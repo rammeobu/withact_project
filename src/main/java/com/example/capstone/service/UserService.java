@@ -31,10 +31,10 @@ public class UserService {
     }
 
     //로그인
-    public User login(LoginRequest req) {
+    public User login(String loginId, String password) {
         // 아이디로 유저 찾기
-        return userRepository.findByLoginId(req.getLoginId())
-                .filter(u -> u.getPassword().equals(req.getPassword())) // 비밀번호 일치 확인
+        return userRepository.findByLoginId(loginId)
+                .filter(u -> u.getPassword().equals(password)) // 비밀번호 일치 확인
                 .orElse(null); // 없거나 틀리면 null 반환
     }
 }
