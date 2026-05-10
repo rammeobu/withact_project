@@ -1,0 +1,8 @@
+*.deb
+*.deb
+.env
+*.env
+*.deb
+.gradle/
+.idea/
+build/
