@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../future&component/layout/basic_layout.dart';
-import '../future&component/profile/profile_card.dart';
-import '../future&component/work/work_card/work_card.dart';
-
+import '../../future&component/layout/basic_layout.dart';
+import '../../future&component/profile/profile_card.dart';
+import '../../future&component/work/work_card/work_card.dart';
 
 class HomeScreen extends StatefulWidget {
   List<List<dynamic>>? recruitCard = [
@@ -20,7 +19,7 @@ class HomeScreen extends StatefulWidget {
     [
       '휴먼AI인터랙션',
       ['일시', '장소'],
-      ['PM', 'FE', 'BE','1','2','3','4'],
+      ['PM', 'FE', 'BE', '1', '2', '3', '4'],
     ],
   ];
   List<List<dynamic>>? participateCard = [
@@ -75,39 +74,46 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return BasicLayout(
       title: 'PM',
       actions: [
         ElevatedButton.icon(
-          onPressed: () {},
-          label: Text('활동/파티 검색', style: TextStyle(fontSize: 15.0)),
-          icon: Icon(Icons.search, size: 30.0),
+          onPressed: search,
+          label: const Text('활동/파티 검색', style: TextStyle(fontSize: 15.0)),
+          icon: const Icon(Icons.search, size: 30.0),
           style: ElevatedButton.styleFrom(
-            fixedSize: Size(225.0, 20.0),
-            foregroundColor: Color(0xFFBFBFC4),
-            backgroundColor: Color(0xFF636370),
+            fixedSize: const Size(225.0, 20.0),
+            foregroundColor: const Color(0xFFBFBFC4),
+            backgroundColor: const Color(0xFF636370),
           ),
         ),
-        SizedBox(width: 37.5),
-        IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
+        SizedBox(width: screenWidth * 0.07),
+        IconButton(
+          onPressed: notification,
+          icon: const Icon(Icons.notifications),
+        ),
+        SizedBox(width: screenWidth * 0.04),
       ],
       body: Padding(
-        padding: const EdgeInsets.only(top: 10.0),
+        padding: EdgeInsets.only(top: screenHeight * 0.005),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            ProfileCardBasic(profileContent: ['1', '2', '3', '4']),
+            const ProfileCardBasic(profileContent: ['1', '2', '3', '4']),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Expanded(
                   flex: 6,
                   child: Padding(
-                    padding: EdgeInsets.only(left: 15.0),
+                    padding: const EdgeInsets.only(left: 15.0),
                     child: Text(
                       '현재 $_selectedMode중인 대외활동',
-                      style: TextStyle(
-                        fontSize: 25.0,
+                      style: const TextStyle(
+                        fontSize: 24.0,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -116,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   flex: 1,
                   child: PopupMenuButton<String>(
-                    icon: Icon(Icons.more_horiz_outlined),
+                    icon: const Icon(Icons.more_horiz_outlined),
                     onSelected: (mode) {
                       setState(() {
                         _selectedMode = mode;
@@ -125,26 +131,26 @@ class _HomeScreenState extends State<HomeScreen> {
                       _scrollController.jumpTo(0.0);
                     },
                     itemBuilder: (BuildContext context) => [
-                      PopupMenuItem(value: '모집', child: Text('모집중인 활동')),
-                      PopupMenuItem(value: '참여', child: Text('참여중인 활동')),
+                      const PopupMenuItem(value: '모집', child: Text('모집중인 활동')),
+                      const PopupMenuItem(value: '참여', child: Text('참여중인 활동')),
                     ],
                   ),
-                ), // onPressed: 모드 변경
+                ),
                 Padding(
                   padding: const EdgeInsets.only(right: 10.0),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: addWork,
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.zero,
-                      minimumSize: Size(10, 10),
-                      fixedSize: Size(40, 40),
-                      backgroundColor: Color(0xFF5764F0),
+                      minimumSize: const Size(10, 10),
+                      fixedSize: const Size(35, 35),
+                      backgroundColor: const Color(0xFF5764F0),
                       foregroundColor: Colors.white,
                       shape: ContinuousRectangleBorder(
                         borderRadius: BorderRadiusGeometry.circular(20.0),
                       ),
                     ),
-                    child: Icon(Icons.add, size: 30.0),
+                    child: const Icon(Icons.add, size: 30.0),
                   ),
                 ),
               ],
@@ -165,19 +171,21 @@ class _HomeScreenState extends State<HomeScreen> {
                               name: work[0],
                               timePlace: work[1],
                               position: work[2],
+                              poster: (work.length > 4) ? work[3] : null,
+                              onTap: workCardTap,
                             ),
                           ),
                         )
                         .toList(),
               ),
             ),
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(left: 15.0),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   '현재 신청한 대외활동',
-                  style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w700),
+                  style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
@@ -192,7 +200,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           name: work[0],
                           timePlace: work[1],
                           applyStatus: work[2],
-                          onPressed: () {},
+                          onProfileCheckPressed: onProfileCheckPressed,
+                          onDetailButtonPressed: onDetailButtonPressed,
                         ),
                       ),
                     )
@@ -204,4 +213,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  void notification() {}
+  void search() {}
+  void addWork() {}
+  void workCardTap() {}
+  void onProfileCheckPressed() {}
+  void onDetailButtonPressed() {}
 }

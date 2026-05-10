@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../layout/person.dart';
-
+import '../../component/person.dart';
 
 class WorkCardBody extends StatefulWidget {
   final List<String> position;
@@ -17,30 +16,30 @@ class _WorkCardBodyState extends State<WorkCardBody> {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-          children: widget.position
-              .map(
-                (e) => Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Person(size: 35.0),
-                      Center(
-                        child: Text(
-                          e,
-                          style: TextStyle(
-                            fontSize: 13.0,
-                            fontWeight: FontWeight.w600,
-                          ),
+        children: widget.position
+            .map(
+              (e) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Person(size: 20.0),
+                    Center(
+                      child: Text(
+                        e,
+                        style: const TextStyle(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              )
-              .toList(),
-        ),
+              ),
+            )
+            .toList(),
+      ),
     );
   }
 }

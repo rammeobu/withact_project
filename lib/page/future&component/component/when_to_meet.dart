@@ -12,7 +12,7 @@ class WhenToMeet extends StatefulWidget {
     this.begin = 8,
     this.end = 23,
     this.initialTimes,
-    this.readOnly = false
+    this.readOnly = false,
   });
 
   @override
@@ -26,11 +26,9 @@ class _WhenToMeetState extends State<WhenToMeet> {
   @override
   void initState() {
     rowCount = (widget.end - widget.begin) * 2;
-    selectedTimes = widget.initialTimes ??
-        List.generate(
-      rowCount * widget.days.length,
-      (int _) => false,
-    );
+    selectedTimes =
+        widget.initialTimes ??
+        List.generate(rowCount * widget.days.length, (int _) => false);
     super.initState();
   }
 
@@ -38,20 +36,23 @@ class _WhenToMeetState extends State<WhenToMeet> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.only(top: 10.0, right: 10.0),
+        padding: const EdgeInsets.only(top: 20.0, right: 10.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Column(
               children: [
-                SizedBox(height: 35.0),
+                const SizedBox(height: 35.0),
                 ...List.generate(widget.end - widget.begin, (int index) {
                   return Container(
                     height: 60.0,
                     alignment: Alignment.topCenter,
                     child: Text(
                       '${widget.begin + index}시',
-                      style: TextStyle(fontSize: 12.0, color: Colors.grey),
+                      style: const TextStyle(
+                        fontSize: 12.0,
+                        color: Colors.grey,
+                      ),
                     ),
                   );
                 }),
@@ -67,18 +68,20 @@ class _WhenToMeetState extends State<WhenToMeet> {
                             child: Center(
                               child: Text(
                                 weekday,
-                                style: TextStyle(fontWeight: FontWeight.w700),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),
                         )
                         .toList(),
                   ),
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
 
                   GridView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: selectedTimes.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: widget.days.length,
@@ -88,11 +91,13 @@ class _WhenToMeetState extends State<WhenToMeet> {
                     ),
                     itemBuilder: (BuildContext context, int i) {
                       return GestureDetector(
-                        onTap: widget.readOnly ? null :() => setState(
-                          () => selectedTimes[i] = !selectedTimes[i],
-                        ),
+                        onTap: widget.readOnly
+                            ? null
+                            : () => setState(
+                                () => selectedTimes[i] = !selectedTimes[i],
+                              ),
                         child: Container(
-                          margin: EdgeInsets.all(0.5),
+                          margin: const EdgeInsets.all(0.5),
                           decoration: BoxDecoration(
                             color: selectedTimes[i]
                                 ? Colors.green

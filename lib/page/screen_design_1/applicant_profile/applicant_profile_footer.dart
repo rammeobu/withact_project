@@ -13,12 +13,13 @@ class ApplicantProfileFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
     return Padding(
       padding: EdgeInsets.only(
         left: 16.0,
-        top: 10.0,
+        top: screenHeight * 0.008,
         right: 16.0,
-        bottom: 20.0,
+        bottom: screenHeight * 0.009,
       ),
       child: Column(
         children: [
@@ -27,15 +28,15 @@ class ApplicantProfileFooter extends StatelessWidget {
               OutlinedButton(
                 onPressed: onAcceptButtonPressed,
                 style: OutlinedButton.styleFrom(
-                  backgroundColor: Color(0xFF1AB97A),
-                  fixedSize: Size(165, 65),
+                  backgroundColor: const Color(0xFF1AB97A),
+                  fixedSize: Size(160, screenHeight * 0.07),
                   padding: EdgeInsets.zero,
-                  side: BorderSide(width: 0.0),
+                  side: const BorderSide(width: 0.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   '수락',
                   style: TextStyle(
                     color: Colors.white,
@@ -44,19 +45,19 @@ class ApplicantProfileFooter extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: 10.0),
+              const SizedBox(width: 10.0),
               OutlinedButton(
-                onPressed: onAcceptButtonPressed,
+                onPressed: onRejectButtonPressed,
                 style: OutlinedButton.styleFrom(
-                  backgroundColor: Color(0xFFF34343),
-                  fixedSize: Size(165, 65),
+                  backgroundColor: const Color(0xFFF34343),
+                  fixedSize: Size(160, screenHeight * 0.07),
                   padding: EdgeInsets.zero,
-                  side: BorderSide(width: 0.0),
+                  side: const BorderSide(width: 0.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   '거절',
                   style: TextStyle(
                     color: Colors.white,
@@ -67,10 +68,10 @@ class ApplicantProfileFooter extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 15),
+          SizedBox(height: screenHeight * 0.013),
           TextButton(
             onPressed: onTextButtonPressed,
-            child: Text(
+            child: const Text(
               '지원자 목록으로 돌아가기',
               style: TextStyle(
                 color: Color(0xFF5764F0),

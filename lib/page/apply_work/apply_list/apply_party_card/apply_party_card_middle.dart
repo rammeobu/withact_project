@@ -12,7 +12,7 @@ class ApplyPartyCardMiddle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      flex: 4,
+      flex: 13,
       child: Padding(
         padding: const EdgeInsets.only(left: 20.0),
         child: Column(
@@ -23,29 +23,35 @@ class ApplyPartyCardMiddle extends StatelessWidget {
               padding: const EdgeInsets.only(top: 10.0),
               child: Text(
                 name,
-                style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.w900),
+                style: const TextStyle(
+                  fontSize: 23.0,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 5.0, right: 15.0),
+              padding: const EdgeInsets.only(top: 5.0, right: 15.0),
               child: Table(
                 border: TableBorder.all(
                   color: Colors.grey,
                   width: 0.5,
                   borderRadius: BorderRadius.circular(15),
                 ),
-                columnWidths: {0: FixedColumnWidth(40), 1: FlexColumnWidth()},
+                columnWidths: const {
+                  0: FixedColumnWidth(40),
+                  1: FlexColumnWidth(),
+                },
                 children: [
                   TableRow(
                     children: [
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.all(3),
                         child: Center(
                           child: Text('일시', style: TextStyle(fontSize: 13.0)),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                           left: 8.0,
                           top: 3.0,
                           right: 3.0,
@@ -60,14 +66,14 @@ class ApplyPartyCardMiddle extends StatelessWidget {
                   ),
                   TableRow(
                     children: [
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.all(3),
                         child: Center(
                           child: Text('장소', style: TextStyle(fontSize: 13.0)),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                           left: 8.0,
                           top: 3.0,
                           right: 3.0,

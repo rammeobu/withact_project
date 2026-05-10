@@ -1,17 +1,12 @@
-# party_maker
+# 현재 진행 상황
 
-A new Flutter project.
+이하 언급되는 섹션은 figma 기준으로 작성하였습니다.
 
-## Getting Started
+1. 화면 디자인 1 섹션 레이아웃 작업 -> **완료**
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+2. 대외활동 지원 섹션 레이아웃 작업  -> **진행 중**
+- 활동 지원 목록 -> **완료**
+- 대외활동 정보 확인 화면 -> **완료**
+- 지원 중인 활동 확인화면 -> **작업 중**
+- 대외활동 지원화면 -> **작업 중**
+- 지원 요청 결과 [성공/실패] -> **작업 예정**

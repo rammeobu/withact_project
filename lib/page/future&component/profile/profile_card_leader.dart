@@ -11,30 +11,32 @@ class ProfileCardLeader extends StatefulWidget {
 class _ProfileCardLeaderState extends State<ProfileCardLeader> {
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
     return Padding(
-      padding: EdgeInsets.only(top: 10.0),
+      padding: EdgeInsets.only(top: screenHeight * 0.02),
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
-        height: 130.0,
+        height: screenHeight * 0.135,
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(20.0),
           ),
-          color: Color(0xFFECEEFD),
+          color: const Color(0xFFECEEFD),
           child: Row(
             children: [
               Flexible(
                 flex: 2,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 10.0),
+                  padding: const EdgeInsets.only(left: 10.0),
                   child: Container(
-                    width: 80.0,
-                    height: 80.0,
-                    decoration: BoxDecoration(
+                    width: screenHeight * 0.11,
+                    height: screenHeight * 0.105,
+                    decoration: const BoxDecoration(
                       color: Color(0xFFECEEFD),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.person,
                       size: 65,
                       color: Color(0xFF5764F0),
@@ -45,15 +47,19 @@ class _ProfileCardLeaderState extends State<ProfileCardLeader> {
               Flexible(
                 flex: 5,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: 20.0),
+                  padding: EdgeInsets.only(
+                    left: 10.0,
+                    right: 10.0,
+                    bottom: screenHeight * 0.005,
+                  ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             '파티장',
                             style: TextStyle(
                               fontSize: 16.0,
@@ -66,16 +72,26 @@ class _ProfileCardLeaderState extends State<ProfileCardLeader> {
                               backgroundColor: Colors.white,
                               foregroundColor: Colors.black,
                               padding: EdgeInsets.zero,
-                              side: BorderSide(color: Colors.grey, width:0.5),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(10.0)),
-                              fixedSize: Size(80, 25),
-                              minimumSize: Size(0, 0),
+                              side: const BorderSide(
+                                color: Colors.grey,
+                                width: 0.5,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadiusGeometry.circular(
+                                  10.0,
+                                ),
+                              ),
+                              fixedSize: const Size(80, 23),
+                              minimumSize: const Size(0, 0),
                             ),
                             onPressed: () {},
-                            child: Text('문의하기', style: TextStyle(
-                              fontSize: 13.0,
-                              fontWeight: FontWeight.w600,
-                            )),
+                            child: const Text(
+                              '문의하기',
+                              style: TextStyle(
+                                fontSize: 13.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -85,7 +101,7 @@ class _ProfileCardLeaderState extends State<ProfileCardLeader> {
                           width: 0.5,
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        columnWidths: {
+                        columnWidths: const {
                           0: FixedColumnWidth(40),
                           1: FlexColumnWidth(),
                         },
@@ -93,21 +109,30 @@ class _ProfileCardLeaderState extends State<ProfileCardLeader> {
                           TableRow(
                             children: [
                               Padding(
-                                padding: EdgeInsets.all(3),
-                                child: Center(child: Text('이름',style: TextStyle(
-                                  fontSize: 13.0,
-                                ))),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 3.0,
+                                  vertical: screenHeight * 0.001,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    '이름',
+                                    style: TextStyle(fontSize: 12.0),
+                                  ),
+                                ),
                               ),
                               Padding(
                                 padding: EdgeInsets.only(
                                   left: 8.0,
-                                  top: 3.0,
+                                  top: screenHeight * 0.001,
                                   right: 3.0,
-                                  bottom: 3.0,
+                                  bottom: screenHeight * 0.001,
                                 ),
                                 child: Align(
                                   alignment: Alignment.centerLeft,
-                                  child: Text(widget.profileContent[0]),
+                                  child: Text(
+                                    widget.profileContent[0],
+                                    style: const TextStyle(fontSize: 12.0),
+                                  ),
                                 ),
                               ),
                             ],
@@ -115,21 +140,30 @@ class _ProfileCardLeaderState extends State<ProfileCardLeader> {
                           TableRow(
                             children: [
                               Padding(
-                                padding: EdgeInsets.all(3),
-                                child: Center(child: Text('기술',style: TextStyle(
-                                  fontSize: 13.0,
-                                ))),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 3.0,
+                                  vertical: screenHeight * 0.001,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    '기술',
+                                    style: TextStyle(fontSize: 12.0),
+                                  ),
+                                ),
                               ),
                               Padding(
                                 padding: EdgeInsets.only(
                                   left: 8.0,
-                                  top: 3.0,
+                                  top: screenHeight * 0.001,
                                   right: 3.0,
-                                  bottom: 3.0,
+                                  bottom: screenHeight * 0.001,
                                 ),
                                 child: Align(
                                   alignment: Alignment.centerLeft,
-                                  child: Text(widget.profileContent[1]),
+                                  child: Text(
+                                    widget.profileContent[1],
+                                    style: const TextStyle(fontSize: 12.0),
+                                  ),
                                 ),
                               ),
                             ],

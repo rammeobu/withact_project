@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 
-
 class DefaultContainer extends StatefulWidget {
   Widget child;
   Color? color;
   double? width;
   double? height;
-  DefaultContainer({super.key, required this.child, this.width, this.height, this.color});
+  DefaultContainer({
+    super.key,
+    required this.child,
+    this.width,
+    this.height,
+    this.color,
+  });
 
   @override
   State<DefaultContainer> createState() => _DefaultContainerState();
@@ -21,7 +26,7 @@ class _DefaultContainerState extends State<DefaultContainer> {
       decoration: BoxDecoration(
         color: (widget.color != null) ? widget.color : Colors.white,
         border: BoxBorder.all(width: 0.5, color: Colors.grey),
-        borderRadius: BorderRadius.circular(10.0)
+        borderRadius: BorderRadius.circular(10.0),
       ),
       child: widget.child,
     );

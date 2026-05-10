@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 
 class ProfileCardBasic extends StatefulWidget {
   final List<String> profileContent;
-  const ProfileCardBasic({super.key, required this.profileContent});
+  final String? profileImage;
+  const ProfileCardBasic({
+    super.key,
+    required this.profileContent,
+    this.profileImage,
+  });
 
   @override
   State<ProfileCardBasic> createState() => _ProfileCardBasicState();
@@ -11,38 +16,49 @@ class ProfileCardBasic extends StatefulWidget {
 class _ProfileCardBasicState extends State<ProfileCardBasic> {
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
     return SizedBox(
-      height: 185.0,
+      height: screenHeight * 0.201,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15.0),
+        padding: const EdgeInsets.symmetric(horizontal: 15.0),
         child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(20.0)),
-          color: Color(0xFFFDFDFD),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadiusGeometry.circular(20.0),
+          ),
+          color: const Color(0xFFFDFDFD),
           child: Row(
             children: [
               Flexible(
                 flex: 2,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 10.0,bottom: 20.0),
-                  child: Container(width:80.0,height: 80.0,
-                    decoration: BoxDecoration(
+                  padding: const EdgeInsets.only(left: 10.0, bottom: 20.0),
+                  child: Container(
+                    width: 80.0,
+                    height: 80.0,
+                    decoration: const BoxDecoration(
                       color: Color(0xFFECEEFD),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      Icons.person,
-                      size: 65,
-                      color: Color(0xFF5764F0),
-                    ),
+                    child: (widget.profileImage != null)
+                        ? Image.asset(widget.profileImage!, fit: BoxFit.cover)
+                        : const Icon(
+                            Icons.person,
+                            size: 65,
+                            color: Color(0xFF5764F0),
+                          ),
                   ),
                 ),
               ),
               Flexible(
                 flex: 5,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 20.0, top: 10.0),
+                  padding: EdgeInsets.only(
+                    left: 15.0,
+                    top: screenHeight * 0.007,
+                  ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Table(
@@ -51,7 +67,7 @@ class _ProfileCardBasicState extends State<ProfileCardBasic> {
                           width: 0.5,
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        columnWidths: {
+                        columnWidths: const {
                           0: FixedColumnWidth(40),
                           1: FlexColumnWidth(),
                         },
@@ -59,48 +75,100 @@ class _ProfileCardBasicState extends State<ProfileCardBasic> {
                           TableRow(
                             children: [
                               Padding(
-                                padding: EdgeInsets.all(3),
-                                child: Center(child: Text('이름')),
+                                padding: EdgeInsets.only(
+                                  left: 3.0,
+                                  right: 3.0,
+                                  top: screenHeight * 0.001,
+                                  bottom: screenHeight * 0.001,
+                                ),
+                                child: const Center(child: Text('이름')),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left:8.0,top:3.0,right: 3.0, bottom: 3.0),
-                                child: Align(alignment: Alignment.centerLeft, child: Text(widget.profileContent[0])),
-                              ),
-                            ],
-                          ),
-                          TableRow(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(3),
-                                child: Center(child: Text('기술')),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left:8.0,top:3.0,right: 3.0, bottom: 3.0),
-                                child: Align(alignment: Alignment.centerLeft, child: Text(widget.profileContent[1])),
-                              ),
-                            ],
-                          ),
-                          TableRow(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(3),
-                                child: Center(child: Text('소속')),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left:8.0,top:3.0,right: 3.0, bottom: 3.0),
-                                child: Align(alignment: Alignment.centerLeft, child: Text(widget.profileContent[2])),
+                                padding: EdgeInsets.only(
+                                  left: 8.0,
+                                  top: screenHeight * 0.001,
+                                  right: 3.0,
+                                  bottom: screenHeight * 0.001,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(widget.profileContent[0]),
+                                ),
                               ),
                             ],
                           ),
                           TableRow(
                             children: [
                               Padding(
-                                padding: EdgeInsets.all(3),
-                                child: Center(child: Text('전공')),
+                                padding: EdgeInsets.only(
+                                  left: 3.0,
+                                  right: 3.0,
+                                  top: screenHeight * 0.001,
+                                  bottom: screenHeight * 0.001,
+                                ),
+                                child: const Center(child: Text('기술')),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(left:8.0,top:3.0,right: 3.0, bottom: 3.0),
-                                child: Align(alignment: Alignment.centerLeft, child: Text(widget.profileContent[3])),
+                                padding: EdgeInsets.only(
+                                  left: 8.0,
+                                  top: screenHeight * 0.001,
+                                  right: 3.0,
+                                  bottom: screenHeight * 0.001,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(widget.profileContent[1]),
+                                ),
+                              ),
+                            ],
+                          ),
+                          TableRow(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: 3.0,
+                                  right: 3.0,
+                                  top: screenHeight * 0.001,
+                                  bottom: screenHeight * 0.001,
+                                ),
+                                child: const Center(child: Text('소속')),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: 8.0,
+                                  top: screenHeight * 0.001,
+                                  right: 3.0,
+                                  bottom: screenHeight * 0.001,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(widget.profileContent[2]),
+                                ),
+                              ),
+                            ],
+                          ),
+                          TableRow(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: 3.0,
+                                  right: 3.0,
+                                  top: screenHeight * 0.001,
+                                  bottom: screenHeight * 0.001,
+                                ),
+                                child: const Center(child: Text('전공')),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: 8.0,
+                                  top: screenHeight * 0.001,
+                                  right: 3.0,
+                                  bottom: screenHeight * 0.001,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(widget.profileContent[3]),
+                                ),
                               ),
                             ],
                           ),
@@ -109,17 +177,17 @@ class _ProfileCardBasicState extends State<ProfileCardBasic> {
                       OutlinedButton(
                         onPressed: () {},
                         style: OutlinedButton.styleFrom(
-                          backgroundColor: Color(0xFF10B880),
+                          backgroundColor: const Color(0xFF10B880),
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.zero,
-                          minimumSize: Size(50.0, 0.0),
-                          fixedSize: Size(100.0, 30.0),
+                          minimumSize: const Size(50.0, 0.0),
+                          fixedSize: Size(100.0, screenHeight * 0.03),
                           side: BorderSide.none,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15.0),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                           '프로필 수정',
                           style: TextStyle(fontSize: 14.0),
                         ),
@@ -127,7 +195,7 @@ class _ProfileCardBasicState extends State<ProfileCardBasic> {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

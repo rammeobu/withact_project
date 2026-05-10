@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:party_maker/page/apply_work/applying_work/applying_work.dart';
-import 'package:party_maker/page/screen_design_1/home_screen.dart';
+import 'package:party_maker/page/recruit_and_announcement/recruit_announcement/recruit_announcement.dart';
+import 'package:party_maker/page/screen_design_1/home_screen/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -17,10 +17,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> route = {'/': (BuildContext context) => HomeScreen()};
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      home: ApplyingWork(profile: ['소개','스펙'], workName: '활동 이름')
+      home: RecruitAnnouncement(
+        content: ['활동 이름'],
+        position: ['PM', 'FE', 'BE'],
+      ),
     );
   }
 }

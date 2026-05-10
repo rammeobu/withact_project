@@ -8,45 +8,53 @@ class ApplyPartyCard extends StatelessWidget {
   final String name;
   final List<String> timePlace;
   final String applyStatus;
+  final VoidCallback onDetailButtonPressed;
+  final VoidCallback onCheckProfileButtonPressed;
   const ApplyPartyCard({
     super.key,
     required this.name,
     required this.timePlace,
     required this.applyStatus,
+    required this.onDetailButtonPressed,
+    required this.onCheckProfileButtonPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 120.0,
+      height: 140,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15.0),
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(20.0),
           ),
-          color: Color(0xFFFDFDFD),
+          color: const Color(0xFFFDFDFD),
           child: Padding(
             padding: const EdgeInsets.only(left: 10.0),
             child: Row(
               children: [
                 Expanded(
-                  flex: 1,
+                  flex: 4,
                   child: Align(
-                    alignment: Alignment(0, 0),
+                    alignment: const Alignment(0, 0),
                     child: DefaultContainer(
                       height: 70,
                       width: 70,
-                      color: Color(0xffe3e5e9),
-                      child: Center(child: Text('포스터')),
+                      color: const Color(0xffe3e5e9),
+                      child: const Center(child: Text('포스터')),
                     ),
                   ),
                 ),
-                ApplyPartyCardMiddle(
-                  name: name,
-                  timePlace: timePlace,
+                ApplyPartyCardMiddle(name: name, timePlace: timePlace),
+                Expanded(
+                  flex: 7,
+                  child: ApplyPartyCardButton(
+                    applyStatus: applyStatus,
+                    onDetailButtonPressed: onDetailButtonPressed,
+                    onCheckProfileButtonPressed: onCheckProfileButtonPressed,
+                  ),
                 ),
-                Expanded(flex: 2, child: ApplyPartyCardButton(applyStatus: applyStatus,)),
               ],
             ),
           ),

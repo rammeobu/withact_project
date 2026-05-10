@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../future&component/layout/default_container.dart';
 
-
-
 class ApplicantProfileBody1 extends StatelessWidget {
   final String section;
   final String content;
@@ -14,27 +12,31 @@ class ApplicantProfileBody1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
     return Padding(
-      padding: const EdgeInsets.only(top: 10.0),
+      padding: EdgeInsets.only(top: screenHeight * 0.01),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             section,
-            style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600),
+            style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 10.0),
+            padding: EdgeInsets.only(top: screenHeight * 0.01),
             child: DefaultContainer(
-              color: Color(0xffebedf0),
+              color: const Color(0xffebedf0),
               width: MediaQuery.of(context).size.width,
-              height: 75,
+              height: screenHeight * 0.13,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Scrollbar(
                   thumbVisibility: true,
                   child: SingleChildScrollView(
-                    child: Text(content, style: TextStyle(fontSize: 15.0)),
+                    child: Text(
+                      content,
+                      style: const TextStyle(fontSize: 15.0),
+                    ),
                   ),
                 ),
               ),

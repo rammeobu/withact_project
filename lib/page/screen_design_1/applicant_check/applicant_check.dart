@@ -11,8 +11,9 @@ class ApplicantCheck extends StatefulWidget {
     ['임꺽정', 'BE', 'spring'],
     ['유성룡', 'BE', 'FastAPI'],
     ['이몽룡', 'FE', 'typescript'],
+    ['김종서', 'BE', 'javascript'],
   ];
-  ApplicantCheck({super.key, required this.position, this.applicants});
+  ApplicantCheck({super.key, required this.position});
 
   @override
   State<ApplicantCheck> createState() => _ApplicantCheckState();
@@ -34,7 +35,7 @@ class _ApplicantCheckState extends State<ApplicantCheck> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(top: 15.0, left: 20.0),
               child: Text(
                 '포지션별 지원자 선택',
@@ -54,7 +55,7 @@ class _ApplicantCheckState extends State<ApplicantCheck> {
               children: displayList
                   .map(
                     (applicantData) => Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: ProfileCardApplicant(
                         profileContent: applicantData,
                         onTap: () {
