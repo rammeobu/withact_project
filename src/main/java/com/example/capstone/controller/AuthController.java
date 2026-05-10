@@ -1,52 +1,61 @@
 package com.example.capstone.controller;
 
-import com.example.capstone.controller.dto.JoinRequest; // 1. DTO 임포트 체크
+import com.example.capstone.controller.dto.JoinRequest;
 import com.example.capstone.controller.dto.LoginRequest;
+import com.example.capstone.entity.User;
 import com.example.capstone.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController // 1. @Controller 대신 @RestController 사용
 @RequiredArgsConstructor
-
+@RequestMapping("/api/auth") // 공통 경로 설정
+@Tag(name = "Auth", description = "인증 관리 (회원가입/로그인)") // Swagger용 태그
 public class AuthController {
 
     private final UserService userService;
 
-    // 1. 회원가입 화면 띄우기
-    @GetMapping("/join")
-    public String joinPage(Model model) {
-        model.addAttribute("joinRequest", new JoinRequest());
-        return "join"; // templates/join.html을 찾아감
-    }
+    // 회원가입 화면(@GetMapping)은 이제 플러터 앱이 스스로 띄우므로 삭제합니다.
 
-    // 2. 실제 회원가입 처리
     @PostMapping("/join")
-    public String join(@Valid @ModelAttribute("joinRequest") JoinRequest req,
-                       BindingResult bindingResult) {
+    @Operation(summary = "회원가입", description = "아이디 중복 확인 후 회원가입을 진행합니다.")
+    public ResponseEntity<String> join(@Valid @RequestBody JoinRequest req) { // 2. @RequestBody로 변경
 
-        // 아이디 중복 체크 로직 (Service 호출)
+        // 아이디 중복 체크
         if(userService.checkLoginIdDuplicate(req.getLoginId())) {
-            bindingResult.rejectValue("loginId", "duplicate", "이미 존재하는 아이디입니다.");
+            return ResponseEntity.badRequest().body("이미 존재하는 아이디입니다.");
         }
 
-        // 에러가 있으면 다시 회원가입 페이지로
-        if(bindingResult.hasErrors()) {
-            return "join";
+        if (!req.getPassword().equals(req.getPasswordConfirm())) {
+            return ResponseEntity.badRequest().body("비밀번호가 일치하지 않습니다.");
         }
 
         userService.join(req);
-        return "redirect:/login"; // 가입 성공 시 로그인 페이지로 이동
+        return ResponseEntity.ok("회원가입 성공"); // 3. HTML 대신 결과 메시지나 데이터를 리턴
     }
-    @GetMapping("/login")
-    public String loginPage(Model model) {
-        model.addAttribute("loginRequest", new LoginRequest());
-        return "login";
+
+    @PostMapping("/login")
+    @Operation(summary = "로그인", description = "아이디와 비밀번호를 확인하여 로그인을 처리합니다.")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
+        // 로그인 로직 처리 (예: 토큰 발급 등)
+        User loginUser = userService.login(req.getLoginId(),req.getPassword());
+
+        if (loginUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("아이디 또는 비밀 번호가 일치하지 않습니다");
+        }
+        return ResponseEntity.ok(Map.of("userId", loginUser.getId()));
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃", description = "현재 서버에서 비울 토큰/세션 상태가 없어 성공 응답만 반환합니다.")
+    public ResponseEntity<String> logout() {
+        return ResponseEntity.ok("로그아웃 성공");
     }
 }
