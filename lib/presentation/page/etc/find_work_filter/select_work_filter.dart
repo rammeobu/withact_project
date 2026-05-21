@@ -1,44 +1,45 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:party_maker/core/constant.dart';
+import 'find_work_filter.dart';
 
-class SelectPartyFilter extends StatelessWidget {
-  final List<String> filter;
-  final String currentFilter;
-  final ValueChanged<String> onChanged;
-  const SelectPartyFilter({
-    super.key,
-    required this.filter,
-    required this.currentFilter,
-    required this.onChanged,
-  });
+class SelectWorkFilter extends ConsumerWidget {
+  final int filterIndex;
+  const SelectWorkFilter({super.key, required this.filterIndex});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final filterState = ref.watch(findWorkFilterProvider);
+    if (filterState.filter.isEmpty ||
+        filterIndex >= filterState.filter.length) {
+      return const SizedBox();
+    }
+    final filter = filterState.filter[filterIndex];
+    final currentFilter = filterState.current[filterIndex];
+
     return Row(
       children: filter.map((pos) {
-        bool isCurrentSelectedPosition = currentFilter == pos;
-
+        bool isSelected = currentFilter == pos;
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.010),
           child: OutlinedButton(
             style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.zero,
-              minimumSize: const Size(0, 0),
-              fixedSize: const Size(70, 35),
-              backgroundColor: (isCurrentSelectedPosition == true)
-                  ? const Color(0xFF5764F0)
-                  : Colors.white,
-              foregroundColor: (isCurrentSelectedPosition == true)
-                  ? Colors.white
-                  : Colors.black,
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.039),
+              minimumSize: const Size(0, 41),
+              backgroundColor: isSelected ? appPrimaryColor : Colors.white,
+              foregroundColor: isSelected ? Colors.white : Colors.black,
               side: const BorderSide(width: 0.5, color: Colors.grey),
             ),
             onPressed: () {
-                onChanged(pos);
+              ref
+                  .read(findWorkFilterProvider.notifier)
+                  .setCurrent(filterIndex, pos);
             },
             child: Text(
               pos,
-              style: const TextStyle(
-                fontSize: 15.0,
+              style: TextStyle(
+                fontSize: screenWidth * 0.036,
                 fontWeight: FontWeight.w700,
               ),
             ),

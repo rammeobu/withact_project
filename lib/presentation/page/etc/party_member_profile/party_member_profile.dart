@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:party_maker/app.dart';
 import 'package:party_maker/presentation/page/etc/party_member_profile/party_member_profile_body1.dart';
 import 'package:party_maker/presentation/page/etc/party_member_profile/party_member_profile_body2.dart';
 import 'package:party_maker/presentation/page/etc/party_member_profile/party_member_profile_body3.dart';
@@ -10,14 +11,14 @@ class PartyMemberProfile extends StatefulWidget {
   final List<String> profileContent;
   final String introduction;
   final String spec;
-  final List<String> preferences;
+  final List<String> favorites;
   final List<String> positions;
   const PartyMemberProfile({
     super.key,
     required this.profileContent,
     required this.introduction,
     required this.spec,
-    required this.preferences,
+    required this.favorites,
     required this.positions,
     this.profileImage,
   });
@@ -45,11 +46,15 @@ class _PartyMemberProfileState extends State<PartyMemberProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return BasicLayout(
       title: '파티원 프로필',
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        padding: EdgeInsets.only(
+          left: screenWidth * 0.036,
+          top: 13,
+          right: screenWidth * 0.036,
+        ),
         child: Expanded(
           child: SingleChildScrollView(
             controller: scrollControllers[0],
@@ -73,28 +78,28 @@ class _PartyMemberProfileState extends State<PartyMemberProfile> {
                 ),
 
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
-                  child: const Text(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
                     '선호 활동 정보',
                     style: TextStyle(
-                      fontSize: 17.0,
+                      fontSize: screenWidth * 0.041,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
 
                 PartyMemberProfileBody3(
-                  preferenceRole: widget.preferences[0],
-                  preferenceField: widget.preferences[1],
-                  preferenceDomain: widget.preferences[2],
+                  favoriteRole: widget.favorites[0],
+                  favoriteField: widget.favorites[1],
+                  favoriteDomain: widget.favorites[2],
                 ),
                 // 1~3까지 dialog로 한 화면 내에서 띄우고 해당 페이지는 제거될 수도 있음.
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
-                  child: const Text(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
                     '파티원 목록',
                     style: TextStyle(
-                      fontSize: 17.0,
+                      fontSize: screenWidth * 0.041,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -114,6 +119,20 @@ class _PartyMemberProfileState extends State<PartyMemberProfile> {
     );
   }
 
-  void onCallButtonPressed() {}
-  void onPersonPressed(String id) {}
+  void onCallButtonPressed() {
+    // TODO: 백엔드와 협의 후 문의하기 기능에 대한 구체화 이후 문의하기 기능에 대한 페이지 구현 후 해당 페이지로의 라우팅 수행
+  }
+  void onPersonPressed(String id) {
+    Navigator.pushReplacementNamed(
+      context,
+      PageRoutes.partyMemberProfile,
+      arguments: {
+        'profileContent': List.generate(2, (i) => i == 1 ? id : ''),
+        'introduction': '',
+        'spec': '',
+        'preferences': List.generate(3, (_) => ''),
+        'positions': widget.positions,
+      },
+    );
+  }
 }

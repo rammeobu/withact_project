@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 import '../../future&component/layout/default_container.dart';
 
 class WorkInformationBody1 extends StatelessWidget {
@@ -18,14 +19,12 @@ class WorkInformationBody1 extends StatelessWidget {
       textDirection: TextDirection.ltr,
       maxLines: 1,
     );
-
     while (fontSize > 9.0) {
       textPainter.text = TextSpan(
         text: text,
         style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w700),
       );
       textPainter.layout();
-
       if (textPainter.width <= maxWidth) break;
       fontSize -= 1.0;
     }
@@ -35,35 +34,25 @@ class WorkInformationBody1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           flex: 1,
           child: DefaultContainer(
-            height: 80,
-            width: 80,
-            color: const Color(0xffe3e5e9),
+            height: screenWidth * 0.195,
+            width: screenWidth * 0.195,
+            color: posterColor,
             child: Center(
               child: (poster != null && poster!.startsWith('http'))
                   ? ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
+                      borderRadius: BorderRadius.circular(screenWidth * 0.024),
                       child: Image.network(
                         poster!,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
-                      ),
-                    )
-                  : (poster != null)
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Image.asset(
-                        poster!,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
+                        cacheWidth: 300,
                       ),
                     )
                   : const Text('포스터'),
@@ -73,7 +62,7 @@ class WorkInformationBody1 extends StatelessWidget {
         Expanded(
           flex: 3,
           child: Padding(
-            padding: const EdgeInsets.only(left: 10.0),
+            padding: EdgeInsets.only(left: screenWidth * 0.024),
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final double usableWidth = constraints.maxHeight - 16.0;
@@ -81,12 +70,11 @@ class WorkInformationBody1 extends StatelessWidget {
                   usableWidth,
                   workOverview,
                 );
-
                 return DefaultContainer(
                   color: const Color(0xffebedfc),
-                  width: MediaQuery.of(context).size.width,
+                  width: screenWidth,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(screenWidth * 0.019),
                     child: Scrollbar(
                       controller: scrollController,
                       child: SingleChildScrollView(
@@ -95,9 +83,9 @@ class WorkInformationBody1 extends StatelessWidget {
                           alignment: Alignment.topLeft,
                           child: Text(
                             workOverview,
-                            style: const TextStyle(
-                              fontSize: 16.0,
-                              color: Color(0xff5764f0),
+                            style: TextStyle(
+                              fontSize: fontSize,
+                              color: appPrimaryColor,
                               fontWeight: FontWeight.w700,
                             ),
                           ),

@@ -1,61 +1,71 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+
+import '../../../../../core/constant.dart';
 
 class ApplyPartyCardMiddle extends StatelessWidget {
   final String name;
   final List<String> timePlace;
+  final String applyStatus;
   const ApplyPartyCardMiddle({
     super.key,
     required this.name,
     required this.timePlace,
+    required this.applyStatus,
   });
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Expanded(
-      flex: 13,
+      flex: 3,
       child: Padding(
-        padding: const EdgeInsets.only(left: 20.0),
+        padding: EdgeInsets.only(left: screenWidth * 0.049),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Text(
-                name,
-                style: const TextStyle(
-                  fontSize: 23.0,
-                  fontWeight: FontWeight.w900,
+              padding: EdgeInsets.only(
+                top: 14,
+                right: screenWidth * 0.036,
+                bottom: 7,
+              ),
+              child: Center(
+                child: Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.058,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
               ),
             ),
+
             Padding(
-              padding: const EdgeInsets.only(top: 5.0, right: 15.0),
+              padding: EdgeInsets.only(top: 6, right: screenWidth * 0.036),
               child: Table(
                 border: TableBorder.all(
                   color: Colors.grey,
                   width: 0.5,
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(screenWidth * 0.036),
                 ),
-                columnWidths: const {
-                  0: FixedColumnWidth(40),
-                  1: FlexColumnWidth(),
+                columnWidths: {
+                  0: FixedColumnWidth(screenWidth * 0.097),
+                  1: const FlexColumnWidth(),
                 },
                 children: [
                   TableRow(
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.all(3),
-                        child: Center(
-                          child: Text('일시', style: TextStyle(fontSize: 13.0)),
-                        ),
+                      Padding(
+                        padding: EdgeInsets.all(screenWidth * 0.007),
+                        child: Center(child: Text('일시', style: tableCellFont)),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                          left: 8.0,
-                          top: 3.0,
-                          right: 3.0,
-                          bottom: 3.0,
+                        padding: EdgeInsets.only(
+                          left: screenWidth * 0.019,
+                          top: screenWidth * 0.007,
+                          right: screenWidth * 0.007,
+                          bottom: screenWidth * 0.007,
                         ),
                         child: Align(
                           alignment: Alignment.centerLeft,
@@ -66,18 +76,16 @@ class ApplyPartyCardMiddle extends StatelessWidget {
                   ),
                   TableRow(
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.all(3),
-                        child: Center(
-                          child: Text('장소', style: TextStyle(fontSize: 13.0)),
-                        ),
+                      Padding(
+                        padding: EdgeInsets.all(screenWidth * 0.007),
+                        child: Center(child: Text('장소', style: tableCellFont)),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                          left: 8.0,
-                          top: 3.0,
-                          right: 3.0,
-                          bottom: 3.0,
+                        padding: EdgeInsets.only(
+                          left: screenWidth * 0.019,
+                          top: screenWidth * 0.007,
+                          right: screenWidth * 0.007,
+                          bottom: screenWidth * 0.007,
                         ),
                         child: Align(
                           alignment: Alignment.centerLeft,

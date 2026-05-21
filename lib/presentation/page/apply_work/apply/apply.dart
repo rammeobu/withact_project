@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../future&component/component/when_to_meet.dart';
 import '../../future&component/layout/basic_layout.dart';
 import 'apply_body1.dart';
@@ -20,12 +20,16 @@ class _ApplyState extends State<Apply> {
 
   late final List<TextEditingController> _bodyTextControllers = [];
   late final List<ScrollController> _bodyScrollControllers = [];
-
+  late TextEditingController timeTextController;
+  late ScrollController whenToMeetScrollController;
   @override
   void initState() {
     super.initState();
 
-    currentProfile = ['', ''];
+    currentProfile = [
+      widget.profile?.elementAtOrNull(0) ?? '',
+      widget.profile?.elementAtOrNull(1) ?? '',
+    ];
     for (int i = 0; i < 2; i++) {
       _bodyTextControllers.add(TextEditingController(text: currentProfile[i]));
       _bodyScrollControllers.add(ScrollController());
@@ -33,6 +37,8 @@ class _ApplyState extends State<Apply> {
         _bodyScrollControllers[0].jumpTo(0.0);
       }
     }
+    timeTextController = TextEditingController();
+    whenToMeetScrollController = ScrollController();
   }
 
   @override
@@ -43,12 +49,14 @@ class _ApplyState extends State<Apply> {
     for (ScrollController controller in _bodyScrollControllers) {
       controller.dispose();
     }
+    timeTextController.dispose();
+    whenToMeetScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return BasicLayout(
       title: '대외활동 지원',
       body: Column(
@@ -58,15 +66,15 @@ class _ApplyState extends State<Apply> {
               controller: _bodyScrollControllers[0],
               child: Padding(
                 padding: EdgeInsets.only(
-                  left: 15.0,
-                  top: screenHeight * 0.01,
-                  right: 15.0,
+                  left: screenWidth * 0.036,
+                  top: 13,
+                  right: screenWidth * 0.036,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 15.0),
+                      padding: const EdgeInsets.only(top: 17),
                       child: ApplyInformation(
                         workOverview: widget.workName,
                         poster: widget.poster,
@@ -78,49 +86,70 @@ class _ApplyState extends State<Apply> {
                       content: currentProfile[0],
                       onLoadButtonPressed: () => onLoadButtonPressed(0),
                       textController: _bodyTextControllers[0],
+                      isRequired: true,
                     ),
                     ApplyBody(
                       section: '스펙',
                       content: currentProfile[1],
                       onLoadButtonPressed: () => onLoadButtonPressed(1),
                       textController: _bodyTextControllers[1],
+                      isRequired: true,
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 10.0),
-                      child: Text(
-                        '활동 가능 시간',
-                        style: TextStyle(
-                          fontSize: 23.0,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Row(
+                        children: [
+                          Text(
+                            '활동 가능 시간',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.058,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const Text(' *', style: TextStyle(color: Colors.red)),
+                        ],
                       ),
                     ),
                     SizedBox(
-                      height: 250,
+                      height: 704,
                       child: WhenToMeet(
-                        readOnly: false,
+                        readOnly: true,
                         scrollController: _bodyScrollControllers[1],
+                        timeTextController: timeTextController,
+                        whenToMeetScrollController: whenToMeetScrollController,
                       ),
                     ),
-                    const SizedBox(height: 20.0),
+                    const Padding(padding: EdgeInsets.only(top: 23)),
                   ],
                 ),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 15.0,
-              vertical: 10.0,
-            ),
-            child: ApplyFooter(onApplyButtonPressed: onApplyButtonPressed),
-          ),
+          ApplyFooter(onApplyButtonPressed: onApplyButtonPressed),
         ],
       ),
       bottomNavigationBar: false,
     );
   }
 
-  void onApplyButtonPressed() {}
-  void onLoadButtonPressed(int i) {}
+  void onApplyButtonPressed() {
+    final requiredFields = [
+      (_bodyTextControllers[0], '소개'),
+      (_bodyTextControllers[1], '스펙'),
+      (timeTextController, '활동 가능 시간'),
+    ];
+    for (final (controller, section) in requiredFields) {
+      if (controller.text.trim().isEmpty) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text('$section을(를) 입력해 주세요.')));
+        return;
+      }
+    }
+    // TODO: 지원 성공 여부에 따른 성공/실패 라우트 구현 (백엔드와 협의 필요)
+  }
+
+  void onLoadButtonPressed(int i) {
+    _bodyTextControllers[i].text = currentProfile[i];
+  }
 }

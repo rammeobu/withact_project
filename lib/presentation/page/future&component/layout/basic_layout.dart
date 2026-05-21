@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:party_maker/app.dart';
 
 class BasicLayout extends StatelessWidget {
   final String? title;
@@ -26,6 +28,7 @@ class BasicLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Directionality(
       textDirection: TextDirection.ltr,
       child: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -49,7 +52,10 @@ class BasicLayout extends StatelessWidget {
                     ? Row(children: needWidget!)
                     : Text(
                         title ?? '',
-                        style: const TextStyle(fontWeight: FontWeight.w700),
+                        style: GoogleFonts.notoSansKr(
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
                       ),
                 actions: actions,
               ),
@@ -58,53 +64,76 @@ class BasicLayout extends StatelessWidget {
                   ? Container(
                       color: Colors.white,
                       child: Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
+                        padding: const EdgeInsets.only(bottom: 12),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             TextButton(
-                              onPressed: mapButtonOnPressed,
+                              onPressed: (mapSelected ?? false)
+                                  ? null
+                                  : () => Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      PageRoutes.map,
+                                      (route) => false,
+                                    ),
                               style: TextButton.styleFrom(
-                                foregroundColor: (mapSelected ?? false)
-                                    ? const Color(0xFFA64B2A)
-                                    : Colors.black,
-                                fixedSize: const Size(120.0, 50.0),
+                                foregroundColor: Colors.black,
+                                disabledForegroundColor: const Color(
+                                  0xFFA64B2A,
+                                ),
+                                fixedSize: Size(screenWidth * 0.292, 57),
                               ),
-                              child: const Icon(Icons.map, size: 40.0),
+                              child: Icon(Icons.map, size: screenWidth * 0.097),
                             ),
                             TextButton(
-                              onPressed: homeButtonOnPressed,
+                              onPressed: (homeSelected ?? false)
+                                  ? null
+                                  : () => Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      PageRoutes.home,
+                                      (route) => false,
+                                    ),
                               style: TextButton.styleFrom(
-                                foregroundColor: (homeSelected ?? false)
-                                    ? const Color(0xFFA64B2A)
-                                    : Colors.black,
-                                fixedSize: const Size(120.0, 50.0),
+                                foregroundColor: Colors.black,
+                                disabledForegroundColor: const Color(
+                                  0xFFA64B2A,
+                                ),
+                                fixedSize: Size(screenWidth * 0.292, 57),
                               ),
-                              child: const Icon(Icons.home, size: 40.0),
+                              child: Icon(
+                                Icons.home,
+                                size: screenWidth * 0.097,
+                              ),
                             ),
                             TextButton(
-                              onPressed: menuButtonOnPressed,
+                              onPressed: (menuSelected ?? false)
+                                  ? null
+                                  : () => Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      PageRoutes.menu,
+                                      (route) => false,
+                                    ),
                               style: TextButton.styleFrom(
-                                foregroundColor: (menuSelected ?? false)
-                                    ? const Color(0xFFA64B2A)
-                                    : Colors.black,
-                                fixedSize: const Size(120.0, 50.0),
+                                foregroundColor: Colors.black,
+                                disabledForegroundColor: const Color(
+                                  0xFFA64B2A,
+                                ),
+                                fixedSize: Size(screenWidth * 0.292, 57),
                               ),
-                              child: const Icon(Icons.menu, size: 40.0),
+                              child: Icon(
+                                Icons.menu,
+                                size: screenWidth * 0.097,
+                              ),
                             ),
                           ],
                         ),
                       ),
                     )
-                  : const SizedBox(),
+                  : null,
             ),
           ),
         ),
       ),
     );
   }
-
-  void mapButtonOnPressed() {}
-  void homeButtonOnPressed() {}
-  void menuButtonOnPressed() {}
 }

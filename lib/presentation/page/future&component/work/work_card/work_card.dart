@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/presentation/page/future&component/work/work_card/work_card_body.dart';
 import '../../layout/default_container.dart';
 
@@ -21,158 +22,117 @@ class WorkCardBasic extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     return SizedBox(
-      height: screenHeight * 0.225,
+      height: 420,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.036),
         child: Card(
+          elevation: 3,
           clipBehavior: Clip.antiAlias,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(20.0),
+            borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.049),
           ),
-          color: const Color(0xFFFDFDFD),
+          color: cardColor,
           child: InkWell(
             onTap: onTap,
             enableFeedback: true,
             splashFactory: InkRipple.splashFactory,
-            child: Row(
-              children: [
-                Flexible(
-                  flex: 6,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Align(
-                      alignment: const Alignment(0, -0.7),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Column(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Center(
                       child: DefaultContainer(
-                        height: 75,
-                        width: 75,
-                        color: const Color(0xffe3e5e9),
+                        height: 190,
+                        width: screenWidth * 0.316,
+                        color: posterColor,
                         child: Center(
                           child: (poster != null && poster!.startsWith('http'))
-                              ? Image.network(poster!, fit: BoxFit.cover)
+                              ? Image.network(
+                                  poster!,
+                                  fit: BoxFit.cover,
+                                  cacheWidth: 400,
+                                )
                               : const Text('포스터'),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Flexible(
-                  flex: 19,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 0.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 10,
+                      left: screenWidth * 0.036,
+                      right: screenWidth * 0.036,
+                      bottom: 8,
+                    ),
+                    child: Center(child: Text(name, style: sectionTitleFont)),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: screenWidth * 0.049,
+                      right: screenWidth * 0.049,
+                      top: 8,
+                    ),
+                    child: Table(
+                      border: TableBorder.all(
+                        color: Colors.grey,
+                        width: 0.5,
+                        borderRadius: BorderRadius.circular(screenWidth * 0.036),
+                      ),
+                      columnWidths: {
+                        0: FixedColumnWidth(screenWidth * 0.097),
+                        1: const FlexColumnWidth(),
+                      },
                       children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: screenHeight * 0.006,
-                            left: 15.0,
-                            bottom: screenHeight * 0.006,
-                          ),
-                          child: Text(
-                            name,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 15.0,
-                            right: 30.0,
-                          ),
-                          child: Table(
-                            border: TableBorder.all(
-                              color: Colors.grey,
-                              width: 0.5,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            columnWidths: const {
-                              0: FixedColumnWidth(40),
-                              1: FlexColumnWidth(),
-                            },
-                            children: [
-                              TableRow(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 3.0,
-                                      top: screenHeight * 0.001,
-                                      right: 3.0,
-                                      bottom: screenHeight * 0.001,
-                                    ),
-                                    child: const Center(
-                                      child: Text(
-                                        '일시',
-                                        style: TextStyle(fontSize: 13.0),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 8.0,
-                                      top: screenHeight * 0.001,
-                                      right: 3.0,
-                                      bottom: screenHeight * 0.001,
-                                    ),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(timePlace[0]),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              TableRow(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 3.0,
-                                      top: screenHeight * 0.001,
-                                      right: 3.0,
-                                      bottom: screenHeight * 0.001,
-                                    ),
-                                    child: const Center(
-                                      child: Text(
-                                        '장소',
-                                        style: TextStyle(fontSize: 13.0),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 8.0,
-                                      top: screenHeight * 0.001,
-                                      right: 3.0,
-                                      bottom: screenHeight * 0.001,
-                                    ),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(timePlace[1]),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: screenHeight * 0.001),
-                        Row(
-                          children: [
-                            Expanded(child: WorkCardBody(position: position)),
-                          ],
-                        ),
+                        workDetailRow('일시', timePlace[0], screenWidth),
+                        workDetailRow('장소', timePlace[1], screenWidth),
                       ],
                     ),
                   ),
-                ),
-              ],
+                  Expanded(
+                    flex: 2,
+                    child: Row(
+                      children: [
+                        Expanded(child: WorkCardBody(position: position)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  TableRow workDetailRow(String label, String value, double screenWidth) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(
+            left: screenWidth * 0.007,
+            top: 1,
+            right: screenWidth * 0.007,
+            bottom: 1,
+          ),
+          child: Center(child: Text(label, style: tableCellFont)),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+            left: screenWidth * 0.019,
+            top: 1,
+            right: screenWidth * 0.007,
+            bottom: 1,
+          ),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(value),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -197,225 +157,214 @@ class WorkCardApply extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     return SizedBox(
-      height: screenHeight * 0.2,
+      height: 420,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.036),
         child: Card(
+          elevation: 3,
+          clipBehavior: Clip.antiAlias,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(20.0),
+            borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.049),
           ),
-          color: const Color(0xFFFDFDFD),
-          child: Column(
-            children: [
-              Expanded(
-                flex: 7,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 12.0),
+          color: cardColor,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Column(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Center(
+                    child: DefaultContainer(
+                      height: 190,
+                      width: screenWidth * 0.316,
+                      color: posterColor,
+                      child: Center(
+                        child: (poster != null && poster!.startsWith('http'))
+                            ? Image.network(
+                                poster!,
+                                fit: BoxFit.cover,
+                                cacheWidth: 400,
+                              )
+                            : const Text('포스터'),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: screenWidth * 0.049),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: 10,
+                            right: screenWidth * 0.049,
+                            bottom: 8,
+                          ),
+                          child: Center(
+                            child: Text(name, style: sectionTitleFont),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            right: screenWidth * 0.049,
+                            top: 8,
+                          ),
+                          child: Table(
+                            border: TableBorder.all(
+                              color: Colors.grey,
+                              width: 0.5,
+                              borderRadius: BorderRadius.circular(
+                                screenWidth * 0.036,
+                              ),
+                            ),
+                            columnWidths: {
+                              0: FixedColumnWidth(screenWidth * 0.097),
+                              1: const FlexColumnWidth(),
+                            },
+                            children: [
+                              workDetailRow('일시', timePlace[0], screenWidth),
+                              workDetailRow('장소', timePlace[1], screenWidth),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
                         flex: 1,
-                        child: Align(
-                          alignment: const Alignment(0, 0),
-                          child: DefaultContainer(
-                            height: 70,
-                            width: 70,
-                            color: const Color(0xffe3e5e9),
-                            child: Center(
-                              child:
-                                  (poster != null && poster!.startsWith('http'))
-                                  ? Image.network(poster!, fit: BoxFit.cover)
-                                  : const Text('포스터'),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF0F3F8),
+                            border: BoxBorder.fromLTRB(
+                              top: const BorderSide(
+                                width: 0.5,
+                                color: Colors.grey,
+                              ),
+                              right: const BorderSide(
+                                width: 0.5,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              applyStatus,
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.034,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey,
+                              ),
                             ),
                           ),
                         ),
                       ),
                       Expanded(
-                        flex: 4,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  top: screenHeight * 0.008,
-                                ),
-                                child: Text(
-                                  name,
-                                  style: const TextStyle(
-                                    fontSize: 23.0,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
+                        flex: 1,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: BoxBorder.fromLTRB(
+                              top: const BorderSide(
+                                width: 0.5,
+                                color: Colors.grey,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 15.0),
-                                child: Table(
-                                  border: TableBorder.all(
-                                    color: Colors.grey,
-                                    width: 0.5,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  columnWidths: const {
-                                    0: FixedColumnWidth(40),
-                                    1: FlexColumnWidth(),
-                                  },
-                                  children: [
-                                    TableRow(
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 3,
-                                            top: screenHeight * 0.001,
-                                            right: 3,
-                                            bottom: screenHeight * 0.001,
-                                          ),
-                                          child: const Center(
-                                            child: Text(
-                                              '일시',
-                                              style: TextStyle(fontSize: 13.0),
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 8,
-                                            top: screenHeight * 0.001,
-                                            right: 3,
-                                            bottom: screenHeight * 0.001,
-                                          ),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(timePlace[0]),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    TableRow(
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 3,
-                                            top: screenHeight * 0.001,
-                                            right: 3,
-                                            bottom: screenHeight * 0.001,
-                                          ),
-                                          child: const Center(
-                                            child: Text(
-                                              '장소',
-                                              style: TextStyle(fontSize: 13.0),
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            left: 8,
-                                            top: screenHeight * 0.001,
-                                            right: 3,
-                                            bottom: screenHeight * 0.001,
-                                          ),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(timePlace[1]),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                              right: const BorderSide(
+                                width: 0.5,
+                                color: Colors.grey,
                               ),
-                            ],
+                            ),
+                          ),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              foregroundColor: appPrimaryColor,
+                            ),
+                            onPressed: onDetailButtonPressed,
+                            child: Text(
+                              '활동 설명',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.034,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: BoxBorder.fromLTRB(
+                              top: const BorderSide(
+                                width: 0.5,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              foregroundColor: appPrimaryColor,
+                            ),
+                            onPressed: onProfileCheckPressed,
+                            child: Text(
+                              '지원서 확인',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.034,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: BoxBorder.fromLTRB(
-                            top: const BorderSide(
-                              width: 0.5,
-                              color: Colors.grey,
-                            ),
-                            right: const BorderSide(
-                              width: 0.5,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                        child: Center(child: Text(applyStatus)),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: BoxBorder.fromLTRB(
-                            top: const BorderSide(
-                              width: 0.5,
-                              color: Colors.grey,
-                            ),
-                            right: const BorderSide(
-                              width: 0.5,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                            foregroundColor: const Color(0xFF5764F0),
-                          ),
-                          onPressed: onDetailButtonPressed,
-                          child: const Text(
-                            '활동 설명',
-                            style: TextStyle(fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: BoxBorder.fromLTRB(
-                            top: const BorderSide(
-                              width: 0.5,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                            foregroundColor: const Color(0xFF5764F0),
-                          ),
-                          onPressed: onProfileCheckPressed,
-                          child: const Text(
-                            '지원서 확인',
-                            style: TextStyle(fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  TableRow workDetailRow(String label, String value, double screenWidth) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(
+            left: screenWidth * 0.007,
+            top: 1,
+            right: screenWidth * 0.007,
+            bottom: 1,
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(fontSize: screenWidth * 0.032),
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+            left: screenWidth * 0.019,
+            top: 1,
+            right: screenWidth * 0.007,
+            bottom: 1,
+          ),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(value),
+          ),
+        ),
+      ],
     );
   }
 }

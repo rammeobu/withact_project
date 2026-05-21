@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../future&component/layout/default_container.dart';
 
 class AnnouncementEditBody extends StatelessWidget {
@@ -6,6 +6,7 @@ class AnnouncementEditBody extends StatelessWidget {
   final String? content;
   final String section;
   final TextEditingController textEditingController;
+  final bool isRequired;
 
   const AnnouncementEditBody({
     super.key,
@@ -13,25 +14,32 @@ class AnnouncementEditBody extends StatelessWidget {
     this.content,
     required this.section,
     required this.textEditingController,
+    this.isRequired = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
-      padding: EdgeInsets.only(top: screenHeight * 0.01),
+      padding: const EdgeInsets.only(top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                section,
-                style: const TextStyle(
-                  fontSize: 23.0,
-                  fontWeight: FontWeight.w800,
-                ),
+              Row(
+                children: [
+                  Text(
+                    section,
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.058,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  if (isRequired)
+                    const Text(' *', style: TextStyle(color: Colors.red)),
+                ],
               ),
               (section == '활동 이름')
                   ? OutlinedButton(
@@ -39,16 +47,16 @@ class AnnouncementEditBody extends StatelessWidget {
                       style: OutlinedButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: const Size(0, 0),
-                        fixedSize: const Size(80, 35),
+                        fixedSize: Size(screenWidth * 0.195, 41),
                         side: const BorderSide(width: 0.5),
                         shape: const StadiumBorder(),
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
                       ),
-                      child: const Text(
+                      child: Text(
                         '검색',
                         style: TextStyle(
-                          fontSize: 15.0,
+                          fontSize: screenWidth * 0.036,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -57,15 +65,13 @@ class AnnouncementEditBody extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: EdgeInsets.only(top: screenHeight * 0.008),
+            padding: const EdgeInsets.only(top: 7),
             child: DefaultContainer(
               color: const Color(0xffebedf0),
-              width: MediaQuery.of(context).size.width,
-              height: (section == '활동 이름')
-                  ? screenHeight * 0.07
-                  : screenHeight * 0.22,
+              width: screenWidth,
+              height: (section == '활동 이름') ? 59 : 186,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(screenWidth * 0.019),
                 child: TextField(
                   controller: textEditingController,
                   selectionControls: EmptyTextSelectionControls(),
@@ -81,12 +87,12 @@ class AnnouncementEditBody extends StatelessWidget {
                     hintText: (section == '활동 이름')
                         ? '$section을 검색하거나 직접 작성하세요.'
                         : '$section를 작성하세요.',
-                    hintStyle: const TextStyle(
+                    hintStyle: TextStyle(
                       color: Colors.grey,
-                      fontSize: 17.0,
+                      fontSize: screenWidth * 0.041,
                     ),
                   ),
-                  style: const TextStyle(fontSize: 17.0),
+                  style: TextStyle(fontSize: screenWidth * 0.041),
                 ),
               ),
             ),

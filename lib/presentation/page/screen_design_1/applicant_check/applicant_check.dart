@@ -1,32 +1,56 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/data/models/applicant_check_data_structure.dart';
 import '../../future&component/layout/basic_layout.dart';
 import '../../future&component/profile/profile_card_applicant.dart';
 import 'applicant_select_position.dart';
 
-class ApplicantCheck extends StatefulWidget {
-  final List<String> position;
-  List<List<String>>? applicants = [
-    ['홍길동', 'PM', 'react'],
-    ['이순신', 'FE', 'flutter'],
-    ['임꺽정', 'BE', 'spring'],
-    ['유성룡', 'BE', 'FastAPI'],
-    ['이몽룡', 'FE', 'typescript'],
-    ['김종서', 'BE', 'javascript'],
-  ];
-  ApplicantCheck({super.key, required this.position});
-
+class _ApplicantPositionNotifier extends Notifier<String> {
   @override
-  State<ApplicantCheck> createState() => _ApplicantCheckState();
+  String build() => 'all';
 }
 
-class _ApplicantCheckState extends State<ApplicantCheck> {
-  String currentPosition = 'all';
+final applicantPositionProvider =
+    NotifierProvider.autoDispose<_ApplicantPositionNotifier, String>(
+      _ApplicantPositionNotifier.new,
+    );
+
+class ApplicantCheck extends ConsumerWidget {
+  final List<String> position;
+  final List<ApplicantItem>? applicants;
+  ApplicantCheck({
+    super.key,
+    required this.position,
+    List<ApplicantItem>? applicants,
+  }) : applicants =
+           applicants ??
+           [
+             const ApplicantItem(name: '홍길동', position: 'PM', skill: 'react'),
+             const ApplicantItem(name: '이순신', position: 'FE', skill: 'flutter'),
+             const ApplicantItem(name: '임꺽정', position: 'BE', skill: 'spring'),
+             const ApplicantItem(name: '유성룡', position: 'BE', skill: 'FastAPI'),
+             const ApplicantItem(
+               name: '이몽룡',
+               position: 'FE',
+               skill: 'typescript',
+             ),
+             const ApplicantItem(
+               name: '김종서',
+               position: 'BE',
+               skill: 'javascript',
+             ),
+           ];
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final currentPosition = ref.watch(applicantPositionProvider);
     final displayList = currentPosition == 'all'
-        ? widget.applicants!
-        : widget.applicants!
-              .where((applicant) => applicant[1] == currentPosition)
+        ? applicants!
+        : applicants!
+              .where((applicant) => applicant.position == currentPosition)
               .toList();
 
     return BasicLayout(
@@ -35,31 +59,34 @@ class _ApplicantCheckState extends State<ApplicantCheck> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 15.0, left: 20.0),
-              child: Text(
-                '포지션별 지원자 선택',
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w700),
-              ),
+            Padding(
+              padding: EdgeInsets.only(top: 13, left: screenWidth * 0.049),
+              child: Text('포지션별 지원자 선택', style: sectionTitleFont),
             ),
-            ApplicantSelectPosition(
-              position: widget.position,
-              currentPosition: currentPosition,
-              onChanged: (changedPosition) {
-                setState(() {
-                  currentPosition = changedPosition;
-                });
-              },
-            ),
+            ApplicantSelectPosition(position: position),
             Column(
               children: displayList
                   .map(
                     (applicantData) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenWidth * 0.036,
+                      ),
                       child: ProfileCardApplicant(
-                        profileContent: applicantData,
+                        profileContent: [
+                          applicantData.name,
+                          applicantData.position,
+                          applicantData.skill,
+                        ],
                         onTap: () {
-                          print('선택: ${applicantData[0]}');
+                          Navigator.pushNamed(
+                            context,
+                            PageRoutes.applicantProfile,
+                            arguments: {
+                              'name': applicantData.name,
+                              'introduction': '',
+                              'spec': applicantData.skill,
+                            },
+                          );
                         },
                       ),
                     ),

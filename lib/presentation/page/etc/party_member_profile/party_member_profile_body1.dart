@@ -1,6 +1,7 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 
 class PartyMemberProfileBody1 extends StatelessWidget {
   final String? profileImage;
@@ -18,13 +19,13 @@ class PartyMemberProfileBody1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return SizedBox(
-      height: screenHeight * 0.19,
+      height: 160,
       child: Padding(
-        padding: EdgeInsets.only(top: screenHeight * 0.015),
+        padding: const EdgeInsets.only(top: 13),
         child: Card(
-          color: const Color(0xFFFDFDFD),
+          color: cardColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -33,15 +34,15 @@ class PartyMemberProfileBody1 extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
+                    padding: const EdgeInsets.only(bottom: 12),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
+                          padding: EdgeInsets.only(left: screenWidth * 0.024),
                           child: Container(
-                            width: 60.0,
-                            height: 60.0,
+                            width: screenWidth * 0.146,
+                            height: screenWidth * 0.146,
                             decoration: const BoxDecoration(
                               color: Color(0xFFECEEFD),
                               shape: BoxShape.circle,
@@ -52,30 +53,36 @@ class PartyMemberProfileBody1 extends StatelessWidget {
                                       File(profileImage!),
                                       fit: BoxFit.cover,
                                     )
-                                  : const Icon(
+                                  : Icon(
                                       Icons.person,
-                                      size: 50,
-                                      color: Color(0xFF5764F0),
+                                      size: screenWidth * 0.122,
+                                      color: appPrimaryColor,
                                     ),
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                          child: Table(
-                            border: TableBorder.all(
-                              color: Colors.grey,
-                              width: 0.5,
-                              borderRadius: BorderRadius.circular(15),
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.036,
                             ),
-                            columnWidths: const {
-                              0: FixedColumnWidth(40),
-                              1: FixedColumnWidth(230),
-                            },
-                            children: [
-                              _tableRowBuilder('이름', name, screenHeight),
-                              _tableRowBuilder('역할', role, screenHeight),
-                            ],
+                            child: Table(
+                              border: TableBorder.all(
+                                color: Colors.grey,
+                                width: 0.5,
+                                borderRadius: BorderRadius.circular(
+                                  screenWidth * 0.036,
+                                ),
+                              ),
+                              columnWidths: {
+                                0: FixedColumnWidth(screenWidth * 0.097),
+                                1: const FlexColumnWidth(),
+                              },
+                              children: [
+                                infoRow('이름', name, screenWidth),
+                                infoRow('역할', role, screenWidth),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -86,7 +93,9 @@ class PartyMemberProfileBody1 extends StatelessWidget {
               Flexible(
                 flex: 1,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.036,
+                  ),
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: OutlinedButton(
@@ -94,18 +103,20 @@ class PartyMemberProfileBody1 extends StatelessWidget {
                       style: OutlinedButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: const Size(0, 0),
-                        fixedSize: const Size(80, 35),
+                        fixedSize: Size(screenWidth * 0.195, 41),
                         side: const BorderSide(width: 0.0),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadiusGeometry.circular(10.0),
+                          borderRadius: BorderRadiusGeometry.circular(
+                            screenWidth * 0.024,
+                          ),
                         ),
                         foregroundColor: Colors.black,
                         backgroundColor: Colors.white,
                       ),
-                      child: const Text(
+                      child: Text(
                         '문의하기',
                         style: TextStyle(
-                          fontSize: 17.0,
+                          fontSize: screenWidth * 0.041,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
@@ -120,20 +131,20 @@ class PartyMemberProfileBody1 extends StatelessWidget {
     );
   }
 
-  TableRow _tableRowBuilder(String key, String value, double screenHeight) {
+  TableRow infoRow(String label, String value, double screenWidth) {
     return TableRow(
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(vertical: screenHeight * 0.001),
-          child: Center(child: Text(key)),
+          padding: const EdgeInsets.symmetric(vertical: 1),
+          child: Center(child: Text(label)),
         ),
         Padding(
           padding: EdgeInsets.only(
-            left: 8.0,
-            top: screenHeight * 0.001,
-            bottom: screenHeight * 0.001,
+            left: screenWidth * 0.019,
+            top: 1,
+            bottom: 1,
           ),
-          child: Text(value, style: const TextStyle(fontSize: 14.0)),
+          child: Text(value, style: TextStyle(fontSize: screenWidth * 0.034)),
         ),
       ],
     );

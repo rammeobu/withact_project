@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 
 import '../../../future&component/layout/default_container.dart';
 import 'apply_party_card_button.dart';
@@ -23,36 +24,45 @@ class ApplyPartyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 140,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+    final double screenWidth = MediaQuery.of(context).size.width;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.036),
+      child: SizedBox(
+        height: 506,
         child: Card(
+          elevation: 2,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(20.0),
+            borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.049),
           ),
-          color: const Color(0xFFFDFDFD),
+          color: cardColor,
           child: Padding(
-            padding: const EdgeInsets.only(left: 10.0),
-            child: Row(
+            padding: const EdgeInsets.only(top: 12),
+            child: Column(
               children: [
                 Expanded(
-                  flex: 4,
-                  child: Align(
-                    alignment: const Alignment(0, 0),
+                  flex: 3,
+                  child: Center(
                     child: DefaultContainer(
-                      height: 70,
-                      width: 70,
-                      color: const Color(0xffe3e5e9),
+                      height: 231,
+                      width: screenWidth * 0.316,
+                      color: posterColor,
                       child: (poster != null && poster!.startsWith('http'))
-                          ? Image.network(poster!, fit: BoxFit.cover)
-                          : Center(child: Text('포스터')),
+                          ? Image.network(
+                              poster!,
+                              fit: BoxFit.cover,
+                              cacheWidth: 400,
+                            )
+                          : const Center(child: Text('포스터')),
                     ),
                   ),
                 ),
-                ApplyPartyCardMiddle(name: name, timePlace: timePlace),
+                ApplyPartyCardMiddle(
+                  name: name,
+                  timePlace: timePlace,
+                  applyStatus: applyStatus,
+                ),
                 Expanded(
-                  flex: 7,
+                  flex: 2,
                   child: ApplyPartyCardButton(
                     applyStatus: applyStatus,
                     onDetailButtonPressed: onDetailButtonPressed,

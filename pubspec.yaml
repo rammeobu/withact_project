@@ -38,9 +38,10 @@ dependencies:
   cupertino_icons: ^1.0.8
   kakao_flutter_sdk: ^2.0.0+1
   flutter_map: ^8.3.0
-  riverpod: ^3.2.1
-  
+  flutter_riverpod: ^3.2.1
+  google_fonts: ^6.2.1
 
+  latlong2: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -63,8 +64,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  assets:
-    - asset/image/
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:

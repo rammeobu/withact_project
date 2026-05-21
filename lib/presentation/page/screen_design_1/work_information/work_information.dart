@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/presentation/page/screen_design_1/work_information/work_information_body1.dart';
 import 'package:party_maker/presentation/page/screen_design_1/work_information/work_information_body2.dart';
 import '../../future&component/layout/default_container.dart';
@@ -26,6 +28,7 @@ class WorkInformation extends StatefulWidget {
   final String? poster;
   final List<String> leaderProfile;
   final List<String> position;
+  final List<bool>? positionOccupy;
 
   const WorkInformation({
     super.key,
@@ -35,6 +38,7 @@ class WorkInformation extends StatefulWidget {
     required this.leaderProfile,
     required this.position,
     this.poster,
+    this.positionOccupy,
   });
 
   @override
@@ -42,26 +46,26 @@ class WorkInformation extends StatefulWidget {
 }
 
 class _WorkInformationState extends State<WorkInformation> {
-  late ScrollController _detailScrollController;
-  late ScrollController _body1ScrollController;
+  late ScrollController detailScrollController;
+  late ScrollController body1ScrollController;
 
   @override
   void initState() {
     super.initState();
-    _detailScrollController = ScrollController();
-    _body1ScrollController = ScrollController();
+    detailScrollController = ScrollController();
+    body1ScrollController = ScrollController();
   }
 
   @override
   void dispose() {
-    _detailScrollController.dispose();
-    _body1ScrollController.dispose();
+    detailScrollController.dispose();
+    body1ScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
 
     return BasicLayout(
       title: '활동 정보',
@@ -71,10 +75,10 @@ class _WorkInformationState extends State<WorkInformation> {
             child: SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.only(
-                  left: 20.0,
-                  top: screenHeight * 0.02,
-                  right: 20.0,
-                  bottom: 20.0,
+                  left: screenWidth * 0.049,
+                  top: 13,
+                  right: screenWidth * 0.049,
+                  bottom: 23,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -82,68 +86,64 @@ class _WorkInformationState extends State<WorkInformation> {
                     WorkInformationBody1(
                       workOverview: widget.workName,
                       poster: widget.poster,
-                      scrollController: _body1ScrollController,
+                      scrollController: body1ScrollController,
                     ),
-
                     Padding(
-                      padding: EdgeInsets.only(top: screenHeight * 0.02),
-                      child: const Text(
+                      padding: const EdgeInsets.only(top: 17),
+                      child: Text(
                         '요약설명',
                         style: TextStyle(
-                          fontSize: 18.0,
+                          fontSize: screenWidth * 0.044,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-
                     Padding(
-                      padding: EdgeInsets.only(top: screenHeight * 0.012),
+                      padding: const EdgeInsets.only(top: 10),
                       child: DefaultContainer(
                         width: double.infinity,
-                        height: screenHeight * 0.12,
+                        height: 101,
                         color: const Color(0xFFF0F2F5),
                         child: Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: EdgeInsets.all(screenWidth * 0.029),
                           child: SingleChildScrollView(
                             child: Text(
                               widget.workOverview,
-                              style: const TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.black87,
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.034,
+                                color: Colors.black,
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-
                     Padding(
-                      padding: EdgeInsets.only(top: screenHeight * 0.02),
-                      child: const Text(
+                      padding: const EdgeInsets.only(top: 17),
+                      child: Text(
                         '상세설명',
                         style: TextStyle(
-                          fontSize: 18.0,
+                          fontSize: screenWidth * 0.044,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-
                     Padding(
-                      padding: EdgeInsets.only(top: screenHeight * 0.012),
+                      padding: const EdgeInsets.only(top: 10),
                       child: DefaultContainer(
                         width: double.infinity,
-                        height: screenHeight * 0.25, // 높이 조절
+                        height: 211,
                         color: const Color(0xFFF7F8F9),
                         child: Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: EdgeInsets.all(screenWidth * 0.029),
                           child: Scrollbar(
-                            controller: _detailScrollController,
+                            controller: detailScrollController,
                             child: SingleChildScrollView(
-                              controller: _detailScrollController,
+                              controller: detailScrollController,
                               child: Text(
                                 widget.workDetail,
-                                style: const TextStyle(
-                                  fontSize: 15.0,
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.036,
                                   height: 1.6,
                                 ),
                               ),
@@ -152,29 +152,26 @@ class _WorkInformationState extends State<WorkInformation> {
                         ),
                       ),
                     ),
-
                     ProfileCardLeader(
                       profileContent: widget.leaderProfile,
                       onCallButtonPressed: onCallButtonPressed,
                     ),
-
                     Padding(
-                      padding: EdgeInsets.only(top: screenHeight * 0.02),
-                      child: const Text(
+                      padding: const EdgeInsets.only(top: 17),
+                      child: Text(
                         '현재 파티원 목록',
                         style: TextStyle(
-                          fontSize: 18.0,
+                          fontSize: screenWidth * 0.044,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-
                     WorkInformationBody2(
                       position: widget.position,
                       onPersonPressed: onPersonPressed,
+                      positionOccupy: widget.positionOccupy,
                     ),
-
-                    SizedBox(height: screenHeight * 0.02),
+                    const SizedBox(height: 17),
                   ],
                 ),
               ),
@@ -183,18 +180,21 @@ class _WorkInformationState extends State<WorkInformation> {
           OutlinedButton(
             style: OutlinedButton.styleFrom(
               padding: EdgeInsets.zero,
-              fixedSize: Size(MediaQuery.of(context).size.width, 50),
+              fixedSize: Size(screenWidth, 57),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
+                borderRadius: BorderRadius.circular(screenWidth * 0.036),
               ),
-              backgroundColor: const Color(0xff5764f0),
+              backgroundColor: appPrimaryColor,
               foregroundColor: Colors.white,
               side: BorderSide.none,
             ),
-            onPressed: checkApplicant,
-            child: const Text(
+            onPressed: onCheckApplicantButtonPressed,
+            child: Text(
               '지원자 확인하기',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                fontSize: screenWidth * 0.044,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],
@@ -203,7 +203,29 @@ class _WorkInformationState extends State<WorkInformation> {
     );
   }
 
-  void onCallButtonPressed() {}
-  void onPersonPressed(String id) {}
-  void checkApplicant() {}
+  void onCallButtonPressed() {
+    // TODO: 백엔드와 협의 후 문의하기 기능에 대한 구체화 이후 문의하기 기능에 대한 페이지 구현 후 해당 페이지로의 라우팅 수행
+  }
+
+  void onPersonPressed(String positionName) {
+    Navigator.pushNamed(
+      context,
+      PageRoutes.partyMemberProfile,
+      arguments: {
+        'profileContent': List.generate(2, (i) => i == 1 ? positionName : ''),
+        'introduction': '',
+        'spec': '',
+        'preferences': List.generate(3, (_) => ''),
+        'positions': widget.position,
+      },
+    );
+  }
+
+  void onCheckApplicantButtonPressed() {
+    Navigator.pushNamed(
+      context,
+      PageRoutes.applicantCheck,
+      arguments: {'position': widget.position},
+    );
+  }
 }

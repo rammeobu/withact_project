@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:party_maker/app.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/recruit_announcement/recruit_announcement_body2.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/recruit_announcement/recruit_announcement_body3.dart';
 import '../../future&component/layout/basic_layout.dart';
@@ -41,7 +42,7 @@ class _RecruitAnnouncementState extends State<RecruitAnnouncement> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return BasicLayout(
       title: '모집 공고',
       body: Column(
@@ -50,7 +51,11 @@ class _RecruitAnnouncementState extends State<RecruitAnnouncement> {
             child: SingleChildScrollView(
               controller: scrollControllers[0],
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                padding: EdgeInsets.only(
+                  left: screenWidth * 0.036,
+                  top: 13,
+                  right: screenWidth * 0.036,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -69,7 +74,7 @@ class _RecruitAnnouncementState extends State<RecruitAnnouncement> {
                       preferences: widget.preferences,
                       scrollController: scrollControllers[3],
                     ),
-                    const SizedBox(height: 20.0),
+                    const SizedBox(height: 23),
                     RecruitAnnouncementBody3(
                       position: widget.position,
                       primaryScrollController: scrollControllers[0],
@@ -82,8 +87,8 @@ class _RecruitAnnouncementState extends State<RecruitAnnouncement> {
           ),
           Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: 15.0,
-              vertical: screenHeight * 0.007,
+              horizontal: screenWidth * 0.036,
+              vertical: 6,
             ),
             child: RecruitAnnouncementFooter(
               onEditAnnouncementButtonPressed: onEditAnnouncementButtonPressed,
@@ -97,8 +102,28 @@ class _RecruitAnnouncementState extends State<RecruitAnnouncement> {
     );
   }
 
-  void onSearchButtonPressed() {}
-  void onEditAnnouncementButtonPressed() {}
-  void onDisbandPartyButtonPressed() {}
-  void onRecruitButtonPressed() {}
+  void onSearchButtonPressed() {
+    Navigator.pushNamed(context, PageRoutes.findWork);
+  }
+
+  void onEditAnnouncementButtonPressed() {
+    Navigator.pushNamed(
+      context,
+      PageRoutes.announcementEdit,
+      arguments: {
+        'workName': widget.workName,
+        'partyNameIntroduction': widget.partyNameIntroduction,
+        'positions': widget.position,
+        'preferences': widget.preferences,
+      },
+    );
+  }
+
+  void onDisbandPartyButtonPressed() {
+    Navigator.pushNamed(context, PageRoutes.disbandDoubleCheck);
+  }
+
+  void onRecruitButtonPressed() {
+    Navigator.pop(context);
+  }
 }

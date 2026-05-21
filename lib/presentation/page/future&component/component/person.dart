@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-class Person extends StatefulWidget {
-  double size;
+class Person extends StatelessWidget {
+  final double size;
   final VoidCallback? onPressed;
-  Person({super.key, required this.size, this.onPressed});
+  final bool positionOccupied;
+  const Person({
+    super.key,
+    required this.size,
+    this.onPressed,
+    this.positionOccupied = true,
+  });
 
-  @override
-  State<Person> createState() => _PersonState();
-}
-
-class _PersonState extends State<Person> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -18,14 +19,16 @@ class _PersonState extends State<Person> {
         shape: BoxShape.circle,
       ),
       child: IconButton(
-        onPressed: widget.onPressed,
+        onPressed: onPressed,
         style: IconButton.styleFrom(
           padding: EdgeInsets.zero,
           disabledForegroundColor: Colors.grey,
-          foregroundColor: const Color(0xff059568),
-          fixedSize: Size(widget.size, widget.size),
+          foregroundColor: positionOccupied
+              ? const Color(0xff059568)
+              : Colors.grey,
+          fixedSize: Size(size, size),
         ),
-        icon: Icon(Icons.person, size: widget.size),
+        icon: Icon(Icons.person, size: size),
       ),
     );
   }

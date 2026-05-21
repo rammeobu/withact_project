@@ -16,34 +16,35 @@ class PartyMemberProfileBody4 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     return Padding(
-      padding: EdgeInsets.only(top: screenHeight * 0.011),
+      padding: const EdgeInsets.only(top: 9),
       child: SingleChildScrollView(
         controller: scrollController,
         scrollDirection: Axis.horizontal,
         child: Row(
           children: position
               .map(
-                (e) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                (positionName) => Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.012,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Center(
                         child: Text(
-                          e,
-                          style: const TextStyle(
-                            fontSize: 13.0,
+                          positionName,
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.032,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
                       Person(
-                        size: 60.0,
+                        size: screenWidth * 0.146,
                         onPressed: () {
-                          onPersonPressed(e);
+                          onPersonPressed(positionName);
                         },
                       ),
                     ],

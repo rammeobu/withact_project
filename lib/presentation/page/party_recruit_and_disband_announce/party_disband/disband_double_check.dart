@@ -1,37 +1,39 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:party_maker/app.dart';
 
 class DisbandDoubleCheck extends StatelessWidget {
   const DisbandDoubleCheck({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25.0),
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.061),
         child: Column(
           children: [
-            const Expanded(
+            Expanded(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.question_mark_rounded,
-                      size: 200.0,
+                      size: screenWidth * 0.487,
                       color: Colors.black,
                     ),
                     Text(
                       '파티 해체',
                       style: TextStyle(
-                        fontSize: 35.0,
+                        fontSize: screenWidth * 0.085,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 23),
                     Text(
                       '정말로 파티를\n 해체하시겠습니까?',
-                      style: TextStyle(fontSize: 20.0),
+                      style: TextStyle(fontSize: screenWidth * 0.049),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -42,40 +44,44 @@ class DisbandDoubleCheck extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
+                  padding: const EdgeInsets.only(bottom: 23),
                   child: OutlinedButton(
-                    onPressed: onRecruitListButtonPressed,
+                    onPressed: () => onDisbandConfirmButtonPressed(context),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.black,
-                      minimumSize: const Size(150, 60),
+                      minimumSize: Size(screenWidth * 0.365, 69),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(22.5),
+                        borderRadius: BorderRadiusGeometry.circular(
+                          screenWidth * 0.055,
+                        ),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       '예',
                       style: TextStyle(
-                        fontSize: 25.0,
+                        fontSize: screenWidth * 0.058,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
+                  padding: const EdgeInsets.only(bottom: 23),
                   child: OutlinedButton(
-                    onPressed: onHomeScreenButtonPressed,
+                    onPressed: () => onDisbandCancelButtonPressed(context),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.black,
-                      minimumSize: const Size(150, 60),
+                      minimumSize: Size(screenWidth * 0.365, 69),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(22.5),
+                        borderRadius: BorderRadiusGeometry.circular(
+                          screenWidth * 0.055,
+                        ),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       '아니오',
                       style: TextStyle(
-                        fontSize: 25.0,
+                        fontSize: screenWidth * 0.058,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -89,6 +95,15 @@ class DisbandDoubleCheck extends StatelessWidget {
     );
   }
 
-  void onRecruitListButtonPressed() {}
-  void onHomeScreenButtonPressed() {}
+  void onDisbandConfirmButtonPressed(BuildContext context) {
+    const bool succeeded = true;
+    Navigator.pushNamed(
+      context,
+      succeeded ? PageRoutes.disbandSuccess : PageRoutes.disbandFail,
+    );
+  }
+
+  void onDisbandCancelButtonPressed(BuildContext context) {
+    Navigator.pop(context);
+  }
 }

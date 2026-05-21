@@ -13,23 +13,27 @@ class ProfileAndDetailEditBody1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.only(top: 10.0),
+      padding: const EdgeInsets.only(top: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             section,
-            style: const TextStyle(fontSize: 21.0, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: screenWidth * 0.051,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 10.0),
+            padding: const EdgeInsets.only(top: 12),
             child: DefaultContainer(
               color: const Color(0xffebedf0),
-              width: MediaQuery.of(context).size.width,
-              height: 130,
+              width: screenWidth,
+              height: 150,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(screenWidth * 0.019),
                 child: TextField(
                   controller: controller,
                   maxLines: null,
@@ -40,12 +44,12 @@ class ProfileAndDetailEditBody1 extends StatelessWidget {
                     isDense: true,
                     contentPadding: EdgeInsets.zero,
                     hintText: '$section 내용 입력 혹은 불러오기',
-                    hintStyle: const TextStyle(
+                    hintStyle: TextStyle(
                       color: Colors.grey,
-                      fontSize: 17.0,
+                      fontSize: screenWidth * 0.041,
                     ),
                   ),
-                  style: const TextStyle(fontSize: 17.0),
+                  style: TextStyle(fontSize: screenWidth * 0.041),
                 ),
               ),
             ),

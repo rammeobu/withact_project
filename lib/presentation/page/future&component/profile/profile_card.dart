@@ -1,6 +1,7 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 
 class ProfileCardBasic extends StatelessWidget {
   final List<String> profileContent;
@@ -16,35 +17,37 @@ class ProfileCardBasic extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     return SizedBox(
-      height: screenHeight * 0.201,
+      height: 175,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.036),
         child: Card(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(20.0),
+            borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.049),
           ),
-          color: const Color(0xFFFDFDFD),
+          color: cardColor,
           child: Row(
             children: [
               Flexible(
                 flex: 2,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 10.0, bottom: 20.0),
+                  padding: EdgeInsets.only(
+                    left: screenWidth * 0.024,
+                    bottom: 23,
+                  ),
                   child: Container(
-                    width: 80.0,
-                    height: 80.0,
+                    width: screenWidth * 0.195,
+                    height: screenWidth * 0.195,
                     decoration: const BoxDecoration(
                       color: Color(0xFFECEEFD),
                       shape: BoxShape.circle,
                     ),
                     child: (profileImage != null)
                         ? Image.file(File(profileImage!), fit: BoxFit.cover)
-                        : const Icon(
+                        : Icon(
                             Icons.person,
-                            size: 65,
-                            color: Color(0xFF5764F0),
+                            size: screenWidth * 0.158,
+                            color: appPrimaryColor,
                           ),
                   ),
                 ),
@@ -52,10 +55,7 @@ class ProfileCardBasic extends StatelessWidget {
               Flexible(
                 flex: 5,
                 child: Padding(
-                  padding: EdgeInsets.only(
-                    left: 15.0,
-                    top: screenHeight * 0.007,
-                  ),
+                  padding: EdgeInsets.only(left: screenWidth * 0.036, top: 6),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -64,113 +64,19 @@ class ProfileCardBasic extends StatelessWidget {
                         border: TableBorder.all(
                           color: Colors.grey,
                           width: 0.5,
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(
+                            screenWidth * 0.036,
+                          ),
                         ),
-                        columnWidths: const {
-                          0: FixedColumnWidth(40),
-                          1: FlexColumnWidth(),
+                        columnWidths: {
+                          0: FixedColumnWidth(screenWidth * 0.097),
+                          1: const FlexColumnWidth(),
                         },
                         children: [
-                          TableRow(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 3.0,
-                                  right: 3.0,
-                                  top: screenHeight * 0.001,
-                                  bottom: screenHeight * 0.001,
-                                ),
-                                child: const Center(child: Text('이름')),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 8.0,
-                                  top: screenHeight * 0.001,
-                                  right: 3.0,
-                                  bottom: screenHeight * 0.001,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(profileContent[0]),
-                                ),
-                              ),
-                            ],
-                          ),
-                          TableRow(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 3.0,
-                                  right: 3.0,
-                                  top: screenHeight * 0.001,
-                                  bottom: screenHeight * 0.001,
-                                ),
-                                child: const Center(child: Text('기술')),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 8.0,
-                                  top: screenHeight * 0.001,
-                                  right: 3.0,
-                                  bottom: screenHeight * 0.001,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(profileContent[1]),
-                                ),
-                              ),
-                            ],
-                          ),
-                          TableRow(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 3.0,
-                                  right: 3.0,
-                                  top: screenHeight * 0.001,
-                                  bottom: screenHeight * 0.001,
-                                ),
-                                child: const Center(child: Text('소속')),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 8.0,
-                                  top: screenHeight * 0.001,
-                                  right: 3.0,
-                                  bottom: screenHeight * 0.001,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(profileContent[2]),
-                                ),
-                              ),
-                            ],
-                          ),
-                          TableRow(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 3.0,
-                                  right: 3.0,
-                                  top: screenHeight * 0.001,
-                                  bottom: screenHeight * 0.001,
-                                ),
-                                child: const Center(child: Text('전공')),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 8.0,
-                                  top: screenHeight * 0.001,
-                                  right: 3.0,
-                                  bottom: screenHeight * 0.001,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(profileContent[3]),
-                                ),
-                              ),
-                            ],
-                          ),
+                          infoRow('이름', profileContent[0], screenWidth),
+                          infoRow('기술', profileContent[1], screenWidth),
+                          infoRow('소속', profileContent[2], screenWidth),
+                          infoRow('전공', profileContent[3], screenWidth),
                         ],
                       ),
                       OutlinedButton(
@@ -179,16 +85,18 @@ class ProfileCardBasic extends StatelessWidget {
                           backgroundColor: const Color(0xFF10B880),
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.zero,
-                          minimumSize: const Size(50.0, 0.0),
-                          fixedSize: Size(100.0, screenHeight * 0.03),
+                          minimumSize: Size(screenWidth * 0.122, 0),
+                          fixedSize: Size(screenWidth * 0.243, 42),
                           side: BorderSide.none,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
+                            borderRadius: BorderRadius.circular(
+                              screenWidth * 0.036,
+                            ),
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           '프로필 수정',
-                          style: TextStyle(fontSize: 14.0),
+                          style: TextStyle(fontSize: screenWidth * 0.034),
                         ),
                       ),
                     ],
@@ -199,6 +107,32 @@ class ProfileCardBasic extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  TableRow infoRow(String label, String value, double screenWidth) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.007,
+            vertical: 1,
+          ),
+          child: Center(child: Text(label)),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+            left: screenWidth * 0.019,
+            top: 1,
+            right: screenWidth * 0.007,
+            bottom: 1,
+          ),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(value),
+          ),
+        ),
+      ],
     );
   }
 }

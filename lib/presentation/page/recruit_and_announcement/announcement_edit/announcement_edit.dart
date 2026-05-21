@@ -1,11 +1,54 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/announcement_edit/announcement_edit_body.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/announcement_edit/announcement_edit_body2.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/announcement_edit/announcement_edit_body3.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/announcement_edit/announcement_edit_footer.dart';
+import '../../../../app.dart';
 import '../../future&component/layout/basic_layout.dart';
 
-class AnnouncementEdit extends StatefulWidget {
+class AnnouncementEditNotifier
+    extends Notifier<({List<String> preference, List<String> position})> {
+  @override
+  ({List<String> preference, List<String> position}) build() =>
+      (preference: [], position: []);
+
+  void init({
+    required List<String> preferences,
+    required List<String> positions,
+  }) {
+    state = (
+      preference: List.from(preferences),
+      position: List.from(positions),
+    );
+  }
+
+  void addPreference(String text) {
+    state = (preference: [...state.preference, text], position: state.position);
+  }
+
+  void removePreference(int i) {
+    final newPrefs = List<String>.from(state.preference)..removeAt(i);
+    state = (preference: newPrefs, position: state.position);
+  }
+
+  void addPosition() {
+    state = (preference: state.preference, position: [...state.position, '']);
+  }
+
+  void removePosition(int i) {
+    final newPositions = List<String>.from(state.position)..removeAt(i);
+    state = (preference: state.preference, position: newPositions);
+  }
+}
+
+final announcementEditProvider =
+    NotifierProvider.autoDispose<
+      AnnouncementEditNotifier,
+      ({List<String> preference, List<String> position})
+    >(AnnouncementEditNotifier.new);
+
+class AnnouncementEdit extends ConsumerStatefulWidget {
   final String workName;
   final String partyNameIntroduction;
   final List<String>? preferences;
@@ -19,15 +62,12 @@ class AnnouncementEdit extends StatefulWidget {
   });
 
   @override
-  State<AnnouncementEdit> createState() => _AnnouncementEditState();
+  ConsumerState<AnnouncementEdit> createState() => _AnnouncementEditState();
 }
 
-class _AnnouncementEditState extends State<AnnouncementEdit> {
+class _AnnouncementEditState extends ConsumerState<AnnouncementEdit> {
   late List<ScrollController> scrollControllers;
   late List<TextEditingController> staticTextControllers;
-
-  late List<String> preference;
-  late List<String> position;
   late List<TextEditingController> dynamicTextControllers;
 
   @override
@@ -42,12 +82,18 @@ class _AnnouncementEditState extends State<AnnouncementEdit> {
       TextEditingController(),
     ];
 
-    preference = List.from(widget.preferences ?? []);
-    position = List.from(widget.positions);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(announcementEditProvider.notifier)
+          .init(
+            preferences: widget.preferences ?? [],
+            positions: widget.positions,
+          );
+    });
 
     dynamicTextControllers = List.generate(
-      position.length,
-      (i) => TextEditingController(text: position[i]),
+      widget.positions.length,
+      (i) => TextEditingController(text: widget.positions[i]),
     );
   }
 
@@ -67,6 +113,8 @@ class _AnnouncementEditState extends State<AnnouncementEdit> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final editState = ref.watch(announcementEditProvider);
     return BasicLayout(
       title: '공고 편집',
       body: Column(
@@ -75,7 +123,11 @@ class _AnnouncementEditState extends State<AnnouncementEdit> {
             child: SingleChildScrollView(
               controller: scrollControllers[0],
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                padding: EdgeInsets.only(
+                  left: screenWidth * 0.036,
+                  top: 13,
+                  right: screenWidth * 0.036,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -84,23 +136,25 @@ class _AnnouncementEditState extends State<AnnouncementEdit> {
                       textEditingController: staticTextControllers[0],
                       onSearchButtonPressed: onSearchButtonPressed,
                       content: widget.workName,
+                      isRequired: true,
                     ),
                     AnnouncementEditBody(
                       section: '파티 이름/소개',
                       textEditingController: staticTextControllers[1],
                       content: widget.partyNameIntroduction,
+                      isRequired: true,
                     ),
                     AnnouncementEditBody2(
-                      preferences: preference,
+                      preferences: editState.preference,
                       scrollController: scrollControllers[1],
                       textEditingController: staticTextControllers[2],
                       onPreferenceAdded: onPreferenceAdded,
                       onDeletePreferenceButtonPressed: (i) =>
                           onDeletePreferenceButtonPressed(i),
                     ),
-                    const SizedBox(height: 20.0),
+                    const Padding(padding: EdgeInsets.only(top: 23)),
                     AnnouncementEditBody3(
-                      positions: position,
+                      positions: editState.position,
                       textEditingControllers: dynamicTextControllers,
                       primaryScrollController: scrollControllers[0],
                       horizontalScrollController: scrollControllers[2],
@@ -114,9 +168,9 @@ class _AnnouncementEditState extends State<AnnouncementEdit> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 15.0,
-              vertical: 10.0,
+            padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.036,
+              vertical: 12,
             ),
             child: AnnouncementEditFooter(
               onSaveAndExitButtonPressed: onSaveAndExitButtonPressed,
@@ -128,14 +182,40 @@ class _AnnouncementEditState extends State<AnnouncementEdit> {
     );
   }
 
-  void onSearchButtonPressed() {}
+  void onSearchButtonPressed() {
+    Navigator.pushNamed(context, PageRoutes.findWork);
+  }
 
-  void onSaveAndExitButtonPressed() {}
+  void onSaveAndExitButtonPressed() {
+    if (staticTextControllers[0].text.trim().isEmpty) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('활동 이름을 입력해 주세요.')));
+      return;
+    }
+    if (staticTextControllers[1].text.trim().isEmpty) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('파티 이름/소개를 입력해 주세요.')));
+      return;
+    }
+    final editState = ref.read(announcementEditProvider);
+    if (editState.position.isEmpty ||
+        dynamicTextControllers.every(
+          (controller) => controller.text.trim().isEmpty,
+        )) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(content: Text('모집 역할을 최소 하나 이상 입력해 주세요.')),
+        );
+      return;
+    }
+    Navigator.pop(context);
+  }
 
   void onPreferenceAdded(String text) {
-    setState(() {
-      preference.add(text);
-    });
+    ref.read(announcementEditProvider.notifier).addPreference(text);
     staticTextControllers[2].clear();
 
     Future.delayed(const Duration(milliseconds: 75), () {
@@ -150,10 +230,10 @@ class _AnnouncementEditState extends State<AnnouncementEdit> {
   }
 
   void onDeletePreferenceButtonPressed(int i) {
-    double currentOffset = scrollControllers[1].offset;
-    setState(() {
-      preference.removeAt(i);
-    });
+    double currentOffset = scrollControllers[1].hasClients
+        ? scrollControllers[1].offset
+        : 0.0;
+    ref.read(announcementEditProvider.notifier).removePreference(i);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(milliseconds: 50));
@@ -169,10 +249,8 @@ class _AnnouncementEditState extends State<AnnouncementEdit> {
   }
 
   void onAddPositionButtonPressed() {
-    setState(() {
-      position.add('');
-      dynamicTextControllers.add(TextEditingController());
-    });
+    ref.read(announcementEditProvider.notifier).addPosition();
+    dynamicTextControllers.add(TextEditingController());
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (scrollControllers[0].hasClients) {
@@ -197,16 +275,14 @@ class _AnnouncementEditState extends State<AnnouncementEdit> {
         ? scrollControllers[2].offset
         : 0.0;
 
-    setState(() {
-      position.removeAt(i);
-      dynamicTextControllers[i].dispose();
-      dynamicTextControllers.removeAt(i);
-    });
+    ref.read(announcementEditProvider.notifier).removePosition(i);
+    dynamicTextControllers[i].dispose();
+    dynamicTextControllers.removeAt(i);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(milliseconds: 10));
 
-      if (position.isEmpty) {
+      if (ref.read(announcementEditProvider).position.isEmpty) {
         if (scrollControllers[0].hasClients) {
           scrollControllers[0].animateTo(
             scrollControllers[0].position.maxScrollExtent,

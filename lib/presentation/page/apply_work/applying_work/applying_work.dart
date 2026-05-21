@@ -1,11 +1,44 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
 import '../../future&component/component/when_to_meet.dart';
 import '../../future&component/layout/basic_layout.dart';
 import 'applying_work_body1.dart';
 import 'applying_work_footer.dart';
 import 'applying_work_information.dart';
 
-class ApplyingWork extends StatefulWidget {
+class ApplyingWorkNotifier
+    extends Notifier<({List<bool> editingMode, List<String> currentProfile})> {
+  @override
+  ({List<bool> editingMode, List<String> currentProfile}) build() =>
+      (editingMode: [false, false, false], currentProfile: []);
+
+  void init(List<String> profile) {
+    state = (
+      editingMode: [false, false, false],
+      currentProfile: List.from(profile),
+    );
+  }
+
+  void toggleEdit(int i, String updatedContent) {
+    final newMode = List<bool>.from(state.editingMode);
+    final newProfile = List<String>.from(state.currentProfile);
+    if (newMode[i] && i > 0 && i < 3) {
+      newProfile[i - 1] = updatedContent;
+    }
+    newMode[i] = !newMode[i];
+    state = (editingMode: newMode, currentProfile: newProfile);
+  }
+}
+
+final applyingWorkProvider =
+    NotifierProvider.autoDispose<
+      ApplyingWorkNotifier,
+      ({List<bool> editingMode, List<String> currentProfile})
+    >(ApplyingWorkNotifier.new);
+
+class ApplyingWork extends ConsumerStatefulWidget {
   final String workName;
   final List<String> profile;
   final String? poster;
@@ -17,21 +50,21 @@ class ApplyingWork extends StatefulWidget {
   });
 
   @override
-  State<ApplyingWork> createState() => _ApplyingWorkState();
+  ConsumerState<ApplyingWork> createState() => _ApplyingWorkState();
 }
 
-class _ApplyingWorkState extends State<ApplyingWork> {
-  List<bool> editingMode = [false, false, false];
-  late List<String> currentProfile;
-
+class _ApplyingWorkState extends ConsumerState<ApplyingWork> {
   late final List<TextEditingController> _bodyTextControllers = [];
   late final List<ScrollController> _bodyScrollControllers = [];
+  late TextEditingController timeTextController;
+  late ScrollController whenToMeetScrollController;
 
   @override
   void initState() {
     super.initState();
-
-    currentProfile = List.from(widget.profile);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(applyingWorkProvider.notifier).init(widget.profile);
+    });
     for (int i = 0; i < 4; i++) {
       if (i > 0 && i < 3) {
         _bodyTextControllers.add(
@@ -39,10 +72,11 @@ class _ApplyingWorkState extends State<ApplyingWork> {
         );
       }
       _bodyScrollControllers.add(ScrollController());
-
       if (_bodyScrollControllers[0].hasClients) {
         _bodyScrollControllers[0].jumpTo(0.0);
       }
+      timeTextController = TextEditingController();
+      whenToMeetScrollController = ScrollController();
     }
   }
 
@@ -54,12 +88,15 @@ class _ApplyingWorkState extends State<ApplyingWork> {
     for (ScrollController controller in _bodyScrollControllers) {
       controller.dispose();
     }
+    timeTextController.dispose();
+    whenToMeetScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final workState = ref.watch(applyingWorkProvider);
     return BasicLayout(
       title: '지원 중인 활동',
       body: Column(
@@ -69,15 +106,15 @@ class _ApplyingWorkState extends State<ApplyingWork> {
               controller: _bodyScrollControllers[0],
               child: Padding(
                 padding: EdgeInsets.only(
-                  left: 15.0,
-                  top: screenHeight * 0.01,
-                  right: 15.0,
+                  left: screenWidth * 0.036,
+                  top: 13,
+                  right: screenWidth * 0.036,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 15.0),
+                      padding: const EdgeInsets.only(top: 17),
                       child: ApplyingWorkInformation(
                         workOverview: widget.workName,
                         poster: widget.poster,
@@ -86,16 +123,20 @@ class _ApplyingWorkState extends State<ApplyingWork> {
                     ),
                     ApplyingWorkBody(
                       section: '소개',
-                      content: currentProfile[0],
-                      editingMode: editingMode[0],
+                      content: workState.currentProfile.isNotEmpty
+                          ? workState.currentProfile[0]
+                          : '',
+                      editingMode: workState.editingMode[0],
                       onEditButtonPressed: () => onEditButtonPressed(0),
                       textController: _bodyTextControllers[0],
                       scrollController: _bodyScrollControllers[1],
                     ),
                     ApplyingWorkBody(
                       section: '스펙',
-                      content: currentProfile[1],
-                      editingMode: editingMode[1],
+                      content: workState.currentProfile.length > 1
+                          ? workState.currentProfile[1]
+                          : '',
+                      editingMode: workState.editingMode[1],
                       onEditButtonPressed: () => onEditButtonPressed(1),
                       textController: _bodyTextControllers[1],
                       scrollController: _bodyScrollControllers[2],
@@ -103,12 +144,12 @@ class _ApplyingWorkState extends State<ApplyingWork> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 10.0),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12),
                           child: Text(
                             '활동 가능 시간',
                             style: TextStyle(
-                              fontSize: 23.0,
+                              fontSize: screenWidth * 0.058,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -118,20 +159,22 @@ class _ApplyingWorkState extends State<ApplyingWork> {
                           style: OutlinedButton.styleFrom(
                             padding: EdgeInsets.zero,
                             minimumSize: const Size(0, 0),
-                            fixedSize: const Size(60, 35),
+                            fixedSize: Size(screenWidth * 0.146, 41),
                             side: const BorderSide(width: 0.0),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadiusGeometry.circular(10.0),
+                              borderRadius: BorderRadiusGeometry.circular(
+                                screenWidth * 0.024,
+                              ),
                             ),
-                            backgroundColor: editingMode[2]
-                                ? const Color(0xff5764f0)
+                            backgroundColor: workState.editingMode[2]
+                                ? appPrimaryColor
                                 : const Color(0xff1cb879),
                             foregroundColor: Colors.white,
                           ),
                           child: Text(
-                            editingMode[2] ? '저장' : '수정',
-                            style: const TextStyle(
-                              fontSize: 17.0,
+                            workState.editingMode[2] ? '저장' : '수정',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.041,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -139,22 +182,24 @@ class _ApplyingWorkState extends State<ApplyingWork> {
                       ],
                     ),
                     SizedBox(
-                      height: 250,
+                      height: 704,
                       child: WhenToMeet(
-                        readOnly: !editingMode[2],
+                        readOnly: !workState.editingMode[2],
                         scrollController: _bodyScrollControllers[3],
+                        timeTextController: timeTextController,
+                        whenToMeetScrollController: whenToMeetScrollController,
                       ),
                     ),
-                    const SizedBox(height: 20.0),
+                    const SizedBox(height: 23),
                   ],
                 ),
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 15.0,
-              vertical: 10.0,
+            padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.036,
+              vertical: 12,
             ),
             child: ApplyingWorkFooter(
               onApplyCancelButtonPressed: onApplyCancelButtonPressed,
@@ -167,22 +212,28 @@ class _ApplyingWorkState extends State<ApplyingWork> {
     );
   }
 
-  void onApplyCancelButtonPressed() {}
-  void onApplyListButtonPressed() {}
+  void onApplyCancelButtonPressed() {
+    Navigator.pop(context);
+  }
+
+  void onApplyListButtonPressed() {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      PageRoutes.applyList,
+      (route) => false,
+    );
+  }
+
   void onEditButtonPressed(int i) {
-    setState(() {
-      if (editingMode[i]) {
-        if (i > 0 && i < 3) {
-          String updatedContent = _bodyTextControllers[i - 1].text;
-
-          currentProfile[i - 1] = updatedContent;
-
-          if (_bodyScrollControllers[i].hasClients) {
-            _bodyScrollControllers[i].jumpTo(0.0);
-          } else if (i == 2) {}
-        }
+    final wasEditing = ref.read(applyingWorkProvider).editingMode[i];
+    final textContent = (i > 0 && i < 3)
+        ? _bodyTextControllers[i - 1].text
+        : '';
+    ref.read(applyingWorkProvider.notifier).toggleEdit(i, textContent);
+    if (wasEditing && i > 0 && i < 3) {
+      if (_bodyScrollControllers[i].hasClients) {
+        _bodyScrollControllers[i].jumpTo(0.0);
       }
-      editingMode[i] = !editingMode[i];
-    });
+    }
   }
 }

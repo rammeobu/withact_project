@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:party_maker/presentation/page/etc/menu/menu_item.dart';
 
 class MenuBody3 extends StatelessWidget {
   final VoidCallback applyingWorkMenuSelect;
@@ -7,69 +8,28 @@ class MenuBody3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     return Column(
       children: [
         Container(
-          height: screenHeight * 0.07,
+          height: 59,
           width: screenWidth,
-          color: Color(0xFFE6E6E6),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20.0, right: 15.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                '지원',
-                style: TextStyle(
-                  fontSize: 21.0,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF3F3F3F),
-                ),
-              ),
+          color: const Color(0xFFE6E6E6),
+          padding: EdgeInsets.only(
+            left: screenWidth * 0.049,
+            right: screenWidth * 0.036,
+          ),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            '지원',
+            style: TextStyle(
+              fontSize: screenWidth * 0.051,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF3F3F3F),
             ),
           ),
         ),
-        _containerBuilder(
-          '지원중인 활동',
-          screenHeight * 0.06,
-          screenWidth,
-          applyingWorkMenuSelect,
-        ),
+        menuItem('지원중인 활동', screenWidth, applyingWorkMenuSelect),
       ],
-    );
-  }
-
-  Container _containerBuilder(
-    String value,
-    double height,
-    double width,
-    VoidCallback onPressed,
-  ) {
-    return Container(
-      height: height,
-      width: width,
-      decoration: BoxDecoration(
-        border: BoxBorder.all(color: Colors.grey, width: 0.1),
-      ),
-      child: TextButton(
-        onPressed: onPressed,
-        style: TextButton.styleFrom(
-          padding: EdgeInsets.zero,
-          fixedSize: Size(width, height),
-          shape: const BeveledRectangleBorder(),
-          side: BorderSide.none,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20.0, right: 15.0),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              value,
-              style: const TextStyle(color: Colors.grey, fontSize: 17.0),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

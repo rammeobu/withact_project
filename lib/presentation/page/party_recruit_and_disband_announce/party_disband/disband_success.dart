@@ -1,33 +1,39 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:party_maker/app.dart';
 
 class DisbandSuccess extends StatelessWidget {
   const DisbandSuccess({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25.0),
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.061),
         child: Column(
           children: [
-            const Expanded(
+            Expanded(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.check_circle, size: 200.0, color: Colors.green),
+                    Icon(
+                      Icons.check_circle,
+                      size: screenWidth * 0.487,
+                      color: Colors.green,
+                    ),
                     Text(
                       '파티 해체 완료',
                       style: TextStyle(
-                        fontSize: 35.0,
+                        fontSize: screenWidth * 0.085,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 23),
                     Text(
                       '정상적으로\n 파티를 해체하였습니다!',
-                      style: TextStyle(fontSize: 20.0),
+                      style: TextStyle(fontSize: screenWidth * 0.049),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -39,34 +45,38 @@ class DisbandSuccess extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 OutlinedButton(
-                  onPressed: onRecruitListButtonPressed,
+                  onPressed: () => onRecruitListButtonPressed(context),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    minimumSize: const Size(200.0, 50),
+                    minimumSize: Size(screenWidth * 0.487, 57),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(20.0),
-                    ),
-                  ),
-                  child: const Text(
-                    '모집 목록으로',
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                ),
-                const SizedBox(height: 12.0),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: OutlinedButton(
-                    onPressed: onHomeScreenButtonPressed,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      minimumSize: const Size(200, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(20.0),
+                      borderRadius: BorderRadiusGeometry.circular(
+                        screenWidth * 0.049,
                       ),
                     ),
-                    child: const Text(
+                  ),
+                  child: Text(
+                    '모집 목록으로',
+                    style: TextStyle(fontSize: screenWidth * 0.049),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 23),
+                  child: OutlinedButton(
+                    onPressed: () => onHomeScreenButtonPressed(context),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.black,
+                      minimumSize: Size(screenWidth * 0.487, 57),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusGeometry.circular(
+                          screenWidth * 0.049,
+                        ),
+                      ),
+                    ),
+                    child: Text(
                       '대기 화면으로',
-                      style: TextStyle(fontSize: 20.0),
+                      style: TextStyle(fontSize: screenWidth * 0.049),
                     ),
                   ),
                 ),
@@ -78,6 +88,19 @@ class DisbandSuccess extends StatelessWidget {
     );
   }
 
-  void onRecruitListButtonPressed() {}
-  void onHomeScreenButtonPressed() {}
+  void onRecruitListButtonPressed(BuildContext context) {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      PageRoutes.recruitList,
+      (route) => false,
+    );
+  }
+
+  void onHomeScreenButtonPressed(BuildContext context) {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      PageRoutes.home,
+      (route) => false,
+    );
+  }
 }

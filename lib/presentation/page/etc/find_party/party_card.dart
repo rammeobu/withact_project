@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 
 import '../../future&component/layout/default_container.dart';
 
@@ -16,40 +17,42 @@ class PartyCard extends StatelessWidget {
     required this.workName,
     required this.onPartyLeaderInformationCheckButtonPressed,
     required this.onRecruitAnnouncementCheckButtonPressed,
-    required this.onApplyButtonPressed
+    required this.onApplyButtonPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     return SizedBox(
-      height: screenHeight * 0.2,
+      height: 169,
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.circular(20.0),
+          borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.049),
         ),
-        color: const Color(0xFFFDFDFD),
+        color: cardColor,
         child: Column(
           children: [
             Expanded(
               flex: 7,
               child: Padding(
-                padding: const EdgeInsets.only(left: 12.0),
+                padding: EdgeInsets.only(left: screenWidth * 0.029),
                 child: Row(
                   children: [
                     Expanded(
                       flex: 1,
-                      child: Align(
-                        alignment: const Alignment(0, 0),
+                      child: Center(
                         child: DefaultContainer(
-                          height: 70,
-                          width: 70,
-                          color: const Color(0xffe3e5e9),
+                          height: screenWidth * 0.170,
+                          width: screenWidth * 0.170,
+                          color: posterColor,
                           child: Center(
                             child:
-                            (poster != null && poster!.startsWith('http'))
-                                ? Image.network(poster!, fit: BoxFit.cover)
+                                (poster != null && poster!.startsWith('http'))
+                                ? Image.network(
+                                    poster!,
+                                    fit: BoxFit.cover,
+                                    cacheWidth: 300,
+                                  )
                                 : const Text('포스터'),
                           ),
                         ),
@@ -58,40 +61,39 @@ class PartyCard extends StatelessWidget {
                     Expanded(
                       flex: 4,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
+                        padding: EdgeInsets.only(left: screenWidth * 0.049),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: EdgeInsets.only(
-                                top: screenHeight * 0.008,
-                              ),
+                              padding: const EdgeInsets.only(top: 7),
                               child: Text(
                                 partyName,
-                                style: const TextStyle(
-                                  fontSize: 20.0,
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.049,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: screenHeight * 0.008,
-                        ),
-                        child: Text(
-                          workName,
-                          style: const TextStyle(
-                            fontSize: 17.0,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),],
+                            Padding(
+                              padding: const EdgeInsets.only(top: 7),
+                              child: Text(
+                                workName,
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.041,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
-                      ))],
+                          ],
                         ),
                       ),
                     ),
+                  ],
+                ),
+              ),
+            ),
             Expanded(
               flex: 3,
               child: Row(
@@ -102,10 +104,7 @@ class PartyCard extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         border: BoxBorder.fromLTRB(
-                          top: const BorderSide(
-                            width: 0.5,
-                            color: Colors.grey,
-                          ),
+                          top: const BorderSide(width: 0.5, color: Colors.grey),
                           right: const BorderSide(
                             width: 0.5,
                             color: Colors.grey,
@@ -114,7 +113,7 @@ class PartyCard extends StatelessWidget {
                       ),
                       child: TextButton(
                         style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF5764F0),
+                          foregroundColor: appPrimaryColor,
                         ),
                         onPressed: onPartyLeaderInformationCheckButtonPressed,
                         child: const Text(
@@ -129,10 +128,7 @@ class PartyCard extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         border: BoxBorder.fromLTRB(
-                          top: const BorderSide(
-                            width: 0.5,
-                            color: Colors.grey,
-                          ),
+                          top: const BorderSide(width: 0.5, color: Colors.grey),
                           right: const BorderSide(
                             width: 0.5,
                             color: Colors.grey,
@@ -141,7 +137,7 @@ class PartyCard extends StatelessWidget {
                       ),
                       child: TextButton(
                         style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF5764F0),
+                          foregroundColor: appPrimaryColor,
                         ),
                         onPressed: onRecruitAnnouncementCheckButtonPressed,
                         child: const Text(
@@ -156,15 +152,12 @@ class PartyCard extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         border: BoxBorder.fromLTRB(
-                          top: const BorderSide(
-                            width: 0.5,
-                            color: Colors.grey,
-                          ),
+                          top: const BorderSide(width: 0.5, color: Colors.grey),
                         ),
                       ),
                       child: TextButton(
                         style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF5764F0),
+                          foregroundColor: appPrimaryColor,
                         ),
                         onPressed: onApplyButtonPressed,
                         child: const Text(

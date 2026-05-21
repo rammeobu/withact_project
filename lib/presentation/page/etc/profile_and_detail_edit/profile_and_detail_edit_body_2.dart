@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class ProfileAndDetailEditBody2 extends StatelessWidget {
   final List<TextEditingController> controllers;
@@ -12,20 +12,23 @@ class ProfileAndDetailEditBody2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
         Table(
           border: TableBorder.all(
             color: Colors.grey,
             width: 0.5,
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(screenWidth * 0.036),
           ),
-          columnWidths: const {0: FixedColumnWidth(100), 1: FlexColumnWidth()},
+          columnWidths: {
+            0: FixedColumnWidth(screenWidth * 0.243),
+            1: const FlexColumnWidth(),
+          },
           children: [
-            _tableRowBuilder('선호 역할', controllers[0], screenHeight),
-            _tableRowBuilder('선호 분야', controllers[1], screenHeight),
-            _tableRowBuilder('선호 도메인', controllers[2], screenHeight),
+            editRow('선호 역할', controllers[0], screenWidth),
+            editRow('선호 분야', controllers[1], screenWidth),
+            editRow('선호 도메인', controllers[2], screenWidth),
           ],
         ),
         Align(
@@ -35,29 +38,43 @@ class ProfileAndDetailEditBody2 extends StatelessWidget {
             style: OutlinedButton.styleFrom(
               backgroundColor: const Color(0xFF10B880),
               foregroundColor: Colors.white,
-              fixedSize: Size(130.0, screenHeight * 0.04),
+              fixedSize: Size(screenWidth * 0.316, 34),
               side: BorderSide.none,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(screenWidth * 0.024),
               ),
             ),
-            child: const Text('상세정보 저장', style: TextStyle(fontSize: 14.0)),
+            child: Text(
+              '상세정보 저장',
+              style: TextStyle(fontSize: screenWidth * 0.034),
+            ),
           ),
         ),
       ],
     );
   }
 
-  TableRow _tableRowBuilder(
-    String key,
+  TableRow editRow(
+    String label,
     TextEditingController controller,
-    double screenHeight,
+    double screenWidth,
   ) {
     return TableRow(
       children: [
-        Padding(padding: const EdgeInsets.only(left: 8.0), child: Text(key)),
         Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+          padding: EdgeInsets.only(
+            left: screenWidth * 0.019,
+            top: 10,
+            bottom: 10,
+          ),
+          child: Text(label),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+            left: screenWidth * 0.019,
+            top: 10,
+            bottom: 10,
+          ),
           child: TextField(
             controller: controller,
             decoration: const InputDecoration(
@@ -65,7 +82,7 @@ class ProfileAndDetailEditBody2 extends StatelessWidget {
               border: InputBorder.none,
               contentPadding: EdgeInsets.zero,
             ),
-            style: const TextStyle(fontSize: 14.0),
+            style: TextStyle(fontSize: screenWidth * 0.034),
           ),
         ),
       ],

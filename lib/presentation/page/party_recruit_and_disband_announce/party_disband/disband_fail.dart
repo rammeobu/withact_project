@@ -1,33 +1,39 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:party_maker/app.dart';
 
 class DisbandFail extends StatelessWidget {
   const DisbandFail({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25.0),
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.061),
         child: Column(
           children: [
-            const Expanded(
+            Expanded(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.close, size: 200.0, color: Colors.red),
+                    Icon(
+                      Icons.close,
+                      size: screenWidth * 0.487,
+                      color: Colors.red,
+                    ),
                     Text(
                       '파티 해체 실패',
                       style: TextStyle(
-                        fontSize: 35.0,
+                        fontSize: screenWidth * 0.085,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 23),
                     Text(
                       '파티 해체 중 오류가 발생했습니다.\n 잠시 후 다시 시도해 주세요.',
-                      style: TextStyle(fontSize: 20.0),
+                      style: TextStyle(fontSize: screenWidth * 0.049),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -39,34 +45,38 @@ class DisbandFail extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 OutlinedButton(
-                  onPressed: onRetryButtonPressed,
+                  onPressed: () => onRetryButtonPressed(context),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    minimumSize: const Size(200.0, 50),
+                    minimumSize: Size(screenWidth * 0.487, 57),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(20.0),
-                    ),
-                  ),
-                  child: const Text(
-                    '다시 시도하기',
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                ),
-                const SizedBox(height: 12.0),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: OutlinedButton(
-                    onPressed: onRecruitListButtonPressed,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      minimumSize: const Size(200, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(20.0),
+                      borderRadius: BorderRadiusGeometry.circular(
+                        screenWidth * 0.049,
                       ),
                     ),
-                    child: const Text(
+                  ),
+                  child: Text(
+                    '다시 시도하기',
+                    style: TextStyle(fontSize: screenWidth * 0.049),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 23),
+                  child: OutlinedButton(
+                    onPressed: () => onRecruitListButtonPressed(context),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.black,
+                      minimumSize: Size(screenWidth * 0.487, 57),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusGeometry.circular(
+                          screenWidth * 0.049,
+                        ),
+                      ),
+                    ),
+                    child: Text(
                       '모집 목록으로',
-                      style: TextStyle(fontSize: 20.0),
+                      style: TextStyle(fontSize: screenWidth * 0.049),
                     ),
                   ),
                 ),
@@ -78,6 +88,15 @@ class DisbandFail extends StatelessWidget {
     );
   }
 
-  void onRetryButtonPressed() {}
-  void onRecruitListButtonPressed() {}
+  void onRetryButtonPressed(BuildContext context) {
+    Navigator.pop(context);
+  }
+
+  void onRecruitListButtonPressed(BuildContext context) {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      PageRoutes.recruitList,
+      (route) => false,
+    );
+  }
 }

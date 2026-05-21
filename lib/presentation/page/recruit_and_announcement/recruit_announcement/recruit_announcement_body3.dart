@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../future&component/component/person.dart';
 
@@ -15,24 +15,29 @@ class RecruitAnnouncementBody3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '모집역할/인원',
-          style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.w800),
+          style: TextStyle(
+            fontSize: screenWidth * 0.058,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         Padding(
-          padding: EdgeInsets.only(top: screenHeight * 0.011),
+          padding: const EdgeInsets.only(top: 9),
           child: SingleChildScrollView(
             controller: horizontalScrollController,
             scrollDirection: Axis.horizontal,
             child: Row(
               children: position.map((pos) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.012,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -40,13 +45,13 @@ class RecruitAnnouncementBody3 extends StatelessWidget {
                       Center(
                         child: Text(
                           pos,
-                          style: const TextStyle(
-                            fontSize: 15.0,
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.036,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                      Person(size: 50.0),
+                      Person(size: screenWidth * 0.122),
                     ],
                   ),
                 );

@@ -1,6 +1,7 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 
 class ProfileCardEdit extends StatelessWidget {
   final List<TextEditingController> controllers;
@@ -22,16 +23,16 @@ class ProfileCardEdit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return SizedBox(
-      height: screenHeight * 0.21,
+      height: 250,
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(screenWidth * 0.049),
         ),
-        color: const Color(0xFFFDFDFD),
+        color: cardColor,
         child: Padding(
-          padding: EdgeInsets.only(top: screenHeight * 0.008),
+          padding: const EdgeInsets.only(top: 7),
           child: Column(
             children: [
               Flexible(
@@ -41,12 +42,12 @@ class ProfileCardEdit extends StatelessWidget {
                     Flexible(
                       flex: 2,
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
+                        padding: EdgeInsets.only(left: screenWidth * 0.024),
                         child: GestureDetector(
                           onTap: onProfileImageTap,
                           child: Container(
-                            width: 80.0,
-                            height: 80.0,
+                            width: screenWidth * 0.195,
+                            height: screenWidth * 0.195,
                             decoration: const BoxDecoration(
                               color: Color(0xFFECEEFD),
                               shape: BoxShape.circle,
@@ -58,10 +59,10 @@ class ProfileCardEdit extends StatelessWidget {
                                       fit: BoxFit.cover,
                                     ),
                                   )
-                                : const Icon(
+                                : Icon(
                                     Icons.person,
-                                    size: 65,
-                                    color: Color(0xFF5764F0),
+                                    size: screenWidth * 0.158,
+                                    color: appPrimaryColor,
                                   ),
                           ),
                         ),
@@ -71,39 +72,45 @@ class ProfileCardEdit extends StatelessWidget {
                       flex: 5,
                       child: Padding(
                         padding: EdgeInsets.only(
-                          left: 15.0,
-                          top: screenHeight * 0.007,
+                          left: screenWidth * 0.036,
+                          top: 6,
                         ),
                         child: Table(
                           border: TableBorder.all(
                             color: Colors.grey,
                             width: 0.5,
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(
+                              screenWidth * 0.036,
+                            ),
                           ),
-                          columnWidths: const {
-                            0: FixedColumnWidth(40),
-                            1: FlexColumnWidth(),
+                          columnWidths: {
+                            0: FixedColumnWidth(screenWidth * 0.097),
+                            1: const FlexColumnWidth(),
                           },
                           children: [
-                            _tableRowBuilder(
+                            editRow(
                               '이름',
                               controllers[0],
-                              screenHeight,
+                              screenWidth,
+                              isRequired: true,
                             ),
-                            _tableRowBuilder(
+                            editRow(
                               '기술',
                               controllers[1],
-                              screenHeight,
+                              screenWidth,
+                              isRequired: true,
                             ),
-                            _tableRowBuilder(
+                            editRow(
                               '소속',
                               controllers[2],
-                              screenHeight,
+                              screenWidth,
+                              isRequired: true,
                             ),
-                            _tableRowBuilder(
+                            editRow(
                               '전공',
                               controllers[3],
-                              screenHeight,
+                              screenWidth,
+                              isRequired: true,
                             ),
                           ],
                         ),
@@ -115,7 +122,9 @@ class ProfileCardEdit extends StatelessWidget {
               Flexible(
                 flex: 2,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.036,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -136,15 +145,17 @@ class ProfileCardEdit extends StatelessWidget {
                         style: OutlinedButton.styleFrom(
                           backgroundColor: const Color(0xFF10B880),
                           foregroundColor: Colors.white,
-                          fixedSize: Size(118.0, screenHeight * 0.04),
+                          fixedSize: Size(screenWidth * 0.287, 34),
                           side: BorderSide.none,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
+                            borderRadius: BorderRadius.circular(
+                              screenWidth * 0.036,
+                            ),
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           '프로필 저장',
-                          style: TextStyle(fontSize: 14.0),
+                          style: TextStyle(fontSize: screenWidth * 0.034),
                         ),
                       ),
                     ],
@@ -158,22 +169,32 @@ class ProfileCardEdit extends StatelessWidget {
     );
   }
 
-  TableRow _tableRowBuilder(
-    String key,
+  TableRow editRow(
+    String label,
     TextEditingController controller,
-    double screenHeight,
-  ) {
+    double screenWidth, {
+    bool isRequired = false,
+  }) {
     return TableRow(
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(vertical: screenHeight * 0.001),
-          child: Center(child: Text(key)),
+          padding: const EdgeInsets.symmetric(vertical: 7),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(label),
+                if (isRequired)
+                  const Text('*', style: TextStyle(color: Colors.red)),
+              ],
+            ),
+          ),
         ),
         Padding(
           padding: EdgeInsets.only(
-            left: 8.0,
-            top: screenHeight * 0.001,
-            bottom: screenHeight * 0.001,
+            left: screenWidth * 0.019,
+            top: 7,
+            bottom: 7,
           ),
           child: TextField(
             controller: controller,
@@ -182,7 +203,7 @@ class ProfileCardEdit extends StatelessWidget {
               border: InputBorder.none,
               contentPadding: EdgeInsets.zero,
             ),
-            style: const TextStyle(fontSize: 14.0),
+            style: TextStyle(fontSize: screenWidth * 0.034),
           ),
         ),
       ],

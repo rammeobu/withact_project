@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../future&component/layout/default_container.dart';
 
 class AnnouncementEditBody2 extends StatelessWidget {
@@ -19,29 +19,32 @@ class AnnouncementEditBody2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
-      padding: EdgeInsets.only(top: screenHeight * 0.01),
+      padding: const EdgeInsets.only(top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 '우대사항',
-                style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.w800),
+                style: TextStyle(
+                  fontSize: screenWidth * 0.058,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ],
           ),
           Padding(
-            padding: EdgeInsets.only(top: screenHeight * 0.008),
+            padding: const EdgeInsets.only(top: 7),
             child: DefaultContainer(
               color: const Color(0xffebedf0),
-              width: MediaQuery.of(context).size.width,
-              height: screenHeight * 0.08,
+              width: screenWidth,
+              height: 68,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(screenWidth * 0.019),
                 child: SingleChildScrollView(
                   controller: scrollController,
                   scrollDirection: Axis.horizontal,
@@ -50,7 +53,7 @@ class AnnouncementEditBody2 extends StatelessWidget {
                       ...List.generate(
                         preferences.length,
                         (i) => Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
+                          padding: EdgeInsets.only(right: screenWidth * 0.019),
                           child: Chip(
                             label: Text('#${preferences[i]}'),
                             onDeleted: () => onDeletePreferenceButtonPressed(i),
@@ -58,12 +61,13 @@ class AnnouncementEditBody2 extends StatelessWidget {
                             materialTapTargetSize:
                                 MaterialTapTargetSize.shrinkWrap,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(
+                                screenWidth * 0.049,
+                              ),
                             ),
                           ),
                         ),
                       ),
-
                       IntrinsicWidth(
                         stepWidth: 100.0,
                         child: TextField(
@@ -74,15 +78,15 @@ class AnnouncementEditBody2 extends StatelessWidget {
                               onPreferenceAdded(text);
                             }
                           },
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             hintText: '#추가',
                             border: InputBorder.none,
                             isDense: true,
                             contentPadding: EdgeInsets.symmetric(
-                              horizontal: 4.0,
+                              horizontal: screenWidth * 0.010,
                             ),
                           ),
-                          style: const TextStyle(fontSize: 13.0),
+                          style: TextStyle(fontSize: screenWidth * 0.032),
                         ),
                       ),
                     ],

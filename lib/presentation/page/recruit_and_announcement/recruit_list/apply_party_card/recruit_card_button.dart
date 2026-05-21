@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 
 class RecruitCardButton extends StatelessWidget {
   final String applyStatus;
@@ -15,27 +16,28 @@ class RecruitCardButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final double screenWidth = MediaQuery.of(context).size.width;
+    return Row(
       children: [
         Flexible(
           flex: 1,
           child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
+            width: screenWidth,
+            height: double.infinity,
             decoration: BoxDecoration(
               border: BoxBorder.fromLTRB(
-                left: const BorderSide(width: 0.5, color: Colors.grey),
-                bottom: const BorderSide(width: 0.5, color: Colors.grey),
+                top: const BorderSide(width: 1.0, color: Colors.grey),
               ),
             ),
             child: TextButton(
               onPressed: onDetailButtonPressed,
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xff5764f0),
-              ),
-              child: const Text(
+              style: TextButton.styleFrom(foregroundColor: appPrimaryColor),
+              child: Text(
                 '활동 설명',
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: screenWidth * 0.036,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -43,21 +45,23 @@ class RecruitCardButton extends StatelessWidget {
         Flexible(
           flex: 1,
           child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
+            width: screenWidth,
+            height: double.infinity,
             decoration: BoxDecoration(
               border: BoxBorder.fromLTRB(
-                left: const BorderSide(width: 0.5, color: Colors.grey),
+                top: const BorderSide(width: 1.0, color: Colors.grey),
+                left: const BorderSide(width: 1.0, color: Colors.grey),
               ),
             ),
             child: TextButton(
               onPressed: onAnnouncementManageButtonPressed,
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xff5764f0),
-              ),
-              child: const Text(
+              style: TextButton.styleFrom(foregroundColor: appPrimaryColor),
+              child: Text(
                 '공고 관리',
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: screenWidth * 0.036,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -65,22 +69,23 @@ class RecruitCardButton extends StatelessWidget {
         Flexible(
           flex: 1,
           child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
+            width: screenWidth,
+            height: double.infinity,
             decoration: BoxDecoration(
               border: BoxBorder.fromLTRB(
-                left: const BorderSide(width: 0.5, color: Colors.grey),
-                top: const BorderSide(width: 0.5, color: Colors.grey),
+                top: const BorderSide(width: 1.0, color: Colors.grey),
+                left: const BorderSide(width: 1.0, color: Colors.grey),
               ),
             ),
             child: TextButton(
               onPressed: onCheckApplicantButtonPressed,
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xff5764f0),
-              ),
-              child: const Text(
+              style: TextButton.styleFrom(foregroundColor: appPrimaryColor),
+              child: Text(
                 '지원자 확인',
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: screenWidth * 0.036,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

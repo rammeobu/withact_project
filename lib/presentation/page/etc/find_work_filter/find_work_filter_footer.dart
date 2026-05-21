@@ -1,26 +1,34 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 
 class FindWorkFilterFooter extends StatelessWidget {
   final VoidCallback onApplyFilterButtonPressed;
-  const FindWorkFilterFooter({super.key, required this.onApplyFilterButtonPressed});
+  const FindWorkFilterFooter({
+    super.key,
+    required this.onApplyFilterButtonPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
         padding: EdgeInsets.zero,
-        fixedSize: Size(MediaQuery.of(context).size.width, 50),
+        fixedSize: Size(screenWidth, 57),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
+          borderRadius: BorderRadius.circular(screenWidth * 0.036),
         ),
-        backgroundColor: const Color(0xff5764f0),
+        backgroundColor: appPrimaryColor,
         foregroundColor: Colors.white,
         side: BorderSide.none,
       ),
       onPressed: onApplyFilterButtonPressed,
-      child: const Text(
+      child: Text(
         '적용하기',
-        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w700),
+        style: TextStyle(
+          fontSize: screenWidth * 0.044,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }

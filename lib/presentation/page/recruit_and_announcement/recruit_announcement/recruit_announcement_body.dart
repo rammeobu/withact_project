@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../future&component/layout/default_container.dart';
 
 class RecruitAnnouncementBody extends StatelessWidget {
@@ -17,29 +17,33 @@ class RecruitAnnouncementBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
-      padding: EdgeInsets.only(top: screenHeight * 0.01),
+      padding: const EdgeInsets.only(top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             section,
-            style: const TextStyle(fontSize: 23.0, fontWeight: FontWeight.w800),
+            style: TextStyle(
+              fontSize: screenWidth * 0.058,
+              fontWeight: FontWeight.w800,
+            ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: screenHeight * 0.008),
+            padding: const EdgeInsets.only(top: 7),
             child: DefaultContainer(
               color: const Color(0xffebedf0),
-              width: MediaQuery.of(context).size.width,
-              height: (section == '활동 이름')
-                  ? screenHeight * 0.07
-                  : screenHeight * 0.22,
+              width: screenWidth,
+              height: (section == '활동 이름') ? 59 : 186,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(screenWidth * 0.019),
                 child: SingleChildScrollView(
                   controller: scrollController,
-                  child: Text(content, style: const TextStyle(fontSize: 17.0)),
+                  child: Text(
+                    content,
+                    style: TextStyle(fontSize: screenWidth * 0.041),
+                  ),
                 ),
               ),
             ),

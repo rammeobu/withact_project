@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../future&component/component/person.dart';
 
@@ -21,7 +21,7 @@ class WorkRecruitBody3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,25 +29,33 @@ class WorkRecruitBody3 extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              '모집역할/인원',
-              style: TextStyle(fontSize: 23.0, fontWeight: FontWeight.w800),
+            Row(
+              children: [
+                Text(
+                  '모집역할/인원',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.058,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const Text(' *', style: TextStyle(color: Colors.red)),
+              ],
             ),
             IconButton(
               onPressed: onAddPositionButtonPressed,
-              icon: const Icon(Icons.add_circle_outline, size: 30.0),
+              icon: Icon(Icons.add_circle_outline, size: screenWidth * 0.073),
             ),
           ],
         ),
         Padding(
-          padding: EdgeInsets.only(top: screenHeight * 0.011),
+          padding: const EdgeInsets.only(top: 9),
           child: SingleChildScrollView(
             controller: horizontalScrollController,
             scrollDirection: Axis.horizontal,
             child: positions.isEmpty
                 ? SizedBox(
-                    height: 130,
-                    width: MediaQuery.of(context).size.width - 30,
+                    height: 150,
+                    width: screenWidth * 0.927,
                     child: const Center(
                       child: Text(
                         '모집 역할을 추가해주세요.',
@@ -60,7 +68,9 @@ class WorkRecruitBody3 extends StatelessWidget {
                       final int i = entry.key;
 
                       return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.012,
+                        ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -73,42 +83,42 @@ class WorkRecruitBody3 extends StatelessWidget {
                                   onChanged: (pos) {
                                     positions[i] = pos;
                                   },
-                                  decoration: const InputDecoration(
+                                  decoration: InputDecoration(
                                     hintText: '직군',
                                     hintStyle: TextStyle(
-                                      fontSize: 15.0,
+                                      fontSize: screenWidth * 0.036,
                                       color: Colors.grey,
                                     ),
                                     border: InputBorder.none,
                                     isDense: true,
-                                    contentPadding: EdgeInsets.symmetric(
-                                      vertical: 4.0,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 4,
                                     ),
                                   ),
-                                  style: const TextStyle(
-                                    fontSize: 15.0,
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.036,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
                             ),
-                            Person(size: 50.0),
+                            Person(size: screenWidth * 0.122),
                             OutlinedButton(
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(width: 0.0),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadiusGeometry.circular(
-                                    20.0,
+                                    screenWidth * 0.049,
                                   ),
                                 ),
                                 backgroundColor: const Color(0xFFF34343),
                                 foregroundColor: Colors.white,
                               ),
                               onPressed: () => onDeletePositionButtonPressed(i),
-                              child: const Text(
+                              child: Text(
                                 '제거',
                                 style: TextStyle(
-                                  fontSize: 15.0,
+                                  fontSize: screenWidth * 0.036,
                                   fontWeight: FontWeight.w900,
                                 ),
                               ),

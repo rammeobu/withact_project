@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 import '../../future&component/layout/default_container.dart';
 
 class ApplyingWorkInformation extends StatelessWidget {
@@ -14,18 +15,19 @@ class ApplyingWorkInformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           flex: 1,
           child: DefaultContainer(
-            height: 100,
-            width: 80,
-            color: const Color(0xffe3e5e9),
+            height: 116,
+            width: screenWidth * 0.195,
+            color: posterColor,
             child: Center(
               child: (poster != null && poster!.startsWith('http'))
-                  ? Image.network(poster!, fit: BoxFit.cover)
+                  ? Image.network(poster!, fit: BoxFit.cover, cacheWidth: 300)
                   : const Text('포스터'),
             ),
           ),
@@ -33,13 +35,13 @@ class ApplyingWorkInformation extends StatelessWidget {
         Expanded(
           flex: 3,
           child: Padding(
-            padding: const EdgeInsets.only(left: 10.0),
+            padding: EdgeInsets.only(left: screenWidth * 0.024),
             child: DefaultContainer(
               color: const Color(0xffebedfc),
-              width: MediaQuery.of(context).size.width,
-              height: 100.0,
+              width: screenWidth,
+              height: 116,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(screenWidth * 0.019),
                 child: Scrollbar(
                   controller: scrollController,
                   child: SingleChildScrollView(
@@ -48,9 +50,9 @@ class ApplyingWorkInformation extends StatelessWidget {
                       alignment: Alignment.topLeft,
                       child: Text(
                         workOverview,
-                        style: const TextStyle(
-                          fontSize: 17.0,
-                          color: Color(0xff5764f0),
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.041,
+                          color: appPrimaryColor,
                           fontWeight: FontWeight.w700,
                         ),
                       ),

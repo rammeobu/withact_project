@@ -20,52 +20,57 @@ class ApplicantProfile extends StatefulWidget {
 }
 
 class _ApplicantProfileState extends State<ApplicantProfile> {
-  late ScrollController _scrollController;
-  late ScrollController _whenToMeetScrollController;
+  late ScrollController scrollController;
+  late ScrollController whenToMeetOuterScrollController;
+  late ScrollController whenToMeetScrollController;
   late List<ScrollController> body1ScrollControllers;
+  late TextEditingController timeTextController;
+
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
+    scrollController = ScrollController();
     body1ScrollControllers = List.generate(2, (_) => ScrollController());
-    _whenToMeetScrollController = ScrollController();
+    whenToMeetOuterScrollController = ScrollController();
+    timeTextController = TextEditingController();
+    whenToMeetScrollController = ScrollController();
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
-    _whenToMeetScrollController.dispose();
+    scrollController.dispose();
+    whenToMeetOuterScrollController.dispose();
     for (ScrollController controller in body1ScrollControllers) {
       controller.dispose();
     }
+    timeTextController.dispose();
+    whenToMeetScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return BasicLayout(
       title: '지원자 프로필',
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.036),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: SingleChildScrollView(
-                controller: _scrollController,
+                controller: scrollController,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: screenHeight * 0.01,
-                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 13),
                       child: Text(
                         widget.name,
-                        style: const TextStyle(
-                          fontSize: 25.0,
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.058,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -80,24 +85,26 @@ class _ApplicantProfileState extends State<ApplicantProfile> {
                       content: widget.spec,
                       scrollController: body1ScrollControllers[1],
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 10.0),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
                       child: Text(
                         '활동 가능 시간',
                         style: TextStyle(
-                          fontSize: 17.0,
+                          fontSize: screenWidth * 0.041,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                     SizedBox(
-                      height: 350.0,
+                      height: 704,
                       child: WhenToMeet(
                         readOnly: true,
-                        scrollController: _whenToMeetScrollController,
+                        scrollController: whenToMeetOuterScrollController,
+                        timeTextController: timeTextController,
+                        whenToMeetScrollController: whenToMeetScrollController,
                       ),
                     ),
-                    const SizedBox(height: 40.0),
+                    const Padding(padding: EdgeInsets.only(top: 46)),
                   ],
                 ),
               ),
@@ -123,6 +130,7 @@ class _ApplicantProfileState extends State<ApplicantProfile> {
           backgroundColor: const Color(0xFF1AB97A),
         ),
       );
+    Navigator.pop(context);
   }
 
   void onRejectButtonPressed() {
@@ -134,7 +142,10 @@ class _ApplicantProfileState extends State<ApplicantProfile> {
           backgroundColor: const Color(0xFFF34343),
         ),
       );
+    Navigator.pop(context);
   }
 
-  void onGoBackApplicantListButtonPressed() {}
+  void onGoBackApplicantListButtonPressed() {
+    Navigator.pop(context);
+  }
 }

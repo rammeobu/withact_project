@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 
 class ApplicantProfileFooter extends StatelessWidget {
   final VoidCallback? onTextButtonPressed;
@@ -13,13 +14,13 @@ class ApplicantProfileFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
       padding: EdgeInsets.only(
-        left: 16.0,
-        top: screenHeight * 0.008,
-        right: 16.0,
-        bottom: screenHeight * 0.009,
+        left: screenWidth * 0.039,
+        top: 7,
+        right: screenWidth * 0.039,
+        bottom: 8,
       ),
       child: Column(
         children: [
@@ -29,53 +30,53 @@ class ApplicantProfileFooter extends StatelessWidget {
                 onPressed: onAcceptButtonPressed,
                 style: OutlinedButton.styleFrom(
                   backgroundColor: const Color(0xFF1AB97A),
-                  fixedSize: Size(160, screenHeight * 0.07),
+                  fixedSize: Size(screenWidth * 0.389, 59),
                   padding: EdgeInsets.zero,
                   side: const BorderSide(width: 0.0),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(screenWidth * 0.073),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   '수락',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: screenWidth * 0.049,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
-              const SizedBox(width: 10.0),
+              SizedBox(width: screenWidth * 0.024),
               OutlinedButton(
                 onPressed: onRejectButtonPressed,
                 style: OutlinedButton.styleFrom(
                   backgroundColor: const Color(0xFFF34343),
-                  fixedSize: Size(160, screenHeight * 0.07),
+                  fixedSize: Size(screenWidth * 0.389, 59),
                   padding: EdgeInsets.zero,
                   side: const BorderSide(width: 0.0),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(screenWidth * 0.073),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   '거절',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: screenWidth * 0.049,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: screenHeight * 0.013),
+          const SizedBox(height: 11),
           TextButton(
             onPressed: onTextButtonPressed,
-            child: const Text(
+            child: Text(
               '지원자 목록으로 돌아가기',
               style: TextStyle(
-                color: Color(0xFF5764F0),
-                fontSize: 18,
+                color: appPrimaryColor,
+                fontSize: screenWidth * 0.044,
                 fontWeight: FontWeight.w600,
               ),
             ),

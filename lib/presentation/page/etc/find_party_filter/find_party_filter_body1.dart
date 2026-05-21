@@ -3,42 +3,31 @@ import 'package:party_maker/presentation/page/etc/find_party_filter/select_party
 
 class FindPartyFilterBody1 extends StatelessWidget {
   final String filterTitle;
-  final List<String> filter;
-  final String currentFilter;
-  final ValueChanged<String> onChanged;
+  final int filterIndex;
 
-  const FindPartyFilterBody1({super.key,
-  required this.filterTitle,
-  required this.filter,
-  required this.currentFilter,
-  required this.onChanged});
+  const FindPartyFilterBody1({
+    super.key,
+    required this.filterTitle,
+    required this.filterIndex,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(
-            vertical: screenHeight * 0.015,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 13),
           child: Text(
             filterTitle,
             style: TextStyle(
-              fontSize: 17.0,
+              fontSize: screenWidth * 0.041,
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
-        SelectPartyFilter(
-    filter: filter,
-    currentFilter: currentFilter,
-    onChanged: onChanged,
-    ),
+        SelectPartyFilter(filterIndex: filterIndex),
       ],
     );
   }

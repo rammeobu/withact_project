@@ -1,33 +1,67 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:party_maker/app.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/work_recruit/work_recruit_body2.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/work_recruit/work_recruit_body3.dart';
 import '../../future&component/layout/basic_layout.dart';
 import 'work_recruit_body.dart';
 import 'work_recruit_footer.dart';
 
-class WorkRecruit extends StatefulWidget {
+class WorkRecruitNotifier
+    extends Notifier<({List<String> preferences, List<String> positions})> {
+  @override
+  ({List<String> preferences, List<String> positions}) build() =>
+      (preferences: [], positions: ['']);
+
+  void addPreference(String text) {
+    state = (
+      preferences: [...state.preferences, text],
+      positions: state.positions,
+    );
+  }
+
+  void removePreference(int i) {
+    final newPrefs = List<String>.from(state.preferences)..removeAt(i);
+    state = (preferences: newPrefs, positions: state.positions);
+  }
+
+  void addPosition() {
+    state = (
+      preferences: state.preferences,
+      positions: [...state.positions, ''],
+    );
+  }
+
+  void removePosition(int i) {
+    final newPositions = List<String>.from(state.positions)..removeAt(i);
+    state = (preferences: state.preferences, positions: newPositions);
+  }
+}
+
+final workRecruitProvider =
+    NotifierProvider.autoDispose<
+      WorkRecruitNotifier,
+      ({List<String> preferences, List<String> positions})
+    >(WorkRecruitNotifier.new);
+
+class WorkRecruit extends ConsumerStatefulWidget {
   final List<String>? profile;
   const WorkRecruit({super.key, this.profile});
 
   @override
-  State<WorkRecruit> createState() => _WorkRecruitState();
+  ConsumerState<WorkRecruit> createState() => _WorkRecruitState();
 }
 
-class _WorkRecruitState extends State<WorkRecruit> {
+class _WorkRecruitState extends ConsumerState<WorkRecruit> {
   late List<ScrollController> scrollControllers;
   late List<TextEditingController> staticTextControllers;
-  late List<String> preferences;
-  late List<String> positions;
   late List<TextEditingController> dynamicTextControllers;
 
   @override
   void initState() {
     super.initState();
-
     scrollControllers = List.generate(3, (i) => ScrollController());
     staticTextControllers = List.generate(3, (i) => TextEditingController());
-    preferences = [];
-    positions = [''];
     dynamicTextControllers = [TextEditingController()];
   }
 
@@ -47,6 +81,8 @@ class _WorkRecruitState extends State<WorkRecruit> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final recruitState = ref.watch(workRecruitProvider);
     return BasicLayout(
       title: '대외활동 모집',
       body: Column(
@@ -55,7 +91,11 @@ class _WorkRecruitState extends State<WorkRecruit> {
             child: SingleChildScrollView(
               controller: scrollControllers[0],
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                padding: EdgeInsets.only(
+                  left: screenWidth * 0.036,
+                  top: 13,
+                  right: screenWidth * 0.036,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -63,22 +103,24 @@ class _WorkRecruitState extends State<WorkRecruit> {
                       section: '활동 이름',
                       textEditingController: staticTextControllers[0],
                       onSearchButtonPressed: onSearchButtonPressed,
+                      isRequired: true,
                     ),
                     WorkRecruitBody(
                       section: '파티 이름/소개',
                       textEditingController: staticTextControllers[1],
+                      isRequired: true,
                     ),
                     WorkRecruitBody2(
-                      preferences: preferences,
+                      preferences: recruitState.preferences,
                       scrollController: scrollControllers[1],
                       textEditingController: staticTextControllers[2],
                       onPreferenceAdded: onPreferenceSubmitted,
                       onDeletePreferenceButtonPressed: (i) =>
                           onDeletePreferenceButtonPressed(i),
                     ),
-                    const SizedBox(height: 20.0),
+                    const Padding(padding: EdgeInsets.only(top: 23)),
                     WorkRecruitBody3(
-                      positions: positions,
+                      positions: recruitState.positions,
                       textEditingControllers: dynamicTextControllers,
                       primaryScrollController: scrollControllers[0],
                       horizontalScrollController: scrollControllers[2],
@@ -92,9 +134,9 @@ class _WorkRecruitState extends State<WorkRecruit> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 15.0,
-              vertical: 10.0,
+            padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.036,
+              vertical: 12,
             ),
             child: WorkRecruitFooter(
               onRecruitStartButtonPressed: onRecruitStartButtonPressed,
@@ -106,14 +148,43 @@ class _WorkRecruitState extends State<WorkRecruit> {
     );
   }
 
-  void onSearchButtonPressed() {}
+  void onSearchButtonPressed() {
+    Navigator.pushNamed(context, PageRoutes.findWork);
+  }
 
-  void onRecruitStartButtonPressed() {}
+  void onRecruitStartButtonPressed() {
+    if (staticTextControllers[0].text.trim().isEmpty) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('활동 이름을 입력해 주세요.')));
+      return;
+    }
+    if (staticTextControllers[1].text.trim().isEmpty) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('파티 이름/소개를 입력해 주세요.')));
+      return;
+    }
+    if (dynamicTextControllers.isEmpty ||
+        dynamicTextControllers.every(
+          (controller) => controller.text.trim().isEmpty,
+        )) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(content: Text('모집 역할을 최소 하나 이상 입력해 주세요.')),
+        );
+      return;
+    }
+    const bool succeeded = true;
+    Navigator.pushNamed(
+      context,
+      succeeded ? PageRoutes.recruitSuccess : PageRoutes.recruitFail,
+    );
+  }
 
   void onPreferenceSubmitted(String text) {
-    setState(() {
-      preferences.add(text);
-    });
+    ref.read(workRecruitProvider.notifier).addPreference(text);
     staticTextControllers[2].clear();
 
     Future.delayed(const Duration(milliseconds: 75), () {
@@ -128,10 +199,10 @@ class _WorkRecruitState extends State<WorkRecruit> {
   }
 
   void onDeletePreferenceButtonPressed(int i) {
-    double currentOffset = scrollControllers[1].offset;
-    setState(() {
-      preferences.removeAt(i);
-    });
+    double currentOffset = scrollControllers[1].hasClients
+        ? scrollControllers[1].offset
+        : 0.0;
+    ref.read(workRecruitProvider.notifier).removePreference(i);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(milliseconds: 50));
@@ -147,10 +218,8 @@ class _WorkRecruitState extends State<WorkRecruit> {
   }
 
   void onAddPositionButtonPressed() {
-    setState(() {
-      positions.add('');
-      dynamicTextControllers.add(TextEditingController());
-    });
+    ref.read(workRecruitProvider.notifier).addPosition();
+    dynamicTextControllers.add(TextEditingController());
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (scrollControllers[0].hasClients) {
@@ -175,16 +244,14 @@ class _WorkRecruitState extends State<WorkRecruit> {
         ? scrollControllers[2].offset
         : 0.0;
 
-    setState(() {
-      positions.removeAt(i);
-      dynamicTextControllers[i].dispose();
-      dynamicTextControllers.removeAt(i);
-    });
+    ref.read(workRecruitProvider.notifier).removePosition(i);
+    dynamicTextControllers[i].dispose();
+    dynamicTextControllers.removeAt(i);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(milliseconds: 10));
 
-      if (positions.isEmpty) {
+      if (ref.read(workRecruitProvider).positions.isEmpty) {
         if (scrollControllers[0].hasClients) {
           scrollControllers[0].animateTo(
             scrollControllers[0].position.maxScrollExtent,

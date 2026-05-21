@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/presentation/page/screen_design_1/work_information/work_information_body1.dart';
 import '../../future&component/layout/default_container.dart';
 import '../../future&component/layout/basic_layout.dart';
@@ -59,46 +60,38 @@ class _WorkInformationTestState extends State<WorkInformationTest> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
 
     return BasicLayout(
       title: '활동 정보',
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.049),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: screenHeight * 0.02),
-
-            // 1단: 원본 위젯에 제목과 포스터를 한 번에 전달
+            const Padding(padding: EdgeInsets.only(top: 13)),
             WorkInformationBody1(
               workOverview: data.workName,
-              poster: data.poster, // 포스터 파라미터 활용
+              poster: data.poster,
               scrollController: _scrollController,
             ),
-
             Padding(
-              padding: EdgeInsets.only(top: screenHeight * 0.02),
-              child: const Text(
-                '요약설명',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w700),
-              ),
+              padding: const EdgeInsets.only(top: 17),
+              child: Text('요약설명', style: subTitleFont),
             ),
-
-            // 2단: 요약 정보 컨테이너
             Padding(
-              padding: EdgeInsets.only(top: screenHeight * 0.012),
+              padding: const EdgeInsets.only(top: 10),
               child: DefaultContainer(
                 width: double.infinity,
-                height: screenHeight * 0.12,
+                height: 101,
                 color: const Color(0xFFF0F2F5),
                 child: Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: EdgeInsets.all(screenWidth * 0.029),
                   child: SingleChildScrollView(
                     child: Text(
                       data.workOverview,
-                      style: const TextStyle(
-                        fontSize: 14.0,
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.034,
                         color: Colors.black87,
                       ),
                     ),
@@ -106,31 +99,28 @@ class _WorkInformationTestState extends State<WorkInformationTest> {
                 ),
               ),
             ),
-
             Padding(
-              padding: EdgeInsets.only(top: screenHeight * 0.02),
-              child: const Text(
-                '상세설명',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w700),
-              ),
+              padding: const EdgeInsets.only(top: 17),
+              child: Text('상세설명', style: subTitleFont),
             ),
-
-            // 3단: 상세 내용 컨테이너
             Padding(
-              padding: EdgeInsets.only(top: screenHeight * 0.012, bottom: 20.0),
+              padding: const EdgeInsets.only(top: 10, bottom: 23),
               child: DefaultContainer(
                 width: double.infinity,
-                height: screenHeight * 0.35,
+                height: 295,
                 color: const Color(0xFFF7F8F9),
                 child: Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: EdgeInsets.all(screenWidth * 0.029),
                   child: Scrollbar(
                     controller: _scrollController,
                     child: SingleChildScrollView(
                       controller: _scrollController,
                       child: Text(
                         data.workDetail,
-                        style: const TextStyle(fontSize: 15.0, height: 1.6),
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.036,
+                          height: 1.6,
+                        ),
                       ),
                     ),
                   ),

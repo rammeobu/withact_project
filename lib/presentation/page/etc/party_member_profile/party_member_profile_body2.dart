@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../future&component/layout/default_container.dart';
 
 class PartyMemberProfileBody2 extends StatelessWidget {
@@ -14,31 +14,34 @@ class PartyMemberProfileBody2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
-      padding: EdgeInsets.only(top: screenHeight * 0.01),
+      padding: const EdgeInsets.only(top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             section,
-            style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: screenWidth * 0.041,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: screenHeight * 0.01),
+            padding: const EdgeInsets.only(top: 8),
             child: DefaultContainer(
               color: const Color(0xffebedf0),
-              width: MediaQuery.of(context).size.width,
-              height: screenHeight * 0.13,
+              width: screenWidth,
+              height: 110,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(screenWidth * 0.019),
                 child: Scrollbar(
                   thumbVisibility: true,
                   child: SingleChildScrollView(
                     controller: scrollController,
                     child: Text(
                       content,
-                      style: const TextStyle(fontSize: 15.0),
+                      style: TextStyle(fontSize: screenWidth * 0.036),
                     ),
                   ),
                 ),

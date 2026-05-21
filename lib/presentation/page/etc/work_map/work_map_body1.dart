@@ -2,57 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-class WorkMapBody1 extends StatefulWidget {
+class WorkMapBody1 extends StatelessWidget {
   final MapController mapController;
-  const WorkMapBody1({super.key, required this.mapController});
-
-  @override
-  State<WorkMapBody1> createState() => _WorkMapBody1State();
-}
-
-class _WorkMapBody1State extends State<WorkMapBody1> {
-  String region = '';
+  final String locationName;
+  const WorkMapBody1({
+    super.key,
+    required this.mapController,
+    this.locationName = '',
+  });
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(vertical: screenHeight * 0.015),
+          padding: const EdgeInsets.symmetric(vertical: 13),
           child: Container(
-            height: screenHeight * 0.08,
+            height: 68,
             width: screenWidth,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey, width: 1.0),
-              borderRadius: BorderRadius.circular(20.0),
+              borderRadius: BorderRadius.circular(screenWidth * 0.049),
             ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: EdgeInsets.only(left: 5.0),
-                child: Text(region),
+                padding: EdgeInsets.only(left: screenWidth * 0.024),
+                child: Text(
+                  locationName,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.044,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ),
         ),
         Container(
-          height: screenHeight * 0.3,
+          height: 253,
           width: screenWidth,
           decoration: BoxDecoration(
-            color: Color(0xFFB4B4B4),
+            color: const Color(0xFFB4B4B4),
             border: Border.all(color: Colors.grey, width: 1.0),
-            borderRadius: BorderRadius.circular(20.0),
+            borderRadius: BorderRadius.circular(screenWidth * 0.049),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20.0),
+            borderRadius: BorderRadius.circular(screenWidth * 0.049),
             child: FlutterMap(
-              mapController: widget.mapController,
-              options: MapOptions(
+              mapController: mapController,
+              options: const MapOptions(
                 initialZoom: 13.0,
                 initialCenter: LatLng(37.5665, 126.9780),
-                interactionOptions: const InteractionOptions(
+                interactionOptions: InteractionOptions(
                   flags: InteractiveFlag.all,
                   enableMultiFingerGestureRace: true,
                   scrollWheelVelocity: 0.005,
@@ -70,6 +73,20 @@ class _WorkMapBody1State extends State<WorkMapBody1> {
                   additionalOptions: const {
                     'User-Agent': 'com.party_maker.app',
                   },
+                ),
+                const MarkerLayer(
+                  markers: [
+                    Marker(
+                      point: LatLng(37.5665, 126.9780),
+                      width: 45.0,
+                      height: 45.0,
+                      child: Icon(
+                        Icons.location_on,
+                        color: Colors.purple,
+                        size: 40.0,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

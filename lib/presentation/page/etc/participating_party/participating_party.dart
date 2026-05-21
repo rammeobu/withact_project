@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/presentation/page/etc/participating_party/participating_part_body2.dart';
 import 'package:party_maker/presentation/page/etc/participating_party/participating_party_body1.dart';
 import 'package:party_maker/presentation/page/etc/participating_party/participating_party_footer.dart';
-import 'package:party_maker/presentation/page/screen_design_1/work_information/work_information_body1.dart';
-import 'package:party_maker/presentation/page/screen_design_1/work_information/work_information_body2.dart';
 import '../../future&component/layout/default_container.dart';
 import '../../future&component/layout/basic_layout.dart';
 import '../../future&component/profile/profile_card_leader.dart';
@@ -29,6 +29,7 @@ class ParticipatingParty extends StatefulWidget {
   final String? poster;
   final List<String> leaderProfile;
   final List<String> position;
+  final List<bool>? positionOccupy;
 
   const ParticipatingParty({
     super.key,
@@ -38,6 +39,7 @@ class ParticipatingParty extends StatefulWidget {
     required this.leaderProfile,
     required this.position,
     this.poster,
+    this.positionOccupy,
   });
 
   @override
@@ -45,29 +47,29 @@ class ParticipatingParty extends StatefulWidget {
 }
 
 class _ParticipatingPartyState extends State<ParticipatingParty> {
-  late ScrollController _detailScrollController;
-  late ScrollController _detailScrollController2;
-  late ScrollController _body1ScrollController;
+  late ScrollController detailScrollController;
+  late ScrollController detailScrollController2;
+  late ScrollController body1ScrollController;
 
   @override
   void initState() {
     super.initState();
-    _detailScrollController = ScrollController();
-    _detailScrollController2 = ScrollController();
-    _body1ScrollController = ScrollController();
+    detailScrollController = ScrollController();
+    detailScrollController2 = ScrollController();
+    body1ScrollController = ScrollController();
   }
 
   @override
   void dispose() {
-    _detailScrollController.dispose();
-    _detailScrollController2.dispose();
-    _body1ScrollController.dispose();
+    detailScrollController.dispose();
+    detailScrollController2.dispose();
+    body1ScrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
 
     return BasicLayout(
       title: '참여 중인 파티',
@@ -77,10 +79,10 @@ class _ParticipatingPartyState extends State<ParticipatingParty> {
             child: SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.only(
-                  left: 20.0,
-                  top: screenHeight * 0.02,
-                  right: 20.0,
-                  bottom: 20.0,
+                  left: screenWidth * 0.049,
+                  top: 13,
+                  right: screenWidth * 0.049,
+                  bottom: 23,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -88,33 +90,27 @@ class _ParticipatingPartyState extends State<ParticipatingParty> {
                     ParticipatingPartyBody1(
                       workOverview: widget.workName,
                       poster: widget.poster,
-                      scrollController: _body1ScrollController,
+                      scrollController: body1ScrollController,
                     ),
 
                     Padding(
-                      padding: EdgeInsets.only(top: screenHeight * 0.02),
-                      child: const Text(
-                        '활동 개요',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
+                      padding: const EdgeInsets.only(top: 17),
+                      child: Text('활동 개요', style: subTitleFont),
                     ),
 
                     Padding(
-                      padding: EdgeInsets.only(top: screenHeight * 0.012),
+                      padding: const EdgeInsets.only(top: 10),
                       child: DefaultContainer(
                         width: double.infinity,
-                        height: screenHeight * 0.12,
+                        height: 101,
                         color: const Color(0xFFF0F2F5),
                         child: Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: EdgeInsets.all(screenWidth * 0.029),
                           child: SingleChildScrollView(
                             child: Text(
                               widget.workOverview,
-                              style: const TextStyle(
-                                fontSize: 14.0,
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.034,
                                 color: Colors.black87,
                               ),
                             ),
@@ -124,32 +120,26 @@ class _ParticipatingPartyState extends State<ParticipatingParty> {
                     ),
 
                     Padding(
-                      padding: EdgeInsets.only(top: screenHeight * 0.02),
-                      child: const Text(
-                        '활동 설명',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
+                      padding: const EdgeInsets.only(top: 17),
+                      child: Text('활동 설명', style: subTitleFont),
                     ),
 
                     Padding(
-                      padding: EdgeInsets.only(top: screenHeight * 0.012),
+                      padding: const EdgeInsets.only(top: 10),
                       child: DefaultContainer(
                         width: double.infinity,
-                        height: screenHeight * 0.25, // 높이 조절
+                        height: 211, // 높이 조절
                         color: const Color(0xFFF7F8F9),
                         child: Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: EdgeInsets.all(screenWidth * 0.029),
                           child: Scrollbar(
-                            controller: _detailScrollController,
+                            controller: detailScrollController,
                             child: SingleChildScrollView(
-                              controller: _detailScrollController,
+                              controller: detailScrollController,
                               child: Text(
                                 widget.workDetail,
-                                style: const TextStyle(
-                                  fontSize: 15.0,
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.036,
                                   height: 1.6,
                                 ),
                               ),
@@ -165,19 +155,14 @@ class _ParticipatingPartyState extends State<ParticipatingParty> {
                     ),
 
                     Padding(
-                      padding: EdgeInsets.only(top: screenHeight * 0.02),
-                      child: const Text(
-                        '현재 파티원 목록',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
+                      padding: const EdgeInsets.only(top: 17),
+                      child: Text('현재 파티원 목록', style: subTitleFont),
                     ),
 
                     ParticipatingPartBody2(
                       position: widget.position,
                       onPersonPressed: onPersonPressed,
+                      positionOccupy: widget.positionOccupy,
                     ),
                   ],
                 ),
@@ -193,7 +178,25 @@ class _ParticipatingPartyState extends State<ParticipatingParty> {
     );
   }
 
-  void onCallButtonPressed() {}
-  void onPersonPressed(String id) {}
-  void onPartyExitButtonPressed() {}
+  void onCallButtonPressed() {
+    // TODO: 백엔드와 협의 후 문의하기 기능에 대한 구체화 이후 문의하기 기능에 대한 페이지 구현 후 해당 페이지로의 라우팅 수행
+  }
+
+  void onPersonPressed(String positionName) {
+    Navigator.pushNamed(
+      context,
+      PageRoutes.partyMemberProfile,
+      arguments: {
+        'profileContent': List.generate(2, (i) => i == 1 ? positionName : ''),
+        'introduction': '',
+        'spec': '',
+        'preferences': List.generate(3, (_) => ''),
+        'positions': widget.position,
+      },
+    );
+  }
+
+  void onPartyExitButtonPressed() {
+    Navigator.pushNamed(context, PageRoutes.partyExitDoubleCheck);
+  }
 }

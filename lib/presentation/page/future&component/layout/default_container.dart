@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class DefaultContainer extends StatefulWidget {
-  Widget child;
-  Color? color;
-  double? width;
-  double? height;
-  DefaultContainer({
+class DefaultContainer extends StatelessWidget {
+  final Widget child;
+  final Color? color;
+  final double? width;
+  final double? height;
+  const DefaultContainer({
     super.key,
     required this.child,
     this.width,
@@ -14,21 +14,16 @@ class DefaultContainer extends StatefulWidget {
   });
 
   @override
-  State<DefaultContainer> createState() => _DefaultContainerState();
-}
-
-class _DefaultContainerState extends State<DefaultContainer> {
-  @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.width,
-      height: widget.height,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
-        color: (widget.color != null) ? widget.color : Colors.white,
+        color: color ?? Colors.white,
         border: BoxBorder.all(width: 0.5, color: Colors.grey),
         borderRadius: BorderRadius.circular(10.0),
       ),
-      child: widget.child,
+      child: child,
     );
   }
 }

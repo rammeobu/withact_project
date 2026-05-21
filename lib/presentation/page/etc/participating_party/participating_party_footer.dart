@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class ParticipatingPartyFooter extends StatelessWidget {
   final VoidCallback onPartyExitButtonPressed;
@@ -9,19 +9,25 @@ class ParticipatingPartyFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
         padding: EdgeInsets.zero,
-        fixedSize: Size(MediaQuery.of(context).size.width - 30, 50),
+        fixedSize: Size(screenWidth * 0.927, 57),
         backgroundColor: Colors.white,
-        foregroundColor: Color(0xFFF34343),
+        foregroundColor: const Color(0xFFF34343),
         side: const BorderSide(width: 0.0, color: Color(0xFFF34343)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(screenWidth * 0.036),
+        ),
       ),
       onPressed: onPartyExitButtonPressed,
-      child: const Text(
+      child: Text(
         '파티 탈퇴',
-        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w700),
+        style: TextStyle(
+          fontSize: screenWidth * 0.044,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }

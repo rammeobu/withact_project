@@ -1,6 +1,7 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 
 class ProfileCardLeader extends StatelessWidget {
   final List<String> profileContent;
@@ -16,15 +17,14 @@ class ProfileCardLeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     return Padding(
-      padding: EdgeInsets.only(top: screenHeight * 0.02),
+      padding: const EdgeInsets.only(top: 17),
       child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: screenHeight * 0.135,
+        width: double.infinity,
+        height: 114,
         child: Card(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(20.0),
+            borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.049),
           ),
           color: const Color(0xFFECEEFD),
           child: Row(
@@ -32,20 +32,20 @@ class ProfileCardLeader extends StatelessWidget {
               Flexible(
                 flex: 2,
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
+                  padding: EdgeInsets.only(left: screenWidth * 0.024),
                   child: Container(
-                    width: screenHeight * 0.11,
-                    height: screenHeight * 0.105,
+                    width: 93,
+                    height: 89,
                     decoration: const BoxDecoration(
                       color: Color(0xFFECEEFD),
                       shape: BoxShape.circle,
                     ),
                     child: (profileImage != null)
                         ? Image.file(File(profileImage!))
-                        : const Icon(
+                        : Icon(
                             Icons.person,
-                            size: 65,
-                            color: Color(0xFF5764F0),
+                            size: screenWidth * 0.158,
+                            color: appPrimaryColor,
                           ),
                   ),
                 ),
@@ -54,9 +54,9 @@ class ProfileCardLeader extends StatelessWidget {
                 flex: 5,
                 child: Padding(
                   padding: EdgeInsets.only(
-                    left: 10.0,
-                    right: 10.0,
-                    bottom: screenHeight * 0.005,
+                    left: screenWidth * 0.024,
+                    right: screenWidth * 0.024,
+                    bottom: 4,
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -65,11 +65,11 @@ class ProfileCardLeader extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             '파티장',
                             style: TextStyle(
-                              fontSize: 16.0,
-                              color: Color(0xff5764f0),
+                              fontSize: screenWidth * 0.039,
+                              color: appPrimaryColor,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -84,17 +84,17 @@ class ProfileCardLeader extends StatelessWidget {
                               ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadiusGeometry.circular(
-                                  10.0,
+                                  screenWidth * 0.024,
                                 ),
                               ),
-                              fixedSize: const Size(80, 23),
+                              fixedSize: Size(screenWidth * 0.195, 26),
                               minimumSize: const Size(0, 0),
                             ),
                             onPressed: onCallButtonPressed,
-                            child: const Text(
+                            child: Text(
                               '문의하기',
                               style: TextStyle(
-                                fontSize: 13.0,
+                                fontSize: screenWidth * 0.032,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -105,75 +105,17 @@ class ProfileCardLeader extends StatelessWidget {
                         border: TableBorder.all(
                           color: Colors.grey,
                           width: 0.5,
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(
+                            screenWidth * 0.036,
+                          ),
                         ),
-                        columnWidths: const {
-                          0: FixedColumnWidth(40),
-                          1: FlexColumnWidth(),
+                        columnWidths: {
+                          0: FixedColumnWidth(screenWidth * 0.097),
+                          1: const FlexColumnWidth(),
                         },
                         children: [
-                          TableRow(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 3.0,
-                                  vertical: screenHeight * 0.001,
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    '이름',
-                                    style: TextStyle(fontSize: 12.0),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 8.0,
-                                  top: screenHeight * 0.001,
-                                  right: 3.0,
-                                  bottom: screenHeight * 0.001,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    profileContent[0],
-                                    style: const TextStyle(fontSize: 12.0),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          TableRow(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 3.0,
-                                  vertical: screenHeight * 0.001,
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    '기술',
-                                    style: TextStyle(fontSize: 12.0),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 8.0,
-                                  top: screenHeight * 0.001,
-                                  right: 3.0,
-                                  bottom: screenHeight * 0.001,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    profileContent[1],
-                                    style: const TextStyle(fontSize: 12.0),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                          infoRow('이름', profileContent[0], screenWidth),
+                          infoRow('기술', profileContent[1], screenWidth),
                         ],
                       ),
                     ],
@@ -184,6 +126,34 @@ class ProfileCardLeader extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  TableRow infoRow(String label, String value, double screenWidth) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.007,
+            vertical: 1,
+          ),
+          child: Center(
+            child: Text(label, style: TextStyle(fontSize: screenWidth * 0.029)),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(
+            left: screenWidth * 0.019,
+            top: 1,
+            right: screenWidth * 0.007,
+            bottom: 1,
+          ),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(value, style: TextStyle(fontSize: screenWidth * 0.029)),
+          ),
+        ),
+      ],
     );
   }
 }

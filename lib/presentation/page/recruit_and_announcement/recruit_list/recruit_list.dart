@@ -1,53 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:party_maker/app.dart';
+import 'package:party_maker/data/models/recruit_data_structures.dart';
 import '../../future&component/layout/basic_layout.dart';
 import 'apply_party_card/recruit_card.dart';
 
 class RecruitList extends StatefulWidget {
-  List<dynamic>? apply = [
-    [
-      '활동 1',
-      ['시간', '장소'],
-      '지원 중',
-      '',
-    ],
-    [
-      '활동 2',
-      ['시간', '장소'],
-      '지원 중',
-      '',
-    ],
-    [
-      '활동 3',
-      ['시간', '장소'],
-      '지원 중',
-      '',
-    ],
-    [
-      '활동 4',
-      ['시간', '장소'],
-      '지원 중',
-      '',
-    ],
-    [
-      '활동 5',
-      ['시간', '장소'],
-      '지원 중',
-      '',
-    ],
-    [
-      '활동 6',
-      ['시간', '장소'],
-      '지원 중',
-      '',
-    ],
-    [
-      '활동 7',
-      ['시간', '장소'],
-      '지원 중',
-      '',
-    ],
-  ];
-  RecruitList({super.key});
+  final List<RecruitItem> apply;
+  RecruitList({super.key, List<RecruitItem>? apply})
+    : apply =
+          apply ??
+          [
+            const RecruitItem(
+              name: '활동 1',
+              timePlace: ['시간', '장소'],
+              applyStatus: '지원 중',
+              poster: '',
+            ),
+            const RecruitItem(
+              name: '활동 2',
+              timePlace: ['시간', '장소'],
+              applyStatus: '지원 중',
+              poster: '',
+            ),
+            const RecruitItem(
+              name: '활동 3',
+              timePlace: ['시간', '장소'],
+              applyStatus: '지원 중',
+              poster: '',
+            ),
+            const RecruitItem(
+              name: '활동 4',
+              timePlace: ['시간', '장소'],
+              applyStatus: '지원 중',
+              poster: '',
+            ),
+            const RecruitItem(
+              name: '활동 5',
+              timePlace: ['시간', '장소'],
+              applyStatus: '지원 중',
+              poster: '',
+            ),
+            const RecruitItem(
+              name: '활동 6',
+              timePlace: ['시간', '장소'],
+              applyStatus: '지원 중',
+              poster: '',
+            ),
+            const RecruitItem(
+              name: '활동 7',
+              timePlace: ['시간', '장소'],
+              applyStatus: '지원 중',
+              poster: '',
+            ),
+          ];
 
   @override
   State<RecruitList> createState() => _RecruitListState();
@@ -56,41 +61,88 @@ class RecruitList extends StatefulWidget {
 class _RecruitListState extends State<RecruitList> {
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return BasicLayout(
-      title: '파티 지원 목록',
+      title: '모집 목록',
       body: Padding(
-        padding: const EdgeInsets.only(top: 15.0),
-        child: Scrollbar(
-          thumbVisibility: true,
-          child: SingleChildScrollView(
-            child: Column(
-              children: widget.apply!
-                  .map(
-                    (apply) => Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
-                      child: RecruitCard(
-                        name: apply[0],
-                        timePlace: apply[1],
-                        applyStatus: apply[2],
-                        poster: apply[3],
-                        onDetailButtonPressed: () {
-                          print('${apply[0]} 활동 설명으로 이동');
-                        },
-                        onAnnouncementManageButtonPressed: () {
-                          print('${apply[0]} 공고 관리로 이동');
-                        },
-                        onCheckApplicantButtonPressed: () {
-                          print('${apply[0]} 지원자 확인으로 이동');
-                        },
+        padding: const EdgeInsets.only(top: 13),
+        child: Center(
+          child: Scrollbar(
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widget.apply
+                    .map(
+                      (apply) => RepaintBoundary(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.024,
+                          ),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: screenWidth * 0.85,
+                            ),
+                            child: RecruitCard(
+                              name: apply.name,
+                              timePlace: apply.timePlace,
+                              applyStatus: apply.applyStatus,
+                              poster: apply.poster,
+                              onDetailButtonPressed: () =>
+                                  onDetailButtonPressed(apply.name),
+                              onAnnouncementManageButtonPressed: () =>
+                                  onAnnouncementManageButtonPressed(apply.name),
+                              onCheckApplicantButtonPressed: () =>
+                                  onCheckApplicantButtonPressed(apply.name),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  )
-                  .toList(),
+                    )
+                    .toList(),
+              ),
             ),
           ),
         ),
       ),
       bottomNavigationBar: true,
+    );
+  }
+
+  void onDetailButtonPressed(String name) {
+    Navigator.pushNamed(
+      context,
+      PageRoutes.workInformation,
+      arguments: {
+        'workName': name,
+        'workOverview': '',
+        'workDetail': '',
+        'leaderProfile': <String>[],
+        'position': <String>[],
+        'poster': null,
+      },
+    );
+  }
+
+  void onAnnouncementManageButtonPressed(String name) {
+    Navigator.pushNamed(
+      context,
+      PageRoutes.recruitAnnouncement,
+      arguments: {
+        'workName': name,
+        'partyNameIntroduction': '',
+        'position': <String>[],
+        'preferences': null,
+      },
+    );
+  }
+
+  void onCheckApplicantButtonPressed(String name) {
+    Navigator.pushNamed(
+      context,
+      PageRoutes.applicantCheck,
+      arguments: {'position': <String>[]},
     );
   }
 }

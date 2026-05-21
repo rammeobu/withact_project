@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 class AnnouncementEditFooter extends StatelessWidget {
   final VoidCallback onSaveAndExitButtonPressed;
@@ -9,29 +9,33 @@ class AnnouncementEditFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 16.0,
-        top: 10.0,
-        right: 16.0,
-        bottom: 20.0,
+      padding: EdgeInsets.only(
+        left: screenWidth * 0.039,
+        top: 12,
+        right: screenWidth * 0.039,
+        bottom: 23,
       ),
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           side: const BorderSide(width: 0.0),
           padding: EdgeInsets.zero,
           minimumSize: const Size(0, 0),
-          fixedSize: Size(MediaQuery.of(context).size.width, 50),
+          fixedSize: Size(screenWidth, 57),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(15.0),
+            borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.036),
           ),
           backgroundColor: const Color(0xFFF34343),
           foregroundColor: Colors.white,
         ),
         onPressed: onSaveAndExitButtonPressed,
-        child: const Text(
+        child: Text(
           '저장하고 나가기',
-          style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w700),
+          style: TextStyle(
+            fontSize: screenWidth * 0.044,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );

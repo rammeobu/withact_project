@@ -1,57 +1,42 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:party_maker/core/constant.dart';
+import 'applicant_check.dart';
 
-class ApplicantSelectPosition extends StatefulWidget {
+class ApplicantSelectPosition extends ConsumerWidget {
   final List<String> position;
-  final String currentPosition;
-  final ValueChanged<String> onChanged;
-  const ApplicantSelectPosition({
-    super.key,
-    required this.position,
-    required this.currentPosition,
-    required this.onChanged,
-  });
+  const ApplicantSelectPosition({super.key, required this.position});
 
   @override
-  State<ApplicantSelectPosition> createState() =>
-      _ApplicantSelectPositionState();
-}
-
-class _ApplicantSelectPositionState extends State<ApplicantSelectPosition> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final currentPosition = ref.watch(applicantPositionProvider);
     return Padding(
-      padding: const EdgeInsets.only(left: 7.0),
+      padding: EdgeInsets.only(left: screenWidth * 0.017),
       child: Row(
-        children: widget.position.map((pos) {
-          bool isCurrentSelectedPosition = widget.currentPosition == pos;
-
+        children: position.map((pos) {
+          bool isSelected = currentPosition == pos;
           return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 8.0,
-              vertical: 10.0,
+            padding: EdgeInsets.symmetric(
+              horizontal: screenWidth * 0.019,
+              vertical: 12,
             ),
             child: OutlinedButton(
               style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.zero,
                 minimumSize: const Size(0, 0),
-                fixedSize: const Size(70, 45),
-                backgroundColor: (isCurrentSelectedPosition == true)
-                    ? const Color(0xFF5764F0)
-                    : Colors.white,
-                foregroundColor: (isCurrentSelectedPosition == true)
-                    ? Colors.white
-                    : Colors.black,
+                fixedSize: Size(screenWidth * 0.170, 52),
+                backgroundColor: isSelected ? appPrimaryColor : Colors.white,
+                foregroundColor: isSelected ? Colors.white : Colors.black,
                 side: const BorderSide(width: 0.5, color: Colors.grey),
               ),
               onPressed: () {
-                setState(() {
-                  widget.onChanged(pos);
-                });
+                ref.read(applicantPositionProvider.notifier).state = pos;
               },
               child: Text(
                 pos,
-                style: const TextStyle(
-                  fontSize: 20.0,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.049,
                   fontWeight: FontWeight.w700,
                 ),
               ),
