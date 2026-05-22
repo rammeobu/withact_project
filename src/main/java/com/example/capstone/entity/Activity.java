@@ -1,9 +1,6 @@
 package com.example.capstone.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
 
@@ -12,7 +9,7 @@ import java.time.LocalDate;
 @Data
 public class Activity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String organization;
