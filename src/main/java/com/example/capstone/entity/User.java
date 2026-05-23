@@ -18,6 +18,7 @@ public class User {
 
     private String skill;
     private String email;
+    @Column(name = "any_field")
     private String any;
     private String phone;
     private String address;

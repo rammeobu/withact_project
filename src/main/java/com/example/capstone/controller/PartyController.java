@@ -1,7 +1,7 @@
 package com.example.capstone.controller;
 
-import com.example.capstone.dto.PartyDto;  // 추가
-import com.example.capstone.dto.PartyRoleDto;      // 추가
+import com.example.capstone.dto.PartyDto;
+import com.example.capstone.dto.PartyRoleDto;
 
 import com.example.capstone.entity.Party;
 import com.example.capstone.entity.PartyRole;

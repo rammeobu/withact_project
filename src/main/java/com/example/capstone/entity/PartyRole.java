@@ -26,4 +26,8 @@ public class PartyRole {
         }
         this.currentCount++;
     }
+
+    public Integer getMaxCount() {
+        return this.targetCount;
+    }
 }

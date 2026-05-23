@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    @PutMapping("/{id}/pofile")
+    @PutMapping("/{id}/profile")
     public User updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
         return userService.UserDate(id, userDto);
     }
-    @PutMapping("/{id}")
-    public UserDto getUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+    @GetMapping("/{id}")
+    public UserDto getUser(@PathVariable Long id) {
         return userService.findbyid(id);
     }
 }
