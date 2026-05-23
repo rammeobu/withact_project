@@ -14,7 +14,7 @@ import tools.jackson.databind.util.RecordUtil;
 public class UserService {
     private final UserRepository userRepository;
     @Transactional
-    public User UserDate(Long userId , UserDto userDto) {
+    public User updateUser(Long userId , UserDto userDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다"));
         user.setName(userDto.getName());

@@ -16,7 +16,7 @@ public class UserController {
 
     @PutMapping("/{id}/profile")
     public User updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
-        return userService.UserDate(id, userDto);
+        return userService.updateUser(id, userDto);
     }
     @GetMapping("/{id}")
     public UserDto getUser(@PathVariable Long id) {
