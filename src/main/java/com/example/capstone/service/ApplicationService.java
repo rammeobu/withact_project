@@ -7,7 +7,7 @@ import com.example.capstone.enums.ApplicationStatus;
 import com.example.capstone.repository.ApplicationRepository;
 import com.example.capstone.repository.PartyRepository;
 import com.example.capstone.repository.PartyRoleRepository;
-import com.example.capstone.repository.UserRepository;
+import com.example.capstone.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final PartyRepository partyRepository;
     private final PartyRoleRepository partyRoleRepository;
 
@@ -34,7 +34,7 @@ public class ApplicationService {
                     throw new RuntimeException("이미 지원한 대외활동입니다.");
                 });
 
-        User user = userRepository.findById(dto.getUserId())
+        Member member = memberRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Party party = partyRepository.findById(dto.getPartyId())
@@ -48,7 +48,7 @@ public class ApplicationService {
         }
 
         Application application = Application.builder()
-                .user(user)
+                .member(member)
                 .party(party)
                 .role(role)
                 .motivation(dto.getMotivation())
@@ -115,7 +115,7 @@ public class ApplicationService {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
-        if (!application.getUser().getId().equals(userId)) {
+        if (!application.getMember().getId().equals(userId)) {
             throw new RuntimeException("본인의 지원만 취소할 수 있습니다.");
         }
 
@@ -129,8 +129,8 @@ public class ApplicationService {
     private ApplicationDto toDto(Application app) {
         return ApplicationDto.builder()
                 .id(app.getId())
-                .userId(app.getUser().getId())
-                .userName(app.getUser().getName())
+                .userId(app.getMember().getId())
+                .userName(app.getMember().getName())
                 .partyId(app.getParty().getId())
                 .partyName(app.getParty().getTitle())
                 .roleId(app.getRole().getId())

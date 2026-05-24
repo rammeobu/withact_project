@@ -18,7 +18,7 @@ public class Application {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;  // 지원자
+    private Member member;  // 지원자
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")

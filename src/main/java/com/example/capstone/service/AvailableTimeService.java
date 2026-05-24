@@ -2,10 +2,10 @@ package com.example.capstone.service;
 
 import com.example.capstone.entity.Activity;
 import com.example.capstone.entity.AvailableTime;
-import com.example.capstone.entity.User;
+import com.example.capstone.entity.Member;
 import com.example.capstone.repository.ActivityRepository;
 import com.example.capstone.repository.AvailableTimeRepository;
-import com.example.capstone.repository.UserRepository;
+import com.example.capstone.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +21,12 @@ import java.util.stream.Collectors;
 public class AvailableTimeService {
 
     private final AvailableTimeRepository availableTimeRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final ActivityRepository activityRepository;
 
     public void saveAvailableTime(Long userId, Long activityId, Map<String, List<Integer>> schedule) {
 
-        User user = userRepository.findById(userId)
+        Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저 없음"));
 
         Activity activity = activityRepository.findById(activityId)
@@ -38,7 +38,7 @@ public class AvailableTimeService {
         schedule.forEach((day, hours) -> {
             if (hours != null && !hours.isEmpty()) {
                 AvailableTime availableTime = AvailableTime.builder()
-                        .user(user)
+                        .member(member)
                         .activity(activity)
                         .dayOfWeek(DayOfWeek.valueOf(day))
                         .hours(hours)
