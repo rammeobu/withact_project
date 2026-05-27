@@ -24,24 +24,7 @@ class ApplicantCheck extends ConsumerWidget {
     super.key,
     required this.position,
     List<ApplicantItem>? applicants,
-  }) : applicants =
-           applicants ??
-           [
-             const ApplicantItem(name: '홍길동', position: 'PM', skill: 'react'),
-             const ApplicantItem(name: '이순신', position: 'FE', skill: 'flutter'),
-             const ApplicantItem(name: '임꺽정', position: 'BE', skill: 'spring'),
-             const ApplicantItem(name: '유성룡', position: 'BE', skill: 'FastAPI'),
-             const ApplicantItem(
-               name: '이몽룡',
-               position: 'FE',
-               skill: 'typescript',
-             ),
-             const ApplicantItem(
-               name: '김종서',
-               position: 'BE',
-               skill: 'javascript',
-             ),
-           ];
+  }) : applicants = applicants ?? [];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -75,7 +58,7 @@ class ApplicantCheck extends ConsumerWidget {
                         profileContent: [
                           applicantData.name,
                           applicantData.position,
-                          applicantData.skill,
+                          applicantData.skill ?? '',
                         ],
                         onTap: () {
                           Navigator.pushNamed(
@@ -84,7 +67,7 @@ class ApplicantCheck extends ConsumerWidget {
                             arguments: {
                               'name': applicantData.name,
                               'introduction': '',
-                              'spec': applicantData.skill,
+                              'spec': applicantData.skill ?? '',
                             },
                           );
                         },

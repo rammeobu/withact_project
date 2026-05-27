@@ -176,10 +176,28 @@ class _WorkRecruitState extends ConsumerState<WorkRecruit> {
         );
       return;
     }
-    const bool succeeded = true;
-    Navigator.pushNamed(
-      context,
-      succeeded ? PageRoutes.recruitSuccess : PageRoutes.recruitFail,
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: const Text('모집을 시작하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              const bool succeeded = true;
+              Navigator.pushNamed(
+                context,
+                succeeded ? PageRoutes.recruitSuccess : PageRoutes.recruitFail,
+              );
+            },
+            child: const Text('예'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('아니오'),
+          ),
+        ],
+      ),
     );
   }
 

@@ -12,15 +12,15 @@ final newPasswordMatchProvider =
     );
 
 class PersonalInfo extends ConsumerStatefulWidget {
-  final String email;
-  const PersonalInfo({super.key, this.email = ''});
+  final String loginId;
+  const PersonalInfo({super.key, this.loginId = ''});
 
   @override
   ConsumerState<PersonalInfo> createState() => _PersonalInfoState();
 }
 
 class _PersonalInfoState extends ConsumerState<PersonalInfo> {
-  late TextEditingController emailTextController;
+  late TextEditingController loginIdTextController;
   late TextEditingController currentPasswordTextController;
   late TextEditingController newPasswordTextController;
   late TextEditingController confirmPasswordTextController;
@@ -28,7 +28,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
   @override
   void initState() {
     super.initState();
-    emailTextController = TextEditingController(text: widget.email);
+    loginIdTextController = TextEditingController(text: widget.loginId);
     currentPasswordTextController = TextEditingController();
     newPasswordTextController = TextEditingController();
     confirmPasswordTextController = TextEditingController();
@@ -45,7 +45,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
 
   @override
   void dispose() {
-    emailTextController.dispose();
+    loginIdTextController.dispose();
     currentPasswordTextController.dispose();
     newPasswordTextController.dispose();
     confirmPasswordTextController.dispose();
@@ -76,7 +76,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
             sectionHeader('계정 정보', screenWidth),
             fieldRow(
               '이메일',
-              emailTextController,
+              loginIdTextController,
               '이메일을 입력해 주세요.',
               screenWidth,
               isRequired: true,

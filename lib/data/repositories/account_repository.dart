@@ -5,24 +5,67 @@ class AccountRepository {
   final ApiClient client;
   AccountRepository(this.client);
 
-  Future<String> postLogin(String email, String password) async {
-    throw UnimplementedError();
+  Future<String> postLogin(String id, String password) async {
+    try {
+      final data = await client.post('/api/auth/login', {
+        'loginId': id,
+        'password': password,
+      });
+      return data?.toString() ?? '';
+    } catch (_) {
+      throw Exception('로그인 실패');
+    }
   }
 
-  Future<void> postSignUp(String email, String password, String name) async {
-    throw UnimplementedError();
+  Future<void> postSignUp(
+    String id,
+    String password,
+    String name,
+    String belong,
+    String major,
+    String skill,
+  ) async {
+    try {
+      await client.post('/api/auth/join', {
+        'loginId': id,
+        'password': password,
+        'passwordConfirm': password,
+        'username': name,
+        'belong': belong,
+        'major': major,
+        'skill': skill,
+      });
+    } catch (_) {
+      throw Exception('회원가입 실패');
+    }
   }
 
   Future<void> postLogout() async {
     throw UnimplementedError();
   }
 
-  Future<ProfileAndDetailEditDataStructure> getProfile() async {
-    throw UnimplementedError();
+  Future<ProfileAndDetailEditDataStructure> getProfile(String id) async {
+    try {
+      final data = await client.get('/api/User/v1/$id');
+      return ProfileAndDetailEditDataStructure.fromJson(
+          data as Map<String, dynamic>);
+    } catch (_) {
+      throw Exception('프로필 조회 실패');
+    }
   }
 
-  Future<void> putProfile(ProfileAndDetailEditDataStructure profile) async {
-    throw UnimplementedError();
+  Future<void> putProfile(
+      String id, ProfileAndDetailEditDataStructure profile) async {
+    try {
+      await client.put('/api/User/v1/$id/profile', {
+        'name': profile.profileContent.isNotEmpty ? profile.profileContent[0] : '',
+        'skill': profile.spec,
+        'belong': profile.profileContent.length > 2 ? profile.profileContent[2] : '',
+        'major': profile.profileContent.length > 3 ? profile.profileContent[3] : '',
+      });
+    } catch (_) {
+      throw Exception('프로필 수정 실패');
+    }
   }
 
   Future<void> putDetailInfo(ProfileAndDetailEditDataStructure info) async {
@@ -34,7 +77,7 @@ class AccountRepository {
   }
 
   Future<void> putPersonalInfo(
-    String email,
+    String loginId,
     String currentPassword,
     String newPassword,
   ) async {

@@ -25,73 +25,11 @@ final homeSelectedModeProvider =
 class HomeScreen extends ConsumerStatefulWidget {
   final String? logo;
   final List<String> profileContent;
-  List<WorkCardItem>? recruitCard;
-  List<WorkCardItem>? participateCard;
-  List<ApplyCardItem>? applyCard;
-  HomeScreen({
+  const HomeScreen({
     super.key,
     this.logo,
     required this.profileContent,
-    List<WorkCardItem>? recruitCard,
-    List<WorkCardItem>? participateCard,
-    List<ApplyCardItem>? applyCard,
-  }) : recruitCard =
-           recruitCard ??
-           [
-             const WorkCardItem(
-               name: '캡스톤',
-               timePlace: ['일시', '장소'],
-               position: ['PM', 'FE', 'BE'],
-             ),
-             const WorkCardItem(
-               name: '생성형AI프로젝트',
-               timePlace: ['일시', '장소'],
-               position: ['PM', 'FE', 'BE'],
-             ),
-             const WorkCardItem(
-               name: '휴먼AI인터랙션',
-               timePlace: ['일시', '장소'],
-               position: ['PM', 'FE', 'BE', '1', '2', '3', '4'],
-             ),
-           ],
-       participateCard =
-           participateCard ??
-           [
-             const WorkCardItem(
-               name: '컴퓨터비전',
-               timePlace: ['일시', '장소'],
-               position: ['PM', 'FE', 'BE'],
-             ),
-             const WorkCardItem(
-               name: '클라우드컴퓨팅',
-               timePlace: ['일시', '장소'],
-               position: ['PM', 'FE', 'BE'],
-             ),
-             const WorkCardItem(
-               name: '데이터마이닝',
-               timePlace: ['일시', '장소'],
-               position: ['PM', 'FE', 'BE'],
-             ),
-           ],
-       applyCard =
-           applyCard ??
-           [
-             const ApplyCardItem(
-               name: '활동 이름',
-               timePlace: ['일시', '장소'],
-               applyStatus: '대기 중',
-             ),
-             const ApplyCardItem(
-               name: '활동 이름',
-               timePlace: ['일시', '장소'],
-               applyStatus: '심사 중',
-             ),
-             const ApplyCardItem(
-               name: '활동 이름',
-               timePlace: ['일시', '장소'],
-               applyStatus: '대기 중',
-             ),
-           ];
+  });
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
@@ -99,6 +37,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final ScrollController scrollController = ScrollController();
+  List<WorkCardItem> _recruitCard = [];
+  List<WorkCardItem> _participateCard = [];
+  List<ApplyCardItem> _applyCard = [];
 
   @override
   void dispose() {
@@ -110,6 +51,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final selectedMode = ref.watch(homeSelectedModeProvider);
+    final activeCards =
+        selectedMode == '모집' ? _recruitCard : _participateCard;
 
     return BasicLayout(
       needTitleExpand: true,
@@ -209,32 +152,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
               ),
-              SingleChildScrollView(
-                controller: scrollController,
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children:
-                      ((selectedMode == '모집'
-                                  ? widget.recruitCard
-                                  : widget.participateCard) ??
-                              [])
-                          .map<Widget>(
-                            (work) => RepaintBoundary(
-                              child: SizedBox(
-                                width: screenWidth * 0.85,
-                                child: WorkCardBasic(
-                                  name: work.name,
-                                  timePlace: work.timePlace,
-                                  position: work.position,
-                                  poster: work.poster,
-                                  onTap: () => workCardTap(work),
+              activeCards.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
+                      child: Center(
+                        child: Text(
+                          '$selectedMode중인 활동이 없습니다.',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: screenWidth * 0.041,
+                          ),
+                        ),
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      controller: scrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: activeCards
+                            .map<Widget>(
+                              (work) => RepaintBoundary(
+                                child: Container(
+                                  width: screenWidth * 0.85,
+                                  child: WorkCardBasic(
+                                    name: work.name,
+                                    timePlace: work.timePlace,
+                                    position: work.position,
+                                    poster: work.poster,
+                                    onTap: () => workCardTap(work),
+                                  ),
                                 ),
                               ),
-                            ),
-                          )
-                          .toList(),
-                ),
-              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
               Padding(
                 padding: EdgeInsets.only(
                   left: screenWidth * 0.036,
@@ -243,29 +195,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 child: Text('현재 신청한 대외활동', style: sectionTitleFont),
               ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: (widget.applyCard ?? [])
-                      .map(
-                        (work) => RepaintBoundary(
-                          child: SizedBox(
-                            width: screenWidth * 0.85,
-                            child: WorkCardApply(
-                              name: work.name,
-                              timePlace: work.timePlace,
-                              applyStatus: work.applyStatus,
-                              onProfileCheckPressed: () =>
-                                  onProfileCheckPressed(work),
-                              onDetailButtonPressed: () =>
-                                  onDetailButtonPressed(work),
-                            ),
+              _applyCard.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
+                      child: Center(
+                        child: Text(
+                          '신청한 활동이 없습니다.',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: screenWidth * 0.041,
                           ),
                         ),
-                      )
-                      .toList(),
-                ),
-              ),
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: _applyCard
+                            .map(
+                              (work) => RepaintBoundary(
+                                child: Container(
+                                  width: screenWidth * 0.85,
+                                  child: WorkCardApply(
+                                    name: work.name,
+                                    timePlace: work.timePlace,
+                                    applyStatus: work.applyStatus,
+                                    onProfileCheckPressed: () =>
+                                        onProfileCheckPressed(work),
+                                    onDetailButtonPressed: () =>
+                                        onDetailButtonPressed(work),
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
             ],
           ),
         ),
@@ -315,8 +280,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } else {
       Navigator.pushNamed(
         context,
-        PageRoutes.findWork,
-        arguments: {'workList': <WorkItem>[]},
+        PageRoutes.findParty,
+        arguments: {'partyList': <PartyItem>[]},
       );
     }
   }
@@ -344,20 +309,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     } else {
       Navigator.pushNamed(
         context,
-        PageRoutes.participatingParty,
-        arguments: {
-          'workName': work.name,
-          'workOverview': '',
-          'workDetail': '',
-          'leaderProfile': List.generate(
-            2,
-            (i) => i < widget.profileContent.length
-                ? widget.profileContent[i]
-                : '',
-          ),
-          'position': work.position,
-          'poster': work.poster,
-        },
+        PageRoutes.findParty,
+        arguments: {'partyList': <PartyItem>[]},
       );
     }
   }

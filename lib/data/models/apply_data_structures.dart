@@ -1,15 +1,25 @@
 class ApplyItem {
+  final int id;
   final String name;
-  final List<String> timePlace;
   final String applyStatus;
-  final String poster;
+  final List<String>? timePlace;
+  final String? poster;
 
   const ApplyItem({
+    required this.id,
     required this.name,
-    required this.timePlace,
     required this.applyStatus,
-    required this.poster,
+    this.timePlace,
+    this.poster,
   });
+
+  factory ApplyItem.fromJson(Map<String, dynamic> json) {
+    return ApplyItem(
+      id: json['id'],
+      name: json['partyName'] ?? '',
+      applyStatus: json['status']?.toString() ?? '',
+    );
+  }
 }
 
 class ApplyDataStructure {

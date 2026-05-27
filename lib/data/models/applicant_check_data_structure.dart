@@ -1,13 +1,24 @@
 class ApplicantItem {
+  final int id;
   final String name;
   final String position;
-  final String skill;
+  final String? skill;
 
   const ApplicantItem({
+    required this.id,
     required this.name,
     required this.position,
-    required this.skill,
+    this.skill,
   });
+
+  factory ApplicantItem.fromJson(Map<String, dynamic> json) {
+    return ApplicantItem(
+      id: json['id'],
+      name: json['userName'] ?? '',
+      position: json['roleName'] ?? '',
+      skill: json['skill']?.toString(),
+    );
+  }
 }
 
 class ApplicantCheckDataStructure {

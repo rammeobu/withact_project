@@ -28,6 +28,23 @@ class ProfileAndDetailEditDataStructure {
     required this.spec,
     required this.preference,
   });
+
+  factory ProfileAndDetailEditDataStructure.fromJson(Map<String, dynamic> json) {
+    return ProfileAndDetailEditDataStructure(
+      profileContent: [
+        json['name'] ?? '',
+        json['skill'] ?? '',
+        json['belong'] ?? '',
+        json['major'] ?? '',
+      ],
+      spec: json['skill'] ?? '',
+      introduction: json['introduction'] ?? '',
+      preference: (json['preference'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+    );
+  }
 }
 
 class ApplicantProfileDataStructure {
@@ -40,6 +57,14 @@ class ApplicantProfileDataStructure {
     required this.introduction,
     required this.spec,
   });
+
+  factory ApplicantProfileDataStructure.fromJson(Map<String, dynamic> json) {
+    return ApplicantProfileDataStructure(
+      name: json['name'] ?? '',
+      introduction: json['introduction'] ?? '',
+      spec: json['skill'] ?? '',
+    );
+  }
 }
 
 class MenuDataStructure {
@@ -47,4 +72,11 @@ class MenuDataStructure {
   final String? profileImage;
 
   const MenuDataStructure({required this.name, this.profileImage});
+
+  factory MenuDataStructure.fromJson(Map<String, dynamic> json) {
+    return MenuDataStructure(
+      name: json['name'] ?? '',
+      profileImage: json['profileImage'],
+    );
+  }
 }

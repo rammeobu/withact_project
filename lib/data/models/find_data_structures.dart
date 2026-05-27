@@ -1,20 +1,59 @@
 class PartyItem {
+  final int id;
   final String partyName;
   final String workName;
+  final int activityId;
+  final int leaderId;
 
-  const PartyItem({required this.partyName, required this.workName});
+  const PartyItem({
+    required this.id,
+    required this.partyName,
+    required this.workName,
+    required this.activityId,
+    required this.leaderId,
+  });
+
+  factory PartyItem.fromJson(Map<String, dynamic> json) {
+    return PartyItem(
+      id: json['id'],
+      partyName: json['title'] ?? '',
+      activityId: json['activityId'],
+      leaderId: json['leaderId'],
+      workName: '활동 ${json['activityId']}',
+    );
+  }
 }
 
 class WorkItem {
+  final int id;
   final String workName;
-  final String time;
-  final String place;
+  final String startDate;
+  final String endDate;
+  final String location;
+  final String organization;
+  final String category;
 
   const WorkItem({
+    required this.id,
     required this.workName,
-    required this.time,
-    required this.place,
+    required this.startDate,
+    required this.endDate,
+    required this.location,
+    required this.organization,
+    required this.category,
   });
+
+  factory WorkItem.fromJson(Map<String, dynamic> json) {
+    return WorkItem(
+      id: json['id'],
+      workName: json['title'] ?? '',
+      startDate: json['startDate'] ?? '',
+      endDate: json['endDate'] ?? '',
+      location: json['location'] ?? '',
+      organization: json['organization'] ?? '',
+      category: json['category'] ?? '',
+    );
+  }
 }
 
 class FilterItem {

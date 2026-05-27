@@ -60,24 +60,7 @@ class _WorkMapState extends State<WorkMap> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
 
-    const rawWorkList = [
-      [
-        '이름',
-        ['시간', '장소'],
-      ],
-      [
-        '이름',
-        ['시간', '장소'],
-      ],
-      [
-        '이름',
-        ['시간', '장소'],
-      ],
-      [
-        '이름',
-        ['시간', '장소'],
-      ],
-    ];
+    const rawWorkList = <List<dynamic>>[];
     final filteredWorkList = searchQuery.isEmpty
         ? rawWorkList
         : rawWorkList

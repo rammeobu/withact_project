@@ -1,64 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/models/recruit_data_structures.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 import '../../future&component/layout/basic_layout.dart';
 import 'apply_party_card/recruit_card.dart';
 
-class RecruitList extends StatefulWidget {
-  final List<RecruitItem> apply;
-  RecruitList({super.key, List<RecruitItem>? apply})
-    : apply =
-          apply ??
-          [
-            const RecruitItem(
-              name: '활동 1',
-              timePlace: ['시간', '장소'],
-              applyStatus: '지원 중',
-              poster: '',
-            ),
-            const RecruitItem(
-              name: '활동 2',
-              timePlace: ['시간', '장소'],
-              applyStatus: '지원 중',
-              poster: '',
-            ),
-            const RecruitItem(
-              name: '활동 3',
-              timePlace: ['시간', '장소'],
-              applyStatus: '지원 중',
-              poster: '',
-            ),
-            const RecruitItem(
-              name: '활동 4',
-              timePlace: ['시간', '장소'],
-              applyStatus: '지원 중',
-              poster: '',
-            ),
-            const RecruitItem(
-              name: '활동 5',
-              timePlace: ['시간', '장소'],
-              applyStatus: '지원 중',
-              poster: '',
-            ),
-            const RecruitItem(
-              name: '활동 6',
-              timePlace: ['시간', '장소'],
-              applyStatus: '지원 중',
-              poster: '',
-            ),
-            const RecruitItem(
-              name: '활동 7',
-              timePlace: ['시간', '장소'],
-              applyStatus: '지원 중',
-              poster: '',
-            ),
-          ];
+class RecruitList extends ConsumerStatefulWidget {
+  final List<RecruitItem>? apply;
+  const RecruitList({super.key, this.apply});
 
   @override
-  State<RecruitList> createState() => _RecruitListState();
+  ConsumerState<RecruitList> createState() => _RecruitListState();
 }
 
-class _RecruitListState extends State<RecruitList> {
+class _RecruitListState extends ConsumerState<RecruitList> {
+  List<RecruitItem> _recruitList = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _recruitList = widget.apply ?? [];
+    _fetchRecruitList();
+  }
+
+  Future<void> _fetchRecruitList() async {
+    try {
+      final result = await ref.read(recruitRepositoryProvider).getRecruitList();
+      if (mounted) setState(() {
+        _recruitList = result;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -66,45 +45,56 @@ class _RecruitListState extends State<RecruitList> {
       title: '모집 목록',
       body: Padding(
         padding: const EdgeInsets.only(top: 13),
-        child: Center(
-          child: Scrollbar(
-            thumbVisibility: true,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: widget.apply
-                    .map(
-                      (apply) => RepaintBoundary(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: screenWidth * 0.024,
-                          ),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: screenWidth * 0.85,
-                            ),
-                            child: RecruitCard(
-                              name: apply.name,
-                              timePlace: apply.timePlace,
-                              applyStatus: apply.applyStatus,
-                              poster: apply.poster,
-                              onDetailButtonPressed: () =>
-                                  onDetailButtonPressed(apply.name),
-                              onAnnouncementManageButtonPressed: () =>
-                                  onAnnouncementManageButtonPressed(apply.name),
-                              onCheckApplicantButtonPressed: () =>
-                                  onCheckApplicantButtonPressed(apply.name),
-                            ),
-                          ),
-                        ),
+        child: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(color: appPrimaryColor),
+              )
+            : _recruitList.isEmpty
+                ? Center(
+                    child: Text(
+                      '모집 내역이 없습니다.',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: screenWidth * 0.041,
                       ),
-                    )
-                    .toList(),
-              ),
-            ),
-          ),
-        ),
+                    ),
+                  )
+                : SizedBox(
+                    height: 506,
+                    child: Scrollbar(
+                      thumbVisibility: true,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _recruitList.length,
+                        itemBuilder: (context, index) {
+                          final apply = _recruitList[index];
+                          return RepaintBoundary(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: screenWidth * 0.024,
+                              ),
+                              child: Container(
+                                width: screenWidth * 0.85,
+                                child: RecruitCard(
+                                  name: apply.name,
+                                  timePlace: apply.timePlace ?? [],
+                                  applyStatus: apply.applyStatus ?? '',
+                                  poster: apply.poster,
+                                  onDetailButtonPressed: () =>
+                                      onDetailButtonPressed(apply.name),
+                                  onAnnouncementManageButtonPressed: () =>
+                                      onAnnouncementManageButtonPressed(
+                                          apply.name),
+                                  onCheckApplicantButtonPressed: () =>
+                                      onCheckApplicantButtonPressed(apply.name),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
       ),
       bottomNavigationBar: true,
     );

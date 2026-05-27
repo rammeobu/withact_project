@@ -67,7 +67,7 @@ class RecruitCardMiddle extends StatelessWidget {
                         ),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(timePlace[0]),
+                          child: Text(timePlace.isNotEmpty ? timePlace[0] : ''),
                         ),
                       ),
                     ],
@@ -87,7 +87,7 @@ class RecruitCardMiddle extends StatelessWidget {
                         ),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(timePlace[1]),
+                          child: Text(timePlace.length > 1 ? timePlace[1] : ''),
                         ),
                       ),
                     ],

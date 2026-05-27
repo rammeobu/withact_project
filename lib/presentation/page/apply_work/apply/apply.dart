@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:party_maker/app.dart';
 import '../../future&component/component/when_to_meet.dart';
 import '../../future&component/layout/basic_layout.dart';
 import 'apply_body1.dart';
@@ -146,7 +147,29 @@ class _ApplyState extends State<Apply> {
         return;
       }
     }
-    // TODO: 지원 성공 여부에 따른 성공/실패 라우트 구현 (백엔드와 협의 필요)
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: const Text('지원하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              const bool succeeded = true;
+              Navigator.pushNamed(
+                context,
+                succeeded ? PageRoutes.applySuccess : PageRoutes.applyFail,
+              );
+            },
+            child: const Text('예'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('아니오'),
+          ),
+        ],
+      ),
+    );
   }
 
   void onLoadButtonPressed(int i) {

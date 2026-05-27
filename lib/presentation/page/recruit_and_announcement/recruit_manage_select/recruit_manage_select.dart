@@ -10,24 +10,9 @@ class RecruitManageSelect extends StatelessWidget {
     : recruitList =
           recruitList ??
           [
-            const RecruitItem(
-              name: '활동 1',
-              timePlace: ['시간', '장소'],
-              applyStatus: '지원 중',
-              poster: '',
-            ),
-            const RecruitItem(
-              name: '활동 2',
-              timePlace: ['시간', '장소'],
-              applyStatus: '지원 중',
-              poster: '',
-            ),
-            const RecruitItem(
-              name: '활동 3',
-              timePlace: ['시간', '장소'],
-              applyStatus: '지원 중',
-              poster: '',
-            ),
+            const RecruitItem(id: 0, name: '활동 1'),
+            const RecruitItem(id: 0, name: '활동 2'),
+            const RecruitItem(id: 0, name: '활동 3'),
           ];
 
   @override

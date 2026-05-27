@@ -1,7 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/models/find_data_structures.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/etc/find_work/work_card_find.dart';
 import 'package:party_maker/presentation/page/future&component/layout/basic_layout.dart';
 
@@ -29,6 +31,8 @@ class _FindWorkState extends ConsumerState<FindWork> {
   late ScrollController scrollController;
   late TextEditingController workSearchController;
   late FocusNode workSearchFocusNode;
+  late List<WorkItem> _workList;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -36,6 +40,20 @@ class _FindWorkState extends ConsumerState<FindWork> {
     scrollController = ScrollController();
     workSearchController = TextEditingController();
     workSearchFocusNode = FocusNode();
+    _workList = widget.workList;
+    _fetchWorkList();
+  }
+
+  Future<void> _fetchWorkList() async {
+    try {
+      final result = await ref.read(findRepositoryProvider).getWorkList([]);
+      if (mounted) setState(() {
+        _workList = result;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -50,53 +68,68 @@ class _FindWorkState extends ConsumerState<FindWork> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final workName = ref.watch(findWorkSearchProvider);
-    final searchedList = widget.workList
+    final searchedList = _workList
         .where((work) => workName.isEmpty || work.workName.contains(workName))
         .toList();
 
     return BasicLayout(
       title: '활동 찾기',
-      body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: screenWidth * 0.036,
-                top: 13,
-                right: screenWidth * 0.036,
-              ),
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  children: [
-                    FindWorkBody1(
-                      onWorkSearch: onWorkSearch,
-                      onFilterApplyButtonPressed: onFilterButtonPressed,
-                      workName: workName,
-                      workCount: searchedList.length,
-                      searchController: workSearchController,
-                      searchFocusNode: workSearchFocusNode,
-                    ),
-                    Column(
-                      children: searchedList.map<Widget>((work) {
-                        return RepaintBoundary(
-                          child: WorkCardFind(
-                            workName: work.workName,
-                            timePlace: [work.time, work.place],
-                            onWorkInformationButtonPressed: () =>
-                                onWorkInformationButtonPressed(work.workName),
-                            onFindPartyButtonPressed: () =>
-                                onFindPartyButtonPressed(work.workName),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
+      body: ListView.builder(
+        controller: scrollController,
+        padding: EdgeInsets.only(
+          left: screenWidth * 0.036,
+          top: 13,
+          right: screenWidth * 0.036,
+        ),
+        itemCount: (_isLoading || searchedList.isEmpty) ? 1 : searchedList.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FindWorkBody1(
+                  onWorkSearch: onWorkSearch,
+                  onFilterApplyButtonPressed: onFilterButtonPressed,
+                  workName: workName,
+                  workCount: searchedList.length,
+                  searchController: workSearchController,
+                  searchFocusNode: workSearchFocusNode,
                 ),
-              ),
+                if (_isLoading)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40),
+                    child: Center(
+                      child: CircularProgressIndicator(color: appPrimaryColor),
+                    ),
+                  )
+                else if (searchedList.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    child: Center(
+                      child: Text(
+                        '활동이 없습니다.',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: screenWidth * 0.041,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          }
+          final work = searchedList[index - 1];
+          return RepaintBoundary(
+            child: WorkCardFind(
+              workName: work.workName,
+              timePlace: ['${work.startDate} ~ ${work.endDate}', work.location],
+              onWorkInformationButtonPressed: () =>
+                  onWorkInformationButtonPressed(work.workName),
+              onFindPartyButtonPressed: () =>
+                  onFindPartyButtonPressed(work.workName),
             ),
-          ),
-        ],
+          );
+        },
       ),
       bottomNavigationBar: true,
     );

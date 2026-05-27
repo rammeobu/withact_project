@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/future&component/layout/basic_layout.dart';
 
 class _SignUpPasswordMatchNotifier extends Notifier<bool> {
@@ -373,7 +374,7 @@ class _SignUpState extends ConsumerState<SignUp> {
     // TODO: 입력된 이메일이 유효한 경우 해당 이메일을 통한 인증 기능 구현 (백엔드와 협의 필요)
   }
 
-  void onSignUpCompleteButtonPressed() {
+  Future<void> onSignUpCompleteButtonPressed() async {
     final requiredFields = [
       (emailTextController, '이메일'),
       (passwordTextController, '비밀번호'),
@@ -404,6 +405,27 @@ class _SignUpState extends ConsumerState<SignUp> {
         ..showSnackBar(const SnackBar(content: Text('비밀번호가 일치하지 않습니다.')));
       return;
     }
-    // TODO: 회원 가입 완료 혹은 실패 페이지(작업 필요)로 이동하는 라우트 필요 (가입 완료의 경우 해당 페이지 이후 대기 화면으로 이동하는 버튼이 존재해야 하며, 실패의 경우 네트워크 오류라면 네트워크 오류, 필수 입력 사항 미입력이라면 필수 입력 사항이 입력되지 않았다는 오류 메시지 출력 필요)
+    try {
+      await ref.read(accountRepositoryProvider).postSignUp(
+        emailTextController.text.trim(),
+        passwordTextController.text,
+        nameTextController.text.trim(),
+        belongTextController.text.trim(),
+        majorTextController.text.trim(),
+        techTextController.text.trim(),
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(const SnackBar(content: Text('회원가입이 완료되었습니다.')));
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
   }
 }

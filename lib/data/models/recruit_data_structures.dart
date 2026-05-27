@@ -1,15 +1,24 @@
 class RecruitItem {
+  final int id;
   final String name;
-  final List<String> timePlace;
-  final String applyStatus;
-  final String poster;
+  final List<String>? timePlace;
+  final String? applyStatus;
+  final String? poster;
 
   const RecruitItem({
+    required this.id,
     required this.name,
-    required this.timePlace,
-    required this.applyStatus,
-    required this.poster,
+    this.timePlace,
+    this.applyStatus,
+    this.poster,
   });
+
+  factory RecruitItem.fromJson(Map<String, dynamic> json) {
+    return RecruitItem(
+      id: json['id'],
+      name: json['title'] ?? '',
+    );
+  }
 }
 
 class RecruitAnnouncementDataStructure {
@@ -24,6 +33,17 @@ class RecruitAnnouncementDataStructure {
     required this.partyNameIntroduction,
     this.preferences,
   });
+
+  factory RecruitAnnouncementDataStructure.fromJson(Map<String, dynamic> json) {
+    final roles = (json['roles'] as List<dynamic>?) ?? [];
+    final positionList =
+        roles.map((r) => r['roleName']?.toString() ?? '').toList();
+    return RecruitAnnouncementDataStructure(
+      workName: json['title'] ?? '',
+      partyNameIntroduction: json['content'] ?? '',
+      position: positionList,
+    );
+  }
 }
 
 class AnnouncementEditDataStructure {

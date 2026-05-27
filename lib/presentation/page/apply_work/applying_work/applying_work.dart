@@ -24,8 +24,9 @@ class ApplyingWorkNotifier
   void toggleEdit(int i, String updatedContent) {
     final newMode = List<bool>.from(state.editingMode);
     final newProfile = List<String>.from(state.currentProfile);
-    if (newMode[i] && i > 0 && i < 3) {
-      newProfile[i - 1] = updatedContent;
+    if (newMode[i] && i < 2) {
+      while (newProfile.length <= i) newProfile.add('');
+      newProfile[i] = updatedContent;
     }
     newMode[i] = !newMode[i];
     state = (editingMode: newMode, currentProfile: newProfile);
@@ -68,7 +69,9 @@ class _ApplyingWorkState extends ConsumerState<ApplyingWork> {
     for (int i = 0; i < 4; i++) {
       if (i > 0 && i < 3) {
         _bodyTextControllers.add(
-          TextEditingController(text: widget.profile[i - 1]),
+          TextEditingController(
+            text: widget.profile.length > (i - 1) ? widget.profile[i - 1] : '',
+          ),
         );
       }
       _bodyScrollControllers.add(ScrollController());
@@ -226,13 +229,13 @@ class _ApplyingWorkState extends ConsumerState<ApplyingWork> {
 
   void onEditButtonPressed(int i) {
     final wasEditing = ref.read(applyingWorkProvider).editingMode[i];
-    final textContent = (i > 0 && i < 3)
-        ? _bodyTextControllers[i - 1].text
+    final textContent = i < _bodyTextControllers.length
+        ? _bodyTextControllers[i].text
         : '';
     ref.read(applyingWorkProvider.notifier).toggleEdit(i, textContent);
-    if (wasEditing && i > 0 && i < 3) {
-      if (_bodyScrollControllers[i].hasClients) {
-        _bodyScrollControllers[i].jumpTo(0.0);
+    if (wasEditing && i < 2) {
+      if (_bodyScrollControllers[i + 1].hasClients) {
+        _bodyScrollControllers[i + 1].jumpTo(0.0);
       }
     }
   }

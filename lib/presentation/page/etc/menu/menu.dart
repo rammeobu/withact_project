@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:party_maker/app.dart';
 import 'package:party_maker/core/constant.dart';
-import 'package:party_maker/data/models/find_data_structures.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_body1.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_body2.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_body3.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_body4.dart';
+import 'package:party_maker/data/models/find_data_structures.dart';
 import 'package:party_maker/presentation/page/future&component/layout/basic_layout.dart';
 
 class Menu extends StatefulWidget {
@@ -41,10 +41,12 @@ class _MenuState extends State<Menu> {
                   color: appPrimaryColor,
                 ),
         ),
-        SizedBox(width: screenWidth * 0.049),
-        Text(
-          '${widget.name} 님',
-          style: const TextStyle(fontWeight: FontWeight.w600),
+        Padding(
+          padding: EdgeInsets.only(left: screenWidth * 0.049),
+          child: Text(
+            '${widget.name} 님',
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
         ),
       ],
       actions: [
@@ -62,33 +64,6 @@ class _MenuState extends State<Menu> {
           ),
           child: Text(
             '로그아웃',
-            style: TextStyle(
-              fontSize: screenWidth * 0.041,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-        ),
-        SizedBox(width: screenWidth * 0.024),
-        OutlinedButton(
-          onPressed: () {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              PageRoutes.login,
-              (route) => false,
-            );
-          },
-          style: OutlinedButton.styleFrom(
-            padding: EdgeInsets.zero,
-            minimumSize: const Size(0, 0),
-            fixedSize: Size(screenWidth * 0.195, 41),
-            side: const BorderSide(width: 0.0, color: Colors.white),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.024),
-            ),
-            foregroundColor: Colors.white,
-          ),
-          child: Text(
-            '테스트',
             style: TextStyle(
               fontSize: screenWidth * 0.041,
               fontWeight: FontWeight.w300,
@@ -132,7 +107,29 @@ class _MenuState extends State<Menu> {
   }
 
   void onLogoutButtonPressed() {
-    // TODO: 로그아웃 화면 구현 필요. 로그아웃 화면 구현 이후 로그아웃 작업 처리
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: const Text('로그아웃 하시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                PageRoutes.login,
+                (route) => false,
+              );
+            },
+            child: const Text('예'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('아니오'),
+          ),
+        ],
+      ),
+    );
   }
 
   void onPersonalInformationManagementMenuSelect() {
@@ -152,9 +149,7 @@ class _MenuState extends State<Menu> {
     );
   }
 
-  void onRecentlySearchedWorkMenuSelect() {
-    // TODO: 최근 검색한 활동을 기억했다가(세션 정보 등에 기록될 수 있음) 해당 메뉴 실행 시 최근 검색한 활동 n개(기준은 기한이 아닌 활동 개수 기준) 표시하는 기능 구현
-  }
+  void onRecentlySearchedWorkMenuSelect() {}
 
   void onParticipatingWorkMenuSelect() {
     Navigator.pushNamed(

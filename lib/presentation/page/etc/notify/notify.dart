@@ -101,28 +101,42 @@ class _NotifyState extends ConsumerState<Notify> {
                     ),
                     NotifyPositionSelect(position: widget.position),
                     const SizedBox(height: 13),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: notifications.map<Widget>((notificationItem) {
-                        return RepaintBoundary(
-                          child: Dismissible(
-                            key: Key(
-                              '${notificationItem.title}_${notificationItem.content}',
+                    notifications.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 40),
+                            child: Center(
+                              child: Text(
+                                '알림이 없습니다.',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: screenWidth * 0.041,
+                                ),
+                              ),
                             ),
-                            direction: DismissDirection.startToEnd,
-                            onDismissed: (direction) {
-                              ref
-                                  .read(notifyListProvider.notifier)
-                                  .dismiss(notificationItem);
-                            },
-                            child: NotifyBody1(
-                              notification: notificationItem,
-                              onNotificationTap: onNotificationTap,
-                            ),
+                          )
+                        : Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children:
+                                notifications.map<Widget>((notificationItem) {
+                              return RepaintBoundary(
+                                child: Dismissible(
+                                  key: Key(
+                                    '${notificationItem.title}_${notificationItem.content}',
+                                  ),
+                                  direction: DismissDirection.startToEnd,
+                                  onDismissed: (direction) {
+                                    ref
+                                        .read(notifyListProvider.notifier)
+                                        .dismiss(notificationItem);
+                                  },
+                                  child: NotifyBody1(
+                                    notification: notificationItem,
+                                    onNotificationTap: onNotificationTap,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
                           ),
-                        );
-                      }).toList(),
-                    ),
                   ],
                 ),
               ),

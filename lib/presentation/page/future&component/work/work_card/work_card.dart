@@ -86,8 +86,8 @@ class WorkCardBasic extends StatelessWidget {
                         1: const FlexColumnWidth(),
                       },
                       children: [
-                        workDetailRow('일시', timePlace[0], screenWidth),
-                        workDetailRow('장소', timePlace[1], screenWidth),
+                        workDetailRow('일시', timePlace.isNotEmpty ? timePlace[0] : '', screenWidth),
+                        workDetailRow('장소', timePlace.length > 1 ? timePlace[1] : '', screenWidth),
                       ],
                     ),
                   ),
@@ -226,8 +226,8 @@ class WorkCardApply extends StatelessWidget {
                               1: const FlexColumnWidth(),
                             },
                             children: [
-                              workDetailRow('일시', timePlace[0], screenWidth),
-                              workDetailRow('장소', timePlace[1], screenWidth),
+                              workDetailRow('일시', timePlace.isNotEmpty ? timePlace[0] : '', screenWidth),
+                              workDetailRow('장소', timePlace.length > 1 ? timePlace[1] : '', screenWidth),
                             ],
                           ),
                         ),

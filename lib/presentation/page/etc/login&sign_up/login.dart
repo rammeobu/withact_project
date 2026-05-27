@@ -1,16 +1,18 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 
 import '../../../../app.dart';
 
-class Login extends StatefulWidget {
+class Login extends ConsumerStatefulWidget {
   const Login({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  ConsumerState<Login> createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends ConsumerState<Login> {
   late TextEditingController emailTextController;
   late TextEditingController passwordTextController;
 
@@ -232,7 +234,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void onLoginButtonPressed() {
+  Future<void> onLoginButtonPressed() async {
     if (emailTextController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -252,13 +254,24 @@ class _LoginState extends State<Login> {
         ..showSnackBar(const SnackBar(content: Text('비밀번호를 입력해 주세요.')));
       return;
     }
-    const bool succeeded = true;
-    if (succeeded) {
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        PageRoutes.home,
-        (route) => false,
+    try {
+      await ref.read(accountRepositoryProvider).postLogin(
+        emailTextController.text.trim(),
+        passwordTextController.text,
       );
+      if (mounted) {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          PageRoutes.home,
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(e.toString())));
+      }
     }
   }
 

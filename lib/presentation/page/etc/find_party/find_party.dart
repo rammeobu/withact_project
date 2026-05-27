@@ -1,9 +1,11 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/data/models/find_data_structures.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/etc/find_party/find_party_body1.dart';
 import 'package:party_maker/presentation/page/etc/find_party/party_card.dart';
-import 'package:party_maker/data/models/find_data_structures.dart';
 import 'package:party_maker/presentation/page/future&component/layout/basic_layout.dart';
 
 class _FindPartySearchNotifier extends Notifier<String> {
@@ -29,6 +31,8 @@ class _FindPartyState extends ConsumerState<FindParty> {
   late ScrollController workCardController;
   late TextEditingController workSearchController;
   late FocusNode workSearchFocusNode;
+  late List<PartyItem> _partyList;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -37,6 +41,20 @@ class _FindPartyState extends ConsumerState<FindParty> {
     workCardController = ScrollController();
     workSearchController = TextEditingController();
     workSearchFocusNode = FocusNode();
+    _partyList = widget.partyList;
+    _fetchPartyList();
+  }
+
+  Future<void> _fetchPartyList() async {
+    try {
+      final result = await ref.read(findRepositoryProvider).getPartyList([]);
+      if (mounted) setState(() {
+        _partyList = result;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -52,56 +70,70 @@ class _FindPartyState extends ConsumerState<FindParty> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final workName = ref.watch(findPartySearchProvider);
-    final filteredParties = widget.partyList
-        .where((party) => workName.isEmpty || party.workName.contains(workName))
+    final filteredParties = _partyList
+        .where((party) => workName.isEmpty || party.partyName.contains(workName))
         .toList();
 
     return BasicLayout(
       title: '파티 찾기',
-      body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: screenWidth * 0.036,
-                top: 13,
-                right: screenWidth * 0.036,
-              ),
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  children: [
-                    FindPartyBody1(
-                      onWorkSearch: onWorkSearch,
-                      workName: workName,
-                      partyList: filteredParties,
-                      searchController: workSearchController,
-                      searchFocusNode: workSearchFocusNode,
-                    ),
-                    Column(
-                      children: filteredParties.map<Widget>((party) {
-                        return RepaintBoundary(
-                          child: PartyCard(
-                            partyName: party.partyName,
-                            workName: party.workName,
-                            onPartyLeaderInformationCheckButtonPressed: () =>
-                                onPartyLeaderInformationCheckButtonPressed(
-                                  party,
-                                ),
-                            onRecruitAnnouncementCheckButtonPressed: () =>
-                                onRecruitAnnouncementCheckButtonPressed(party),
-                            onApplyButtonPressed: () =>
-                                onApplyButtonPressed(party),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
+      body: ListView.builder(
+        controller: scrollController,
+        padding: EdgeInsets.only(
+          left: screenWidth * 0.036,
+          top: 13,
+          right: screenWidth * 0.036,
+        ),
+        itemCount: (_isLoading || filteredParties.isEmpty)
+            ? 1
+            : filteredParties.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FindPartyBody1(
+                  onWorkSearch: onWorkSearch,
+                  workName: workName,
+                  partyList: filteredParties,
+                  searchController: workSearchController,
+                  searchFocusNode: workSearchFocusNode,
                 ),
-              ),
+                if (_isLoading)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40),
+                    child: Center(
+                      child: CircularProgressIndicator(color: appPrimaryColor),
+                    ),
+                  )
+                else if (filteredParties.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    child: Center(
+                      child: Text(
+                        '파티가 없습니다.',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: screenWidth * 0.041,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          }
+          final party = filteredParties[index - 1];
+          return RepaintBoundary(
+            child: PartyCard(
+              partyName: party.partyName,
+              workName: party.workName,
+              onPartyLeaderInformationCheckButtonPressed: () =>
+                  onPartyLeaderInformationCheckButtonPressed(party),
+              onRecruitAnnouncementCheckButtonPressed: () =>
+                  onRecruitAnnouncementCheckButtonPressed(party),
+              onApplyButtonPressed: () => onApplyButtonPressed(party),
             ),
-          ),
-        ],
+          );
+        },
       ),
       bottomNavigationBar: true,
     );
@@ -116,17 +148,6 @@ class _FindPartyState extends ConsumerState<FindParty> {
     });
     ref.read(findPartySearchProvider.notifier).state =
         workSearchController.text;
-  }
-
-  void onFilterButtonPressed() {
-    Navigator.pushNamed(
-      context,
-      PageRoutes.findPartyFilter,
-      arguments: {
-        'filterData': <FilterItem>[],
-        'detailCategory': <String, List<String>>{},
-      },
-    );
   }
 
   void onPartyLeaderInformationCheckButtonPressed(PartyItem party) {

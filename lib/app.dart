@@ -299,7 +299,7 @@ class App extends ConsumerWidget {
         );
 
       case PageRoutes.personalInfo:
-        destinationPage = PersonalInfo(email: getArg(args, 'email', ''));
+        destinationPage = PersonalInfo(loginId: getArg(args, 'loginId', ''));
 
       case PageRoutes.recruitManageSelect:
         destinationPage = RecruitManageSelect(
