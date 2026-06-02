@@ -219,6 +219,7 @@ class _AnnouncementEditState extends ConsumerState<AnnouncementEdit> {
     staticTextControllers[2].clear();
 
     Future.delayed(const Duration(milliseconds: 75), () {
+      if (!mounted) return;
       if (scrollControllers[1].hasClients) {
         scrollControllers[1].animateTo(
           scrollControllers[1].position.maxScrollExtent,
@@ -237,6 +238,7 @@ class _AnnouncementEditState extends ConsumerState<AnnouncementEdit> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(milliseconds: 50));
+      if (!mounted) return;
       if (scrollControllers[1].hasClients) {
         scrollControllers[1].jumpTo(currentOffset);
         scrollControllers[1].animateTo(
@@ -281,6 +283,7 @@ class _AnnouncementEditState extends ConsumerState<AnnouncementEdit> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(milliseconds: 10));
+      if (!mounted) return;
 
       if (ref.read(announcementEditProvider).position.isEmpty) {
         if (scrollControllers[0].hasClients) {

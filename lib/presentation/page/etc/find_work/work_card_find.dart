@@ -66,9 +66,8 @@ class WorkCardFind extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const SizedBox(height: 6),
                         Padding(
-                          padding: EdgeInsets.only(right: screenWidth * 0.036),
+                          padding: EdgeInsets.only(top: 6, right: screenWidth * 0.036),
                           child: Table(
                             border: TableBorder.all(
                               color: Colors.grey,

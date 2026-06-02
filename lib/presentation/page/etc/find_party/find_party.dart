@@ -173,6 +173,7 @@ class _FindPartyState extends ConsumerState<FindParty> {
         'partyNameIntroduction': party.partyName,
         'position': <String>[],
         'preferences': null,
+        'partyId': party.id,
       },
     );
   }

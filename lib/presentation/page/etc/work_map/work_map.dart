@@ -203,7 +203,7 @@ class _WorkMapState extends State<WorkMap> {
         final name = parts.join(' ');
         if (mounted && name.isNotEmpty) setState(() => locationName = name);
       }
-    } catch (e) {
+    } catch (_) {
       return;
     }
   }
@@ -238,7 +238,7 @@ class _WorkMapState extends State<WorkMap> {
         }
       }
       if (mounted) setState(() => searchQuery = query);
-    } catch (e) {
+    } catch (_) {
       if (mounted) setState(() => searchQuery = query);
     }
   }

@@ -11,12 +11,14 @@ class RecruitAnnouncement extends StatefulWidget {
   final List<String> position;
   final String workName;
   final String partyNameIntroduction;
+  final int partyId;
   const RecruitAnnouncement({
     super.key,
     this.preferences,
     required this.workName,
     required this.partyNameIntroduction,
     required this.position,
+    required this.partyId,
   });
 
   @override
@@ -74,11 +76,13 @@ class _RecruitAnnouncementState extends State<RecruitAnnouncement> {
                       preferences: widget.preferences,
                       scrollController: scrollControllers[3],
                     ),
-                    const SizedBox(height: 23),
-                    RecruitAnnouncementBody3(
-                      position: widget.position,
-                      primaryScrollController: scrollControllers[0],
-                      horizontalScrollController: scrollControllers[4],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 23),
+                      child: RecruitAnnouncementBody3(
+                        position: widget.position,
+                        primaryScrollController: scrollControllers[0],
+                        horizontalScrollController: scrollControllers[4],
+                      ),
                     ),
                   ],
                 ),
@@ -120,7 +124,11 @@ class _RecruitAnnouncementState extends State<RecruitAnnouncement> {
   }
 
   void onDisbandPartyButtonPressed() {
-    Navigator.pushNamed(context, PageRoutes.disbandDoubleCheck);
+    Navigator.pushNamed(
+      context,
+      PageRoutes.disbandDoubleCheck,
+      arguments: {'partyId': widget.partyId},
+    );
   }
 
   void onRecruitButtonPressed() {

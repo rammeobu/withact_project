@@ -166,12 +166,14 @@ class _WorkInformationState extends State<WorkInformation> {
                         ),
                       ),
                     ),
-                    WorkInformationBody2(
-                      position: widget.position,
-                      onPersonPressed: onPersonPressed,
-                      positionOccupy: widget.positionOccupy,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 17),
+                      child: WorkInformationBody2(
+                        position: widget.position,
+                        onPersonPressed: onPersonPressed,
+                        positionOccupy: widget.positionOccupy,
+                      ),
                     ),
-                    const SizedBox(height: 17),
                   ],
                 ),
               ),

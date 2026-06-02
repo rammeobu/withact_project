@@ -18,12 +18,19 @@ class RecruitList extends ConsumerStatefulWidget {
 class _RecruitListState extends ConsumerState<RecruitList> {
   List<RecruitItem> _recruitList = [];
   bool _isLoading = true;
+  final ScrollController _listScrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _recruitList = widget.apply ?? [];
     _fetchRecruitList();
+  }
+
+  @override
+  void dispose() {
+    _listScrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchRecruitList() async {
@@ -63,7 +70,9 @@ class _RecruitListState extends ConsumerState<RecruitList> {
                     height: 506,
                     child: Scrollbar(
                       thumbVisibility: true,
+                      controller: _listScrollController,
                       child: ListView.builder(
+                        controller: _listScrollController,
                         scrollDirection: Axis.horizontal,
                         itemCount: _recruitList.length,
                         itemBuilder: (context, index) {
@@ -84,7 +93,7 @@ class _RecruitListState extends ConsumerState<RecruitList> {
                                       onDetailButtonPressed(apply.name),
                                   onAnnouncementManageButtonPressed: () =>
                                       onAnnouncementManageButtonPressed(
-                                          apply.name),
+                                          apply.name, apply.id),
                                   onCheckApplicantButtonPressed: () =>
                                       onCheckApplicantButtonPressed(apply.name),
                                 ),
@@ -115,7 +124,7 @@ class _RecruitListState extends ConsumerState<RecruitList> {
     );
   }
 
-  void onAnnouncementManageButtonPressed(String name) {
+  void onAnnouncementManageButtonPressed(String name, int partyId) {
     Navigator.pushNamed(
       context,
       PageRoutes.recruitAnnouncement,
@@ -124,6 +133,7 @@ class _RecruitListState extends ConsumerState<RecruitList> {
         'partyNameIntroduction': '',
         'position': <String>[],
         'preferences': null,
+        'partyId': partyId,
       },
     );
   }

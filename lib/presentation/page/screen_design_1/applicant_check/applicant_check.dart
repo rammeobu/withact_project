@@ -68,6 +68,7 @@ class ApplicantCheck extends ConsumerWidget {
                               'name': applicantData.name,
                               'introduction': '',
                               'spec': applicantData.skill ?? '',
+                              'applicationId': applicantData.id,
                             },
                           );
                         },

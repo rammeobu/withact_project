@@ -37,7 +37,9 @@ class ApplicantProfileBody1 extends StatelessWidget {
                 padding: EdgeInsets.all(screenWidth * 0.019),
                 child: Scrollbar(
                   thumbVisibility: true,
+                  controller: scrollController,
                   child: SingleChildScrollView(
+                    controller: scrollController,
                     child: Text(
                       content,
                       style: TextStyle(fontSize: screenWidth * 0.036),

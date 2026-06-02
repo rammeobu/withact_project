@@ -49,7 +49,7 @@ class BasicLayout extends StatelessWidget {
                 foregroundColor: Colors.white,
                 elevation: 0,
                 title: (needTitleExpand != null && needTitleExpand!)
-                    ? Row(children: needWidget!)
+                    ? Row(children: needWidget ?? [])
                     : Text(
                         title ?? '',
                         style: GoogleFonts.notoSansKr(

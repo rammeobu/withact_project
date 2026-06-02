@@ -11,6 +11,7 @@ import 'presentation/page/etc/work_map/work_map.dart';
 import 'presentation/page/etc/menu/menu.dart';
 import 'presentation/page/etc/notify/notify.dart';
 import 'presentation/page/screen_design_1/work_information/work_information.dart';
+import 'presentation/page/apply_work/apply/apply.dart';
 import 'presentation/page/apply_work/work_information_apply/work_information_apply.dart';
 import 'presentation/page/apply_work/apply_success_fail/apply_success/apply_success.dart';
 import 'presentation/page/apply_work/apply_success_fail/apply_fail/apply_fail.dart';
@@ -67,6 +68,7 @@ class PageRoutes {
   static const applicantCheck = '/applicant_check';
   static const applicantProfile = '/applicant_profile';
 
+  static const apply = '/apply';
   static const applyList = '/apply_list';
   static const applyingWork = '/applying_work';
 
@@ -185,8 +187,15 @@ class App extends ConsumerWidget {
           name: getArg(args, 'name', ''),
           introduction: getArg(args, 'introduction', ''),
           spec: getArg(args, 'spec', ''),
+          applicationId: getArg(args, 'applicationId', 0),
         );
 
+      case PageRoutes.apply:
+        destinationPage = Apply(
+          workName: getArg(args, 'workName', ''),
+          profile: args?['profile'] as List<String>?,
+          poster: args?['poster'] as String?,
+        );
       case PageRoutes.applyList:
         destinationPage = ApplyList(apply: args?['apply'] as List<ApplyItem>?);
       case PageRoutes.applyingWork:
@@ -214,6 +223,7 @@ class App extends ConsumerWidget {
           partyNameIntroduction: getArg(args, 'partyNameIntroduction', ''),
           position: getArg(args, 'position', <String>[]),
           preferences: args?['preferences'] as List<String>?,
+          partyId: getArg(args, 'partyId', 0),
         );
       case PageRoutes.announcementEdit:
         destinationPage = AnnouncementEdit(
@@ -223,7 +233,9 @@ class App extends ConsumerWidget {
           preferences: args?['preferences'] as List<String>?,
         );
       case PageRoutes.disbandDoubleCheck:
-        destinationPage = const DisbandDoubleCheck();
+        destinationPage = DisbandDoubleCheck(
+          partyId: getArg(args, 'partyId', 0),
+        );
       case PageRoutes.disbandSuccess:
         destinationPage = const DisbandSuccess();
       case PageRoutes.disbandFail:

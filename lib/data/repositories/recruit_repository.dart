@@ -9,10 +9,10 @@ class RecruitRepository {
     try {
       final data = await client.get('/api/Party/v1');
       return (data as List<dynamic>)
-          .map((e) => RecruitItem.fromJson(e as Map<String, dynamic>))
+          .map((item) => RecruitItem.fromJson(item as Map<String, dynamic>))
           .toList();
-    } catch (_) {
-      throw Exception('모집 목록 조회 실패');
+    } catch (e) {
+      throw Exception('모집 목록 조회 실패: $e');
     }
   }
 
@@ -21,16 +21,16 @@ class RecruitRepository {
       final data = await client.get('/api/Party/v1/$id');
       return RecruitAnnouncementDataStructure.fromJson(
           data as Map<String, dynamic>);
-    } catch (_) {
-      throw Exception('모집 공고 조회 실패');
+    } catch (e) {
+      throw Exception('모집 공고 조회 실패: $e');
     }
   }
 
   Future<void> postWork(WorkRecruitDataStructure workData) async {
     try {
       await client.post('/api/Party/v1', {});
-    } catch (_) {
-      throw Exception('모집 공고 작성 실패');
+    } catch (e) {
+      throw Exception('모집 공고 작성 실패: $e');
     }
   }
 
@@ -44,8 +44,8 @@ class RecruitRepository {
   Future<void> deleteParty(String id) async {
     try {
       await client.delete('/api/Party/v1/$id');
-    } catch (_) {
-      throw Exception('파티 삭제 실패');
+    } catch (e) {
+      throw Exception('파티 삭제 실패: $e');
     }
   }
 }

@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 import '../../future&component/component/when_to_meet.dart';
 import '../../future&component/layout/basic_layout.dart';
 import 'applicant_profile_body1.dart';
 import 'applicant_profile_footer.dart';
 
-class ApplicantProfile extends StatefulWidget {
+class ApplicantProfile extends ConsumerStatefulWidget {
   final String name;
   final String introduction;
   final String spec;
+  final int applicationId;
   const ApplicantProfile({
     super.key,
     required this.name,
     required this.introduction,
     required this.spec,
+    required this.applicationId,
   });
 
   @override
-  State<ApplicantProfile> createState() => _ApplicantProfileState();
+  ConsumerState<ApplicantProfile> createState() => _ApplicantProfileState();
 }
 
-class _ApplicantProfileState extends State<ApplicantProfile> {
+class _ApplicantProfileState extends ConsumerState<ApplicantProfile> {
   late ScrollController scrollController;
   late ScrollController whenToMeetOuterScrollController;
   late ScrollController whenToMeetScrollController;
@@ -121,28 +125,50 @@ class _ApplicantProfileState extends State<ApplicantProfile> {
     );
   }
 
-  void onAcceptButtonPressed() {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text('${widget.name} 지원자 수락 완료'),
-          backgroundColor: const Color(0xFF1AB97A),
-        ),
-      );
-    Navigator.pop(context);
+  Future<void> onAcceptButtonPressed() async {
+    try {
+      await ref.read(applyRepositoryProvider).putApprove(widget.applicationId);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text('${widget.name} 지원자 수락 완료'),
+              backgroundColor: const Color(0xFF1AB97A),
+            ),
+          );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
   }
 
-  void onRejectButtonPressed() {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text('${widget.name} 지원자 거절 완료'),
-          backgroundColor: const Color(0xFFF34343),
-        ),
-      );
-    Navigator.pop(context);
+  Future<void> onRejectButtonPressed() async {
+    try {
+      await ref.read(applyRepositoryProvider).putReject(widget.applicationId);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text('${widget.name} 지원자 거절 완료'),
+              backgroundColor: const Color(0xFFF34343),
+            ),
+          );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
   }
 
   void onGoBackApplicantListButtonPressed() {

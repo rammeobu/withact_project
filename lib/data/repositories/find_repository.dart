@@ -9,10 +9,10 @@ class FindRepository {
     try {
       final data = await client.get('/api/activities/v1');
       return (data as List<dynamic>)
-          .map((e) => WorkItem.fromJson(e as Map<String, dynamic>))
+          .map((item) => WorkItem.fromJson(item as Map<String, dynamic>))
           .toList();
-    } catch (_) {
-      throw Exception('활동 목록 불러오기 실패');
+    } catch (e) {
+      throw Exception('활동 목록 불러오기 실패: $e');
     }
   }
 
@@ -20,10 +20,10 @@ class FindRepository {
     try {
       final data = await client.get('/api/Party/v1');
       return (data as List<dynamic>)
-          .map((e) => PartyItem.fromJson(e as Map<String, dynamic>))
+          .map((item) => PartyItem.fromJson(item as Map<String, dynamic>))
           .toList();
-    } catch (_) {
-      throw Exception('파티 목록 불러오기 실패');
+    } catch (e) {
+      throw Exception('파티 목록 불러오기 실패: $e');
     }
   }
 
@@ -31,8 +31,8 @@ class FindRepository {
     try {
       final data = await client.get('/api/activities/v1/$id');
       return data as Map<String, dynamic>;
-    } catch (_) {
-      throw Exception('활동 정보 불러오기 실패');
+    } catch (e) {
+      throw Exception('활동 정보 불러오기 실패: $e');
     }
   }
 

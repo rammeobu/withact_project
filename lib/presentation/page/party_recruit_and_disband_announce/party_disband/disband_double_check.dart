@@ -1,11 +1,14 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 
-class DisbandDoubleCheck extends StatelessWidget {
-  const DisbandDoubleCheck({super.key});
+class DisbandDoubleCheck extends ConsumerWidget {
+  final int partyId;
+  const DisbandDoubleCheck({super.key, required this.partyId});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -30,11 +33,13 @@ class DisbandDoubleCheck extends StatelessWidget {
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    const SizedBox(height: 23),
-                    Text(
-                      '정말로 파티를\n 해체하시겠습니까?',
-                      style: TextStyle(fontSize: screenWidth * 0.049),
-                      textAlign: TextAlign.center,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 23),
+                      child: Text(
+                        '정말로 파티를\n 해체하시겠습니까?',
+                        style: TextStyle(fontSize: screenWidth * 0.049),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ],
                 ),
@@ -46,7 +51,7 @@ class DisbandDoubleCheck extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 23),
                   child: OutlinedButton(
-                    onPressed: () => onDisbandConfirmButtonPressed(context),
+                    onPressed: () => onDisbandConfirmButtonPressed(context, ref),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.black,
                       minimumSize: Size(screenWidth * 0.365, 69),
@@ -68,7 +73,7 @@ class DisbandDoubleCheck extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 23),
                   child: OutlinedButton(
-                    onPressed: () => onDisbandCancelButtonPressed(context),
+                    onPressed: () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.black,
                       minimumSize: Size(screenWidth * 0.365, 69),
@@ -95,15 +100,20 @@ class DisbandDoubleCheck extends StatelessWidget {
     );
   }
 
-  void onDisbandConfirmButtonPressed(BuildContext context) {
-    const bool succeeded = true;
-    Navigator.pushNamed(
-      context,
-      succeeded ? PageRoutes.disbandSuccess : PageRoutes.disbandFail,
-    );
-  }
-
-  void onDisbandCancelButtonPressed(BuildContext context) {
-    Navigator.pop(context);
+  Future<void> onDisbandConfirmButtonPressed(
+      BuildContext context, WidgetRef ref) async {
+    bool succeeded = false;
+    try {
+      await ref
+          .read(recruitRepositoryProvider)
+          .deleteParty(partyId.toString());
+      succeeded = true;
+    } catch (_) {}
+    if (context.mounted) {
+      Navigator.pushNamed(
+        context,
+        succeeded ? PageRoutes.disbandSuccess : PageRoutes.disbandFail,
+      );
+    }
   }
 }

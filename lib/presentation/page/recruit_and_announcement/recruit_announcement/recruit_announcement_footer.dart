@@ -71,25 +71,27 @@ class RecruitAnnouncementFooter extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 11),
-          OutlinedButton(
-            onPressed: onRecruitButtonPressed,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFFF34343),
-              backgroundColor: Colors.white,
-              fixedSize: Size(screenWidth * 0.828, 59),
-              padding: EdgeInsets.zero,
-              side: const BorderSide(width: 0.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(screenWidth * 0.049),
+          Padding(
+            padding: const EdgeInsets.only(top: 11),
+            child: OutlinedButton(
+              onPressed: onRecruitButtonPressed,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFFF34343),
+                backgroundColor: Colors.white,
+                fixedSize: Size(screenWidth * 0.828, 59),
+                padding: EdgeInsets.zero,
+                side: const BorderSide(width: 0.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(screenWidth * 0.049),
+                ),
               ),
-            ),
-            child: Text(
-              '모집목록으로',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: screenWidth * 0.044,
-                fontWeight: FontWeight.w600,
+              child: Text(
+                '모집목록으로',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: screenWidth * 0.044,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

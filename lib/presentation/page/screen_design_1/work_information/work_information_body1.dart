@@ -65,7 +65,7 @@ class WorkInformationBody1 extends StatelessWidget {
             padding: EdgeInsets.only(left: screenWidth * 0.024),
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final double usableWidth = constraints.maxHeight - 16.0;
+                final double usableWidth = constraints.maxWidth - 16.0;
                 final double fontSize = dynamicFontSize(
                   usableWidth,
                   workOverview,

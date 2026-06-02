@@ -36,7 +36,8 @@ class MenuBody2 extends StatelessWidget {
           ),
         ),
         menuItem('최근 검색한 활동', screenWidth, recentlySearchedWorkMenuSelect),
-        menuItem('활동 찾기', screenWidth, participatingWorkMenuSelect),
+        menuItem('참여중인 활동', screenWidth, participatingWorkMenuSelect),
+        menuItem('활동 찾기', screenWidth, findWorkMenuSelect),
       ],
     );
   }

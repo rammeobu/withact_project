@@ -80,9 +80,6 @@ class WorkRecruitBody3 extends StatelessWidget {
                                 child: TextField(
                                   controller: textEditingControllers[i],
                                   textAlign: TextAlign.center,
-                                  onChanged: (pos) {
-                                    positions[i] = pos;
-                                  },
                                   decoration: InputDecoration(
                                     hintText: '직군',
                                     hintStyle: TextStyle(

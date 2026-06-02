@@ -30,11 +30,13 @@ class PartyExitDoubleCheck extends StatelessWidget {
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    const SizedBox(height: 23),
-                    Text(
-                      '정말로 파티를\n 탈퇴하시겠습니까?',
-                      style: TextStyle(fontSize: screenWidth * 0.049),
-                      textAlign: TextAlign.center,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 23),
+                      child: Text(
+                        '정말로 파티를\n 탈퇴하시겠습니까?',
+                        style: TextStyle(fontSize: screenWidth * 0.049),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ],
                 ),

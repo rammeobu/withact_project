@@ -173,13 +173,14 @@ class _WorkInformationApplyState extends State<WorkInformationApply> {
                       ),
                     ),
 
-                    WorkInformationApplyBody2(
-                      position: widget.position,
-                      onPersonPressed: onPersonPressed,
-                      positionOccupy: widget.positionOccupy,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 17),
+                      child: WorkInformationApplyBody2(
+                        position: widget.position,
+                        onPersonPressed: onPersonPressed,
+                        positionOccupy: widget.positionOccupy,
+                      ),
                     ),
-
-                    const SizedBox(height: 17),
                   ],
                 ),
               ),
@@ -230,10 +231,14 @@ class _WorkInformationApplyState extends State<WorkInformationApply> {
   }
 
   void onApplyButtonPressed() {
-    const bool succeeded = true;
     Navigator.pushNamed(
       context,
-      succeeded ? PageRoutes.applySuccess : PageRoutes.applyFail,
+      PageRoutes.apply,
+      arguments: {
+        'workName': widget.workName,
+        'profile': widget.leaderProfile,
+        'poster': widget.poster,
+      },
     );
   }
 }

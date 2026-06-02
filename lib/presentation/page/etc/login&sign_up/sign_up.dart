@@ -370,8 +370,62 @@ class _SignUpState extends ConsumerState<SignUp> {
     );
   }
 
-  void onEmailAuthButtonPressed() {
-    // TODO: 입력된 이메일이 유효한 경우 해당 이메일을 통한 인증 기능 구현 (백엔드와 협의 필요)
+  Future<void> onEmailAuthButtonPressed() async {
+    final email = emailTextController.text.trim();
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('이메일을 입력해 주세요.')));
+      return;
+    }
+    try {
+      await ref.read(accountRepositoryProvider).postEmailRequest(email);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+      return;
+    }
+    if (!mounted) return;
+    final codeController = TextEditingController();
+    final code = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        content: TextField(
+          controller: codeController,
+          decoration: const InputDecoration(hintText: '인증번호 6자리를 입력해 주세요.'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(dialogContext, codeController.text.trim()),
+            child: const Text('확인'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('취소'),
+          ),
+        ],
+      ),
+    );
+    codeController.dispose();
+    if (code == null || code.isEmpty) return;
+    try {
+      await ref.read(accountRepositoryProvider).postEmailVerify(email, code);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(const SnackBar(content: Text('이메일 인증이 완료되었습니다.')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
   }
 
   Future<void> onSignUpCompleteButtonPressed() async {

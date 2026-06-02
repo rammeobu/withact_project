@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/future&component/layout/basic_layout.dart';
 
-class ForgotPassword extends StatefulWidget {
+class ForgotPassword extends ConsumerStatefulWidget {
   const ForgotPassword({super.key});
 
   @override
-  State<ForgotPassword> createState() => _ForgotPasswordState();
+  ConsumerState<ForgotPassword> createState() => _ForgotPasswordState();
 }
 
-class _ForgotPasswordState extends State<ForgotPassword> {
+class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
   late TextEditingController emailTextController;
   late TextEditingController verificationCodeTextController;
   late TextEditingController newPasswordTextController;
@@ -209,11 +211,31 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     );
   }
 
-  void onSendCodeButtonPressed() {
-    // TODO: 입력된 이메일이 유효하며 해당 이메일로 가입된 계정이 존재할 경우 해당 이메일로 코드를 보내는 기능 구현(백엔드와 협의 필요)
+  Future<void> onSendCodeButtonPressed() async {
+    final email = emailTextController.text.trim();
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('이메일을 입력해 주세요.')));
+      return;
+    }
+    try {
+      await ref.read(accountRepositoryProvider).postEmailRequest(email);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(const SnackBar(content: Text('인증번호가 발송되었습니다.')));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
   }
 
-  void onResetButtonPressed() {
+  Future<void> onResetButtonPressed() async {
     final requiredFields = [
       (emailTextController, '이메일'),
       (verificationCodeTextController, '인증코드'),
@@ -234,10 +256,25 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         ..showSnackBar(const SnackBar(content: Text('새 비밀번호가 일치하지 않습니다.')));
       return;
     }
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      PageRoutes.login,
-      (route) => false,
-    );
+    try {
+      await ref.read(accountRepositoryProvider).postEmailVerify(
+        emailTextController.text.trim(),
+        verificationCodeTextController.text.trim(),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+      return;
+    }
+    if (mounted) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        PageRoutes.login,
+        (route) => false,
+      );
+    }
   }
 }

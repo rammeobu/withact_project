@@ -69,15 +69,17 @@ class ApplicantProfileFooter extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 11),
-          TextButton(
-            onPressed: onTextButtonPressed,
-            child: Text(
-              '지원자 목록으로 돌아가기',
-              style: TextStyle(
-                color: appPrimaryColor,
-                fontSize: screenWidth * 0.044,
-                fontWeight: FontWeight.w600,
+          Padding(
+            padding: const EdgeInsets.only(top: 11),
+            child: TextButton(
+              onPressed: onTextButtonPressed,
+              child: Text(
+                '지원자 목록으로 돌아가기',
+                style: TextStyle(
+                  color: appPrimaryColor,
+                  fontSize: screenWidth * 0.044,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

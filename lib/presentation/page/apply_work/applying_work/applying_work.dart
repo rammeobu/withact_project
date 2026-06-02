@@ -66,6 +66,8 @@ class _ApplyingWorkState extends ConsumerState<ApplyingWork> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(applyingWorkProvider.notifier).init(widget.profile);
     });
+    timeTextController = TextEditingController();
+    whenToMeetScrollController = ScrollController();
     for (int i = 0; i < 4; i++) {
       if (i > 0 && i < 3) {
         _bodyTextControllers.add(
@@ -78,8 +80,6 @@ class _ApplyingWorkState extends ConsumerState<ApplyingWork> {
       if (_bodyScrollControllers[0].hasClients) {
         _bodyScrollControllers[0].jumpTo(0.0);
       }
-      timeTextController = TextEditingController();
-      whenToMeetScrollController = ScrollController();
     }
   }
 
@@ -184,16 +184,18 @@ class _ApplyingWorkState extends ConsumerState<ApplyingWork> {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 704,
-                      child: WhenToMeet(
-                        readOnly: !workState.editingMode[2],
-                        scrollController: _bodyScrollControllers[3],
-                        timeTextController: timeTextController,
-                        whenToMeetScrollController: whenToMeetScrollController,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 23),
+                      child: SizedBox(
+                        height: 704,
+                        child: WhenToMeet(
+                          readOnly: !workState.editingMode[2],
+                          scrollController: _bodyScrollControllers[3],
+                          timeTextController: timeTextController,
+                          whenToMeetScrollController: whenToMeetScrollController,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 23),
                   ],
                 ),
               ),

@@ -12,8 +12,8 @@ class AccountRepository {
         'password': password,
       });
       return data?.toString() ?? '';
-    } catch (_) {
-      throw Exception('로그인 실패');
+    } catch (e) {
+      throw Exception('로그인 실패: $e');
     }
   }
 
@@ -35,8 +35,24 @@ class AccountRepository {
         'major': major,
         'skill': skill,
       });
-    } catch (_) {
-      throw Exception('회원가입 실패');
+    } catch (e) {
+      throw Exception('회원가입 실패: $e');
+    }
+  }
+
+  Future<void> postEmailRequest(String email) async {
+    try {
+      await client.post('/api/email/request', {'email': email});
+    } catch (e) {
+      throw Exception('인증번호 발송 실패: $e');
+    }
+  }
+
+  Future<void> postEmailVerify(String email, String code) async {
+    try {
+      await client.post('/api/email/verify', {'email': email, 'code': code});
+    } catch (e) {
+      throw Exception('이메일 인증 실패: $e');
     }
   }
 
@@ -49,8 +65,8 @@ class AccountRepository {
       final data = await client.get('/api/User/v1/$id');
       return ProfileAndDetailEditDataStructure.fromJson(
           data as Map<String, dynamic>);
-    } catch (_) {
-      throw Exception('프로필 조회 실패');
+    } catch (e) {
+      throw Exception('프로필 조회 실패: $e');
     }
   }
 
@@ -58,13 +74,13 @@ class AccountRepository {
       String id, ProfileAndDetailEditDataStructure profile) async {
     try {
       await client.put('/api/User/v1/$id/profile', {
-        'name': profile.profileContent.isNotEmpty ? profile.profileContent[0] : '',
-        'skill': profile.spec,
+        'name': profile.profileContent.length > 0 ? profile.profileContent[0] : '',
+        'skill': profile.profileContent.length > 1 ? profile.profileContent[1] : '',
         'belong': profile.profileContent.length > 2 ? profile.profileContent[2] : '',
         'major': profile.profileContent.length > 3 ? profile.profileContent[3] : '',
       });
-    } catch (_) {
-      throw Exception('프로필 수정 실패');
+    } catch (e) {
+      throw Exception('프로필 수정 실패: $e');
     }
   }
 

@@ -58,13 +58,17 @@ class _ProfileAndDetailEditState extends ConsumerState<ProfileAndDetailEdit> {
     textControllers = [
       ...List.generate(
         4,
-        (int i) => TextEditingController(text: widget.profileContent[i]),
+        (int i) => TextEditingController(
+          text: i < widget.profileContent.length ? widget.profileContent[i] : '',
+        ),
       ),
       TextEditingController(text: widget.introduction),
       TextEditingController(text: widget.spec),
       ...List.generate(
         3,
-        (int i) => TextEditingController(text: widget.favorites[i]),
+        (int i) => TextEditingController(
+          text: i < widget.favorites.length ? widget.favorites[i] : '',
+        ),
       ),
     ];
   }

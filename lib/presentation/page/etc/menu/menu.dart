@@ -7,7 +7,6 @@ import 'package:party_maker/presentation/page/etc/menu/menu_body1.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_body2.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_body3.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_body4.dart';
-import 'package:party_maker/data/models/find_data_structures.dart';
 import 'package:party_maker/presentation/page/future&component/layout/basic_layout.dart';
 
 class Menu extends StatefulWidget {
@@ -154,8 +153,15 @@ class _MenuState extends State<Menu> {
   void onParticipatingWorkMenuSelect() {
     Navigator.pushNamed(
       context,
-      PageRoutes.findWork,
-      arguments: {'workList': <WorkItem>[]},
+      PageRoutes.participatingParty,
+      arguments: {
+        'workName': '',
+        'workOverview': '',
+        'workDetail': '',
+        'leaderProfile': <String>[],
+        'position': <String>[],
+        'poster': null,
+      },
     );
   }
 

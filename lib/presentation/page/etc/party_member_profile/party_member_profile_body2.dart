@@ -37,6 +37,7 @@ class PartyMemberProfileBody2 extends StatelessWidget {
                 padding: EdgeInsets.all(screenWidth * 0.019),
                 child: Scrollbar(
                   thumbVisibility: true,
+                  controller: scrollController,
                   child: SingleChildScrollView(
                     controller: scrollController,
                     child: Text(

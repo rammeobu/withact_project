@@ -30,11 +30,13 @@ class RecruitFail extends StatelessWidget {
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    const SizedBox(height: 23),
-                    Text(
-                      '모집 시작 중 오류가 발생했습니다.\n 잠시 후 다시 시도해 주세요.',
-                      style: TextStyle(fontSize: screenWidth * 0.049),
-                      textAlign: TextAlign.center,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 23),
+                      child: Text(
+                          '모집 시작 중 오류가 발생했습니다.\n 잠시 후 다시 시도해 주세요.',
+                        style: TextStyle(fontSize: screenWidth * 0.049),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ],
                 ),
@@ -60,9 +62,8 @@ class RecruitFail extends StatelessWidget {
                     style: TextStyle(fontSize: screenWidth * 0.049),
                   ),
                 ),
-                const SizedBox(height: 14),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 23),
+                  padding: const EdgeInsets.only(top: 14, bottom: 23),
                   child: OutlinedButton(
                     onPressed: () => onRecruitListButtonPressed(context),
                     style: OutlinedButton.styleFrom(

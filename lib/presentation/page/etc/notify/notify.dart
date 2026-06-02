@@ -100,8 +100,9 @@ class _NotifyState extends ConsumerState<Notify> {
                       ),
                     ),
                     NotifyPositionSelect(position: widget.position),
-                    const SizedBox(height: 13),
-                    notifications.isEmpty
+                    Padding(
+                      padding: const EdgeInsets.only(top: 13),
+                      child: notifications.isEmpty
                         ? Padding(
                             padding: const EdgeInsets.symmetric(vertical: 40),
                             child: Center(
@@ -137,6 +138,7 @@ class _NotifyState extends ConsumerState<Notify> {
                               );
                             }).toList(),
                           ),
+                    ),
                   ],
                 ),
               ),

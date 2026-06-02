@@ -1,6 +1,8 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/data/models/recruit_data_structures.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/work_recruit/work_recruit_body2.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/work_recruit/work_recruit_body3.dart';
 import '../../future&component/layout/basic_layout.dart';
@@ -178,22 +180,30 @@ class _WorkRecruitState extends ConsumerState<WorkRecruit> {
     }
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         content: const Text('모집을 시작하시겠습니까?'),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              const bool succeeded = true;
-              Navigator.pushNamed(
-                context,
-                succeeded ? PageRoutes.recruitSuccess : PageRoutes.recruitFail,
-              );
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              bool succeeded = false;
+              try {
+                await ref.read(recruitRepositoryProvider).postWork(
+                  WorkRecruitDataStructure(profile: widget.profile),
+                );
+                succeeded = true;
+              } catch (_) {}
+              if (mounted) {
+                Navigator.pushNamed(
+                  context,
+                  succeeded ? PageRoutes.recruitSuccess : PageRoutes.recruitFail,
+                );
+              }
             },
             child: const Text('예'),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('아니오'),
           ),
         ],
@@ -206,6 +216,7 @@ class _WorkRecruitState extends ConsumerState<WorkRecruit> {
     staticTextControllers[2].clear();
 
     Future.delayed(const Duration(milliseconds: 75), () {
+      if (!mounted) return;
       if (scrollControllers[1].hasClients) {
         scrollControllers[1].animateTo(
           scrollControllers[1].position.maxScrollExtent,
@@ -224,6 +235,7 @@ class _WorkRecruitState extends ConsumerState<WorkRecruit> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(milliseconds: 50));
+      if (!mounted) return;
       if (scrollControllers[1].hasClients) {
         scrollControllers[1].jumpTo(currentOffset);
         scrollControllers[1].animateTo(
@@ -268,6 +280,7 @@ class _WorkRecruitState extends ConsumerState<WorkRecruit> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(milliseconds: 10));
+      if (!mounted) return;
 
       if (ref.read(workRecruitProvider).positions.isEmpty) {
         if (scrollControllers[0].hasClients) {

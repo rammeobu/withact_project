@@ -11,10 +11,10 @@ class ApplyRepository {
     try {
       final data = await client.get('/api/application/v1/my?userId=$userId');
       return (data as List<dynamic>)
-          .map((e) => ApplyItem.fromJson(e as Map<String, dynamic>))
+          .map((item) => ApplyItem.fromJson(item as Map<String, dynamic>))
           .toList();
-    } catch (_) {
-      throw Exception('지원 목록 불러오기 실패');
+    } catch (e) {
+      throw Exception('지원 목록 불러오기 실패: $e');
     }
   }
 
@@ -28,8 +28,8 @@ class ApplyRepository {
       final data = await client.get('/api/User/v1/$applicantId');
       return ApplicantProfileDataStructure.fromJson(
           data as Map<String, dynamic>);
-    } catch (_) {
-      throw Exception('지원자 프로필 불러오기 실패');
+    } catch (e) {
+      throw Exception('지원자 프로필 불러오기 실패: $e');
     }
   }
 
@@ -37,10 +37,10 @@ class ApplyRepository {
     try {
       final data = await client.get('/api/application/v1/party/$partyId');
       return (data as List<dynamic>)
-          .map((e) => ApplicantItem.fromJson(e as Map<String, dynamic>))
+          .map((item) => ApplicantItem.fromJson(item as Map<String, dynamic>))
           .toList();
-    } catch (_) {
-      throw Exception('지원자 목록 불러오기 실패');
+    } catch (e) {
+      throw Exception('지원자 목록 불러오기 실패: $e');
     }
   }
 
@@ -61,16 +61,32 @@ class ApplyRepository {
         'introduction': introduction,
         'portfolioUrl': portfolioUrl,
       });
-    } catch (_) {
-      throw Exception('지원 실패');
+    } catch (e) {
+      throw Exception('지원 실패: $e');
     }
   }
 
   Future<void> deleteApply(String id, int userId) async {
     try {
       await client.delete('/api/application/v1/$id?userId=$userId');
-    } catch (_) {
-      throw Exception('지원 취소 실패');
+    } catch (e) {
+      throw Exception('지원 취소 실패: $e');
+    }
+  }
+
+  Future<void> putApprove(int applicationId) async {
+    try {
+      await client.put('/api/application/v1/$applicationId/approve', {});
+    } catch (e) {
+      throw Exception('지원 승인 실패: $e');
+    }
+  }
+
+  Future<void> putReject(int applicationId) async {
+    try {
+      await client.put('/api/application/v1/$applicationId/reject', {});
+    } catch (e) {
+      throw Exception('지원 거절 실패: $e');
     }
   }
 

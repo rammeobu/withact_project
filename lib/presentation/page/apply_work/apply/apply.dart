@@ -114,7 +114,7 @@ class _ApplyState extends State<Apply> {
                     SizedBox(
                       height: 704,
                       child: WhenToMeet(
-                        readOnly: true,
+                        readOnly: false,
                         scrollController: _bodyScrollControllers[1],
                         timeTextController: timeTextController,
                         whenToMeetScrollController: whenToMeetScrollController,
