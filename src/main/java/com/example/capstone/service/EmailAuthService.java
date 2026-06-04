@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.SimpleMailMessage;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Random;
 
@@ -16,6 +17,7 @@ public class EmailAuthService {
 
     // 인증번호 임시 저장소 (이메일, 인증번호)
     private final Map<String, String> authCodeStorage = new ConcurrentHashMap<>();
+    private final Set<String> verifiedEmailStorage = ConcurrentHashMap.newKeySet();
 
 
     public void sendVerificationEmail(String email) {
@@ -51,6 +53,7 @@ public class EmailAuthService {
         // 사용자가 입력한 코드와 서버가 보낸 코드가 일치하는지 확인
         if (savedCode.equals(code)) {
             authCodeStorage.remove(email); // 인증 성공 시 저장소에서 삭제
+            verifiedEmailStorage.add(email);
 
             return true;
         }
@@ -63,5 +66,13 @@ public class EmailAuthService {
         Random random = new Random();
         int code = 100000 + random.nextInt(900000);
         return String.valueOf(code);
+    }
+
+    public boolean consumeVerifiedEmail(String email) {
+        if (email == null) {
+            return false;
+        }
+
+        return verifiedEmailStorage.remove(email);
     }
 }
