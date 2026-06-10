@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class DotenvConfig {
 
     static {
-        그럼 로그 안찍는걸로 바꾸자오전 4:37Claude 응답: System.javastatic {
+        {
             try {
                 Dotenv dotenv = Dotenv.configure()
                         .directory("./")
