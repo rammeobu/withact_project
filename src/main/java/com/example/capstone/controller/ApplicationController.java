@@ -28,8 +28,8 @@ public class ApplicationController {
         ApplicationDto response = applicationService.apply(dto);
         return ResponseEntity.ok(response);
     }
-
-    @GetMapping("/my")
+    //TODO :Security 적용후 @AutenticationPrincipal 교체 필요
+    @GetMapping("/{userid}")
     @Operation(summary = "내 지원 내역 조회", description = "사용자의 모든 지원 내역 조회")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공")
@@ -38,6 +38,7 @@ public class ApplicationController {
         List<ApplicationDto> applications = applicationService.getMyApplications(userId);
         return ResponseEntity.ok(applications);
     }
+
 
     @GetMapping("/party/{partyId}")
     @Operation(summary = "파티 지원자 목록", description = "특정 파티에 지원한 모든 사용자 조회")

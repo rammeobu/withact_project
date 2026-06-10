@@ -1,5 +1,12 @@
 package com.example.capstone.service;
 
+import com.example.capstone.dto.PartyRoleDto;
+import com.example.capstone.entity.Application;
+import com.example.capstone.enums.ApplicationStatus;
+
+import com.example.capstone.repository.ActivityRepository;
+import com.example.capstone.repository.ApplicationRepository;
+import com.example.capstone.dto.PartyDto;
 import com.example.capstone.entity.Party;
 import com.example.capstone.entity.PartyRole;
 import com.example.capstone.repository.PartyRepository;
@@ -10,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +25,8 @@ import java.util.*;
 public class PartyService {
     private final PartyRepository partyRepository;
     private final PartyRoleRepository partyRoleRepository;
+    private final ApplicationRepository applicationRepository;
+    private final ActivityRepository activityRepository;
     public List<Party> findAll(){
         return partyRepository.findAll();
     }
@@ -30,9 +40,12 @@ public class PartyService {
         return partyRepository.save(party);
     }
     @Transactional
-    public PartyRole addRole(Long partyId, PartyRole role) {
+    public PartyRole addRole(Long partyId, PartyRoleDto dto) {  // PartyRole → PartyRoleDto
         Party party = findByPartyId(partyId);
+        PartyRole role = new PartyRole();
         role.setParty(party);
+        role.setRoleName(dto.getRoleName());
+        role.setTargetCount(dto.getTargetCount());
         role.setCurrentCount(0);
         return partyRoleRepository.save(role);
     }
@@ -45,12 +58,49 @@ public class PartyService {
         partyRepository.deleteById(id);
     }
 
-    public Party findByActivityId(Long activityId){
-        return partyRepository.getReferenceById(activityId);
+    @Transactional
+    public Party updateParty(Long id, PartyDto partyDto) {
+        Party party = partyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Party not found"));
+
+        party.setTitle(partyDto.getTitle());
+        party.setContent(partyDto.getContent());
+        return partyRepository.save(party);
+
     }
-    public void approvePartyicipant(Long partyId,String roleName){
-        Party party = findByPartyId(partyId);
-        party.approveMember(roleName);
+    public PartyDto findByPartyIdWithActivityTitle(Long partyId) {
+        Party party = partyRepository.findById(partyId)
+                .orElseThrow(() -> new RuntimeException("Party not found"));
+
+        String activityTitle = activityRepository.findById(party.getActivityId())
+                .map(a -> a.getTitle())
+                .orElse(null);
+
+        return PartyDto.builder()
+                .id(party.getId())
+                .title(party.getTitle())
+                .content(party.getContent())
+                .activityId(party.getActivityId())
+                .activityTitle(activityTitle)
+                .leaderId(party.getLeaderId())
+                .roles(party.getRoles().stream()
+                        .map(PartyRoleDto::from)
+                        .collect(Collectors.toList()))
+                .build();
     }
+    @Transactional
+    public void leaveParty(Long partyId, Long userId) {
+        Application application = applicationRepository
+                .findByPartyIdAndMemberIdAndStatus(partyId, userId, ApplicationStatus.APPROVED)
+                .orElseThrow(() -> new RuntimeException("해당 파티의 멤버가 아닙니다"));
+
+        // 2. PartyRole의 currentCount 감소
+        PartyRole role = application.getRole();
+        role.setCurrentCount(role.getCurrentCount() - 1);
+
+        // 3. Application 삭제
+        applicationRepository.delete(application);
+    }
+
 }
 

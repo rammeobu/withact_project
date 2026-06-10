@@ -8,20 +8,19 @@ import org.springframework.context.annotation.Configuration;
 public class DotenvConfig {
 
     static {
-        // Spring 시작 전에 환경변수 로드
-        try {
-            Dotenv dotenv = Dotenv.configure()
-                    .directory("./")
-                    .ignoreIfMissing()
-                    .load();
+        그럼 로그 안찍는걸로 바꾸자오전 4:37Claude 응답: System.javastatic {
+            try {
+                Dotenv dotenv = Dotenv.configure()
+                        .directory("./")
+                        .ignoreIfMissing()
+                        .load();
 
-            dotenv.entries().forEach(entry -> {
-                System.setProperty(entry.getKey(), entry.getValue());
-                System.out.println("[ENV] " + entry.getKey() + " = " +
-                        (entry.getKey().contains("PASSWORD") ? "****" : entry.getValue()));
-            });
-        } catch (Exception e) {
-            System.err.println("Failed to load .env file: " + e.getMessage());
+                dotenv.entries().forEach(entry -> {
+                    System.setProperty(entry.getKey(), entry.getValue());
+                });
+            } catch (Exception e) {
+                System.err.println("Failed to load .env file: " + e.getMessage());
+            }
         }
     }
 

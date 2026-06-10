@@ -11,5 +11,5 @@ import java.util.Map;
 public class AvailableTimeDto {
     private Long userId;
     private Long activityId;
-    private Map<String, List<Integer>> schedule;
+    private Map<String, List<String>> schedule;
 }

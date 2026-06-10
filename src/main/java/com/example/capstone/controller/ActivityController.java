@@ -1,4 +1,5 @@
 package com.example.capstone.controller;
+import com.example.capstone.dto.FilterOptionDto;
 import com.example.capstone.entity.Activity;
 import com.example.capstone.service.ActivityService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,16 +23,14 @@ public class ActivityController {
             @ApiResponse(responseCode = "204",description = "대외활동 없음")
     })
     public ResponseEntity<List<Activity>> getAll() {
-        List<Activity> activities=activityService.findAll();
-        if (activities.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(activityService.findAll());
+        List<Activity> activities = activityService.findAll();
+        return ResponseEntity.ok(activities);
     }
+
     @Operation(summary = "대외활동 조회",description = "id로 대회활동 조회")
     @ApiResponses({
             @ApiResponse(responseCode = "200",description = "성공"),
-            @ApiResponse(responseCode = "404",description = "대외활동 존제 안함")
+            @ApiResponse(responseCode = "404",description = "대외활동 존재 안함")
     })
     @GetMapping("/{id}")
     public ResponseEntity<Activity> getOne(@PathVariable("id") Long id) {
@@ -56,4 +55,13 @@ public class ActivityController {
         activityService.delete(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/filters")
+    @Operation(summary = "활동 필터 항목 조회", description = "활동 필터링에 사용되는 항목 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공")
+    })
+    public ResponseEntity<List<FilterOptionDto>> getFilters() {
+        return ResponseEntity.ok(activityService.getFilters());
+    }
+
 }

@@ -6,6 +6,7 @@ import com.example.capstone.dto.PartyRoleDto;
 import com.example.capstone.entity.Party;
 import com.example.capstone.entity.PartyRole;
 import com.example.capstone.service.PartyService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/Party/v1")
+@RequestMapping("/api/party/v1")
 @RequiredArgsConstructor
 public class PartyController {
 
@@ -28,9 +29,13 @@ public class PartyController {
             @ApiResponse(responseCode = "200", description = "모집하는 파티가 존재"),
             @ApiResponse(responseCode = "404", description = "모집하는 파티가 없음")
     })
-    @GetMapping // 모든 파티 찾기
-    public ResponseEntity<List<Party>> findPartyAll() {
-        List<Party> parties = partyService.findAll();
+    @GetMapping
+    public ResponseEntity<List<PartyDto>> findPartyAll() {
+        List<PartyDto> parties = partyService.findAll()
+                .stream()
+                .map(PartyDto::from)
+                .collect(Collectors.toList());
+
         if (parties.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -39,9 +44,7 @@ public class PartyController {
 
     @GetMapping("/{id}") // 특정 id의 파티 찾기
     public ResponseEntity<PartyDto> getPartyOne(@PathVariable("id") Long id) {
-        Party party = partyService.findByPartyId(id);
-
-        return ResponseEntity.ok(PartyDto.from(party));
+        return ResponseEntity.ok(partyService.findByPartyIdWithActivityTitle(id));
     }
 
     @GetMapping("/{id}/roles") // 특정 파티의 직군 조회
@@ -57,15 +60,32 @@ public class PartyController {
         Party createdParty = partyService.save(party);
         return ResponseEntity.status(201).body(createdParty);
     }
+    @PostMapping("/{id}")
+    public ResponseEntity<PartyDto> updateParty(@PathVariable("id") Long id, @RequestBody PartyDto partyDto) {
+        partyService.updateParty(id, partyDto); // 수정 호출 추가
+        return ResponseEntity.ok(partyService.findByPartyIdWithActivityTitle(id));
+    }
+
     @PostMapping("/{id}/roles")
-    public ResponseEntity<PartyRole> createPartyroles(@PathVariable("id") Long id,@RequestBody PartyRole partyRole) {
-        PartyRole createdParty = partyService.addRole(id,partyRole);
-        return ResponseEntity.status(201).body(createdParty);
+    public ResponseEntity<PartyRoleDto> createPartyroles(
+            @PathVariable("id") Long id,
+            @RequestBody PartyRoleDto partyRoleDto) {
+        PartyRole createdRole = partyService.addRole(id, partyRoleDto);
+        return ResponseEntity.status(201).body(PartyRoleDto.from(createdRole));
     }
 
     @DeleteMapping("/{id}") // 특정 파티 삭제
     public ResponseEntity<Void> deleteParty(@PathVariable("id") Long id) {
         partyService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/{id}/member")
+    @Operation(summary = "파티 탈퇴", description = "승인된 파티원이 파티에서 탈퇴")
+    public ResponseEntity<String> leaveParty(
+            @PathVariable("id") Long partyId,
+            @RequestParam("userId") Long userId
+    ) {
+        partyService.leaveParty(partyId, userId);
+        return ResponseEntity.ok("파티에서 탈퇴했습니다.");
     }
 }

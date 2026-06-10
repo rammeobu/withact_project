@@ -21,6 +21,7 @@ public class ApplicationDto {
     private String userName;
     private String partyName;
     private String roleName;
+    private String skill;
     private ApplicationStatus status;
     private LocalDateTime appliedAt;
     private LocalDateTime processedAt;

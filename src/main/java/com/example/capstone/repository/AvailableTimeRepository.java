@@ -9,7 +9,6 @@ import java.util.List;
 @Repository
 public interface AvailableTimeRepository extends JpaRepository<AvailableTime, Long> {
 
-    void deleteByUserIdAndActivityId(Long userId, Long activityId);
-
-    List<AvailableTime> findByUserIdAndActivityId(Long userId, Long activityId);
+    void deleteByMemberIdAndActivityId(Long memberId, Long activityId);
+    List<AvailableTime> findByMemberIdAndActivityId(Long memberId, Long activityId);
 }

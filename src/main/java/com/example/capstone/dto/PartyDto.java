@@ -19,6 +19,7 @@ public class PartyDto {
     private String title;
     private String content;
     private Long activityId;
+    private String activityTitle;
     private Long leaderId;
     private List<PartyRoleDto> roles;
 

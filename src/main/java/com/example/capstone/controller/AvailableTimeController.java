@@ -29,11 +29,11 @@ public class AvailableTimeController {
 
 
     @GetMapping
-    public ResponseEntity<Map<String, List<Integer>>> getMyAvailableTime(
+    public ResponseEntity<Map<String, List<String>>> getMyAvailableTime(
             @RequestParam Long userId,
             @RequestParam Long activityId
     ) {
-        Map<String, List<Integer>> schedule = availableTimeService
+        Map<String, List<String>> schedule = availableTimeService
                 .getMyAvailableTime(userId, activityId);
         return ResponseEntity.ok(schedule);
     }

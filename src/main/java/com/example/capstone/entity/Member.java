@@ -12,14 +12,16 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter @Setter
 public class Member {
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
-    private String skill;
+    private String spec;
     private String email;
     @Column(name = "any_field")
     private String any;
-    private String phone;
     private String address;
+    private String major;
+    private String belong;
+    private String preference;
+    private String introduction;
 }

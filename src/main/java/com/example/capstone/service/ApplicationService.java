@@ -29,7 +29,7 @@ public class ApplicationService {
 
     public ApplicationDto apply(ApplicationDto dto) {
 
-        applicationRepository.findByUserIdAndPartyId(dto.getUserId(), dto.getPartyId())
+        applicationRepository.findByMemberIdAndPartyId(dto.getUserId(), dto.getPartyId())
                 .ifPresent(app -> {
                     throw new RuntimeException("이미 지원한 대외활동입니다.");
                 });
@@ -64,7 +64,7 @@ public class ApplicationService {
 
     @Transactional(readOnly = true)
     public List<ApplicationDto> getMyApplications(Long userId) {
-        return applicationRepository.findByUserId(userId).stream()
+        return applicationRepository.findByMemberId(userId).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
@@ -135,6 +135,7 @@ public class ApplicationService {
                 .partyName(app.getParty().getTitle())
                 .roleId(app.getRole().getId())
                 .roleName(app.getRole().getRoleName())
+                .skill(app.getMember().getSpec())
                 .motivation(app.getMotivation())
                 .introduction(app.getIntroduction())
                 .portfolioUrl(app.getPortfolioUrl())

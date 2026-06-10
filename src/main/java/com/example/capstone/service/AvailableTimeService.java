@@ -24,16 +24,17 @@ public class AvailableTimeService {
     private final MemberRepository memberRepository;
     private final ActivityRepository activityRepository;
 
-    public void saveAvailableTime(Long userId, Long activityId, Map<String, List<Integer>> schedule) {
+    // userId → memberId로 변경
+    public void saveAvailableTime(Long memberId, Long activityId, Map<String, List<String>> schedule) {
 
-        Member member = memberRepository.findById(userId)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("유저 없음"));
 
         Activity activity = activityRepository.findById(activityId)
                 .orElseThrow(() -> new RuntimeException("대외활동 없음"));
 
-
-        availableTimeRepository.deleteByUserIdAndActivityId(userId, activityId);
+        // 메서드 이름 변경
+        availableTimeRepository.deleteByMemberIdAndActivityId(memberId, activityId);
 
         schedule.forEach((day, hours) -> {
             if (hours != null && !hours.isEmpty()) {
@@ -47,18 +48,18 @@ public class AvailableTimeService {
             }
         });
     }
-    @Transactional(readOnly = true)
-    public Map<String, List<Integer>> getMyAvailableTime(Long userId, Long activityId) {
-        List<AvailableTime> times = availableTimeRepository
-                .findByUserIdAndActivityId(userId, activityId);
 
+    @Transactional(readOnly = true)
+    public Map<String, List<String>> getMyAvailableTime(Long memberId, Long activityId) {
+        List<AvailableTime> times = availableTimeRepository.findByMemberIdAndActivityId(memberId, activityId);
         return times.stream()
                 .collect(Collectors.toMap(
                         time -> time.getDayOfWeek().name(),
                         AvailableTime::getHours
                 ));
     }
-    public void deleteAvailableTime(Long userId, Long activityId) {
-        availableTimeRepository.deleteByUserIdAndActivityId(userId, activityId);
+
+    public void deleteAvailableTime(Long memberId, Long activityId) {
+        availableTimeRepository.deleteByMemberIdAndActivityId(memberId, activityId);
     }
 }

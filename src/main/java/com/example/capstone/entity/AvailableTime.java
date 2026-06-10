@@ -34,6 +34,6 @@ public class AvailableTime {
             joinColumns = @JoinColumn(name = "available_time_id")
     )
     @Column(name = "time_hour")
-    private List<Integer> hours = new ArrayList<>();
+    private List<String> hours = new ArrayList<>();
 
 }

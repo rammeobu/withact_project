@@ -11,13 +11,15 @@ import java.util.Optional;
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
 
-    List<Application> findByUserId(Long userId);
+
+    List<Application> findByMemberId(Long memberId);
 
     List<Application> findByPartyId(Long partyId);
 
     List<Application> findByRoleId(Long roleId);
 
-    Optional<Application> findByUserIdAndPartyId(Long userId, Long partyId);
+    Optional<Application> findByMemberIdAndPartyId(Long memberId, Long partyId);
 
     List<Application> findByPartyIdAndStatus(Long partyId, ApplicationStatus status);
+    Optional<Application> findByPartyIdAndMemberIdAndStatus(Long partyId, Long memberId, ApplicationStatus status);
 }
