@@ -198,6 +198,31 @@ Widget sectionBlock(double screenWidth, String label, Widget content) {
   );
 }
 
+/// Borderless multiline input for use inside a [sectionCard] / [sectionBlock].
+Widget detailEditField(
+  TextEditingController controller,
+  String hint,
+  double screenWidth,
+) {
+  return TextField(
+    controller: controller,
+    minLines: 3,
+    maxLines: 6,
+    style: TextStyle(
+      fontSize: screenWidth * 0.041,
+      height: 1.4,
+      color: cardInk,
+    ),
+    decoration: InputDecoration(
+      isDense: true,
+      contentPadding: EdgeInsets.zero,
+      border: InputBorder.none,
+      hintText: hint,
+      hintStyle: TextStyle(color: cardSub, fontSize: screenWidth * 0.041),
+    ),
+  );
+}
+
 Widget sectionText(String value, double screenWidth) {
   final bool empty = value.trim().isEmpty;
   return Text(

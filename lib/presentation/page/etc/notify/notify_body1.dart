@@ -51,24 +51,33 @@ class NotifyBody1 extends StatelessWidget {
                           ),
                         ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: screenWidth * 0.012),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        notification.title,
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.044,
-                          fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: screenWidth * 0.012,
+                      right: screenWidth * 0.04,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          notification.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.044,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      Text(
-                        notification.content,
-                        style: TextStyle(fontSize: screenWidth * 0.036),
-                      ),
-                    ],
+                        Text(
+                          notification.content,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: screenWidth * 0.036),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

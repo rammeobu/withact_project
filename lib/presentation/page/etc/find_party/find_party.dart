@@ -115,6 +115,7 @@ class FindPartyState extends ConsumerState<FindParty> {
               children: [
                 FindPartyBody1(
                   onActivitySearch: onActivitySearch,
+                  onFilterButtonPressed: onFilterButtonPressed,
                   activityName: activityName,
                   partyList: filteredParties,
                   searchController: activitySearchController,
@@ -161,6 +162,17 @@ class FindPartyState extends ConsumerState<FindParty> {
       ),
       ),
       bottomNavigationBar: true,
+    );
+  }
+
+  void onFilterButtonPressed() {
+    Navigator.pushNamed(
+      context,
+      PageRoutes.findPartyFilter,
+      arguments: {
+        'filterData': <FilterItem>[],
+        'detailCategory': <String, List<String>>{},
+      },
     );
   }
 

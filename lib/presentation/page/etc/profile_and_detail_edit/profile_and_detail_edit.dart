@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:party_maker/data/models/profile_data_structures.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
-import 'package:party_maker/presentation/page/etc/profile_and_detail_edit/profile_and_detail_edit_body_1.dart';
 import 'package:party_maker/presentation/page/etc/profile_and_detail_edit/profile_and_detail_edit_body_2.dart';
 import 'package:party_maker/presentation/page/etc/profile_and_detail_edit/profile_and_detail_edit_footer.dart';
 import 'package:party_maker/presentation/page/etc/profile_and_detail_edit/profile_card_edit.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 import 'package:party_maker/presentation/page/future&component/layout/basic_layout.dart';
 
 class ProfileAnonymousNotifier extends Notifier<bool> {
@@ -152,13 +152,29 @@ class ProfileAndDetailEditState extends ConsumerState<ProfileAndDetailEdit> {
                         ),
                       ),
                     ),
-                    ProfileAndDetailEditBody1(
-                      section: '소개',
-                      controller: textControllers[4],
-                    ),
-                    ProfileAndDetailEditBody1(
-                      section: '스펙',
-                      controller: textControllers[5],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: sectionCard(screenWidth, [
+                        sectionBlock(
+                          screenWidth,
+                          '소개',
+                          detailEditField(
+                            textControllers[4],
+                            '소개 내용 입력 혹은 불러오기',
+                            screenWidth,
+                          ),
+                        ),
+                        sectionDivider(),
+                        sectionBlock(
+                          screenWidth,
+                          '스펙',
+                          detailEditField(
+                            textControllers[5],
+                            '스펙 내용 입력 혹은 불러오기',
+                            screenWidth,
+                          ),
+                        ),
+                      ]),
                     ),
                     const Padding(padding: EdgeInsets.only(top: 8)),
                     Padding(

@@ -50,7 +50,54 @@ class ActivityRecruitBody4 extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 7),
+            padding: const EdgeInsets.only(top: 10),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(screenWidth * 0.04),
+                border: Border.all(color: const Color(0xFFE0E3E8)),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  value: selectedRegion.isEmpty ? null : selectedRegion,
+                  hint: Text(
+                    '시 / 도로 선택',
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.041,
+                      color: cardSub,
+                    ),
+                  ),
+                  icon: Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: appPrimaryColor,
+                  ),
+                  borderRadius: BorderRadius.circular(screenWidth * 0.04),
+                  items: ProvinceMapState.shortNames.keys
+                      .map(
+                        (name) => DropdownMenuItem<String>(
+                          value: name,
+                          child: Text(
+                            name,
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.041,
+                              color: cardInk,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value != null) onRegionSelected(value);
+                  },
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
             child: Material(
               color: const Color(0xFFEAEFF4),
               elevation: 2,

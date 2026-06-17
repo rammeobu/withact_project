@@ -4,7 +4,6 @@ import 'package:party_maker/core/constant.dart';
 const Color _cardInk = Color(0xFF20232A);
 const Color _cardSub = Color(0xFF8A8F98);
 const Color _chipBg = Color(0xFFEAF2FE);
-const Color _posterIcon = Color(0xFFB7BDC6);
 
 Widget _poster(String? poster, double screenWidth, double height) {
   final bool hasImage = poster != null && poster.startsWith('http');
@@ -34,11 +33,22 @@ Widget _poster(String? poster, double screenWidth, double height) {
 }
 
 Widget _posterEmpty(double screenWidth) {
-  return Center(
-    child: Icon(
-      Icons.image_outlined,
-      size: screenWidth * 0.12,
-      color: _posterIcon,
+  return Container(
+    width: double.infinity,
+    height: double.infinity,
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFEAF2FE), Color(0xFFCFE2FB)],
+      ),
+    ),
+    child: Center(
+      child: Icon(
+        Icons.groups_rounded,
+        size: screenWidth * 0.16,
+        color: const Color(0xFF9BBEF0),
+      ),
     ),
   );
 }

@@ -1,9 +1,11 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/models/find_data_structures.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 class FindPartyBody1 extends StatelessWidget {
   final VoidCallback onActivitySearch;
+  final VoidCallback onFilterButtonPressed;
   final String activityName;
   final List<PartyItem> partyList;
   final TextEditingController searchController;
@@ -11,6 +13,7 @@ class FindPartyBody1 extends StatelessWidget {
   const FindPartyBody1({
     super.key,
     required this.onActivitySearch,
+    required this.onFilterButtonPressed,
     required this.activityName,
     required this.partyList,
     required this.searchController,
@@ -54,11 +57,43 @@ class FindPartyBody1 extends StatelessWidget {
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                fixedSize: Size(screenWidth * 0.928, 57),
+                fixedSize: Size(screenWidth * 0.72, 57),
                 foregroundColor: const Color(0xFF636370),
                 backgroundColor: posterColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(screenWidth * 0.061),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: screenWidth * 0.05),
+              child: ElevatedButton(
+                onPressed: onFilterButtonPressed,
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  fixedSize: Size(screenWidth * 0.15, 46),
+                  padding: EdgeInsets.zero,
+                  foregroundColor: appPrimaryColor,
+                  backgroundColor: cardChipBg,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(screenWidth * 0.036),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.tune, size: screenWidth * 0.04),
+                    Padding(
+                      padding: EdgeInsets.only(left: screenWidth * 0.012),
+                      child: Text(
+                        '필터',
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.036,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

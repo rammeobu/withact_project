@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
 import '../../future&component/component/when_to_meet.dart';
 import '../../future&component/layout/basic_layout.dart';
-import 'applicant_profile_body1.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 import 'applicant_profile_footer.dart';
 
 class ApplicantProfile extends ConsumerStatefulWidget {
@@ -105,23 +105,30 @@ class ApplicantProfileState extends ConsumerState<ApplicantProfile> {
                         ),
                       ),
                     ),
-                    ApplicantProfileBody1(
-                      section: '소개',
-                      content: widget.introduction,
-                      scrollController: body1ScrollControllers[0],
-                    ),
-                    ApplicantProfileBody1(
-                      section: '스펙',
-                      content: widget.spec,
-                      scrollController: body1ScrollControllers[1],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: sectionCard(screenWidth, [
+                        sectionBlock(
+                          screenWidth,
+                          '소개',
+                          sectionText(widget.introduction, screenWidth),
+                        ),
+                        sectionDivider(),
+                        sectionBlock(
+                          screenWidth,
+                          '스펙',
+                          sectionText(widget.spec, screenWidth),
+                        ),
+                      ]),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 12),
+                      padding: const EdgeInsets.only(top: 16, bottom: 4),
                       child: Text(
                         '활동 가능 시간',
                         style: TextStyle(
-                          fontSize: screenWidth * 0.041,
-                          fontWeight: FontWeight.w600,
+                          fontSize: screenWidth * 0.044,
+                          fontWeight: FontWeight.w700,
+                          color: cardInk,
                         ),
                       ),
                     ),

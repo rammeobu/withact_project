@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:party_maker/app.dart';
 import 'package:party_maker/presentation/page/etc/party_member_profile/party_member_profile_body1.dart';
-import 'package:party_maker/presentation/page/etc/party_member_profile/party_member_profile_body2.dart';
 import 'package:party_maker/presentation/page/etc/party_member_profile/party_member_profile_body3.dart';
 import 'package:party_maker/presentation/page/etc/party_member_profile/party_member_profile_body4.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 import 'package:party_maker/presentation/page/future&component/layout/basic_layout.dart';
 
 class PartyMemberProfile extends StatefulWidget {
@@ -69,24 +69,31 @@ class PartyMemberProfileState extends State<PartyMemberProfile> {
                     : '',
                 onCallButtonPressed: onCallButtonPressed,
               ),
-              PartyMemberProfileBody2(
-                section: '소개',
-                content: widget.introduction,
-                scrollController: scrollControllers[1],
-              ),
-              PartyMemberProfileBody2(
-                section: '스펙',
-                content: widget.spec,
-                scrollController: scrollControllers[2],
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: sectionCard(screenWidth, [
+                  sectionBlock(
+                    screenWidth,
+                    '소개',
+                    sectionText(widget.introduction, screenWidth),
+                  ),
+                  sectionDivider(),
+                  sectionBlock(
+                    screenWidth,
+                    '스펙',
+                    sectionText(widget.spec, screenWidth),
+                  ),
+                ]),
               ),
 
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.only(top: 16, bottom: 8),
                 child: Text(
                   '선호 활동 정보',
                   style: TextStyle(
-                    fontSize: screenWidth * 0.041,
-                    fontWeight: FontWeight.w600,
+                    fontSize: screenWidth * 0.044,
+                    fontWeight: FontWeight.w700,
+                    color: cardInk,
                   ),
                 ),
               ),
