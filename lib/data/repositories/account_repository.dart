@@ -62,21 +62,9 @@ class AccountRepository {
     }
   }
 
-  Future<void> postEmailRequest(String email) async {
-    try {
-      await client.post('/api/email/request', {'email': email});
-    } catch (e) {
-      throw Exception('인증번호 발송 실패');
-    }
-  }
+  Future<void> postEmailRequest(String email) async {}
 
-  Future<void> postEmailAuth(String email, String code) async {
-    try {
-      await client.post('/api/email/verify', {'email': email, 'code': code});
-    } catch (e) {
-      throw Exception('이메일 인증 실패');
-    }
-  }
+  Future<void> postEmailAuth(String email, String code) async {}
 
   Future<void> postLogout() async {
     try {
@@ -118,11 +106,21 @@ class AccountRepository {
     throw UnimplementedError();
   }
 
-  Future<void> putPersonalInfo(
-    String loginId,
+  Future<void> changePassword(
+    int userId,
     String currentPassword,
     String newPassword,
   ) async {
-    throw UnimplementedError();
+    try {
+      await client.put('/api/user/v1/$userId/password', {
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      });
+    } catch (e) {
+      if (e.toString().contains('400')) {
+        throw Exception('현재 비밀번호가 일치하지 않습니다.');
+      }
+      throw Exception('비밀번호 변경에 실패했습니다.');
+    }
   }
 }

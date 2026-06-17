@@ -8,19 +8,51 @@ class RecruitRepository {
   Future<List<RecruitItem>> getRecruitList() async {
     try {
       final data = await client.get('/api/party/v1');
-      return (data as List<dynamic>)
+      final list = (data as List<dynamic>)
           .map((item) => RecruitItem.fromJson(item as Map<String, dynamic>))
+          .toList();
+      final posters = await _activityPosterMap();
+      return list
+          .map((r) => (r.poster == null || r.poster!.isEmpty) &&
+                  r.activityId != null &&
+                  posters[r.activityId] != null
+              ? r.copyWith(poster: posters[r.activityId])
+              : r)
           .toList();
     } catch (e) {
       throw Exception('모집 목록 조회 실패');
     }
   }
 
+  Future<Map<int, String>> _activityPosterMap() async {
+    try {
+      final data = await client.get('/api/activities/v1');
+      final map = <int, String>{};
+      for (final item in (data as List<dynamic>)) {
+        final m = item as Map<String, dynamic>;
+        final id = (m['id'] as num?)?.toInt();
+        final url = m['imageUrl']?.toString();
+        if (id != null && url != null && url.isNotEmpty) map[id] = url;
+      }
+      return map;
+    } catch (_) {
+      return {};
+    }
+  }
+
   Future<List<RecruitItem>> getParticipatingList(int userId) async {
     try {
-      final data = await client.get('/api/party/v1/joined?userId=$userId');
+      final data = await client.get('/api/application/v1/my?userId=$userId');
       return (data as List<dynamic>)
-          .map((item) => RecruitItem.fromJson(item as Map<String, dynamic>))
+          .where((item) =>
+              (item as Map<String, dynamic>)['status'] == 'APPROVED')
+          .map((item) {
+            final app = item as Map<String, dynamic>;
+            return RecruitItem(
+              id: (app['partyId'] as num?)?.toInt() ?? 0,
+              name: app['partyName']?.toString() ?? '',
+            );
+          })
           .toList();
     } catch (e) {
       throw Exception('참여 목록 조회 실패');

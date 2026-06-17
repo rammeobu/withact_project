@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
 import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/data/models/find_data_structures.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_body1.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_body2.dart';
@@ -52,7 +53,11 @@ class MenuState extends ConsumerState<Menu> {
           padding: EdgeInsets.only(left: screenWidth * 0.049),
           child: Text(
             '$name 님',
-            style: const TextStyle(fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: screenWidth * 0.05,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ),
       ],
@@ -73,6 +78,7 @@ class MenuState extends ConsumerState<Menu> {
                         onRecentlySearchedActivityMenuSelect,
                     participatingActivityMenuSelect: onParticipatingActivityMenuSelect,
                     findActivityMenuSelect: onFindActivityMenuSelect,
+                    findPartyMenuSelect: onFindPartyMenuSelect,
                   ),
                   MenuBody3(applyingActivityMenuSelect: onApplyingActivityMenuSelect),
                   MenuBody4(
@@ -118,6 +124,14 @@ class MenuState extends ConsumerState<Menu> {
 
   void onFindActivityMenuSelect() {
     Navigator.pushNamed(context, PageRoutes.findActivity);
+  }
+
+  void onFindPartyMenuSelect() {
+    Navigator.pushNamed(
+      context,
+      PageRoutes.findParty,
+      arguments: {'partyList': <PartyItem>[]},
+    );
   }
 
   void onApplyingActivityMenuSelect() {

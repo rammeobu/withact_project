@@ -4,6 +4,7 @@ import 'package:party_maker/app.dart';
 import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/models/recruit_data_structures.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 import '../../future&component/component/load_failed_view.dart';
 import '../../future&component/layout/basic_layout.dart';
 
@@ -80,44 +81,60 @@ class RecruitManageSelectState extends ConsumerState<RecruitManageSelect> {
                 left: screenWidth * 0.036,
                 right: screenWidth * 0.036,
               ),
-              child: ListView.separated(
+              child: ListView.builder(
                 itemCount: recruitList.length,
-                separatorBuilder: (context, i) =>
-                    Container(height: 0.5, color: const Color(0xFFBDBDBD)),
                 itemBuilder: (context, i) {
                   final recruit = recruitList[i];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        PageRoutes.recruitAnnouncement,
-                        arguments: {
-                          'activityName': recruit.name,
-                          'partyNameIntroduction': '',
-                          'position': <String>[],
-                          'preferences': null,
-                          'partyId': recruit.id,
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Material(
+                      color: cardColor,
+                      elevation: 2,
+                      shadowColor: Colors.black26,
+                      borderRadius: BorderRadius.circular(screenWidth * 0.05),
+                      clipBehavior: Clip.antiAlias,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            PageRoutes.recruitAnnouncement,
+                            arguments: {
+                              'activityName': recruit.name,
+                              'partyNameIntroduction': '',
+                              'position': <String>[],
+                              'preferences': null,
+                              'partyId': recruit.id,
+                            },
+                          );
                         },
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            recruit.name,
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.041,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 18,
+                            horizontal: 18,
                           ),
-                          Icon(
-                            Icons.chevron_right,
-                            color: appPrimaryColor,
-                            size: screenWidth * 0.058,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  recruit.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.041,
+                                    fontWeight: FontWeight.w600,
+                                    color: cardInk,
+                                  ),
+                                ),
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                color: appPrimaryColor,
+                                size: screenWidth * 0.058,
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   );

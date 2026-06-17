@@ -130,6 +130,8 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                       name: apply.name,
                       timePlace: apply.timePlace ?? [],
                       applyStatus: apply.applyStatus,
+                      introduction: apply.introduction,
+                      spec: apply.spec,
                     ),
                   )
                   .toList();
@@ -225,8 +227,8 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           icon: Icon(Icons.search, size: screenWidth * 0.073),
           style: ElevatedButton.styleFrom(
             fixedSize: Size(screenWidth * 0.547, 44),
-            foregroundColor: Colors.white,
-            backgroundColor: const Color(0xFF8D6E63),
+            foregroundColor: appPrimaryColor,
+            backgroundColor: Colors.white,
           ),
         ),
         Padding(
@@ -240,8 +242,12 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ],
-      body: SingleChildScrollView(
-        child: Padding(
+      body: RefreshIndicator(
+        onRefresh: fetchHomeCards,
+        color: appPrimaryColor,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
           padding: const EdgeInsets.only(top: 12, bottom: 17),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -402,6 +408,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
         ),
+        ),
       ),
       bottomNavigationBar: true,
       homeSelected: true,
@@ -493,9 +500,10 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       PageRoutes.applyingActivity,
       arguments: {
         'activityName': activity.name,
-        'profile': <String>[],
+        'profile': [activity.introduction, activity.spec],
         'poster': null,
         'applicationId': activity.applicationId,
+        'partyId': activity.partyId,
       },
     );
   }

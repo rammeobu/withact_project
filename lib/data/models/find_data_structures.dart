@@ -57,6 +57,7 @@ class ActivityItem {
   final String location;
   final String organization;
   final String category;
+  final String? poster;
 
   const ActivityItem({
     required this.id,
@@ -66,6 +67,7 @@ class ActivityItem {
     required this.location,
     required this.organization,
     required this.category,
+    this.poster,
   });
 
   factory ActivityItem.fromJson(Map<String, dynamic> json) {
@@ -77,6 +79,7 @@ class ActivityItem {
       location: json['location'] ?? '',
       organization: json['organization'] ?? '',
       category: json['category'] ?? '',
+      poster: json['imageUrl'] ?? json['poster'],
     );
   }
 
@@ -89,6 +92,7 @@ class ActivityItem {
       'location': location,
       'organization': organization,
       'category': category,
+      'imageUrl': poster,
     };
   }
 }

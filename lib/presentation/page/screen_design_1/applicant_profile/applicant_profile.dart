@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
 import '../../future&component/component/when_to_meet.dart';
@@ -152,6 +153,7 @@ class ApplicantProfileState extends ConsumerState<ApplicantProfile> {
 
   Future<void> onAcceptButtonPressed() async {
     if (isSubmitting) return;
+    HapticFeedback.mediumImpact();
     setState(() => isSubmitting = true);
     try {
       await ref.read(applyRepositoryProvider).putAccept(widget.applicationId);
@@ -180,6 +182,7 @@ class ApplicantProfileState extends ConsumerState<ApplicantProfile> {
 
   Future<void> onRejectButtonPressed() async {
     if (isSubmitting) return;
+    HapticFeedback.mediumImpact();
     setState(() => isSubmitting = true);
     try {
       await ref.read(applyRepositoryProvider).putDeny(widget.applicationId);

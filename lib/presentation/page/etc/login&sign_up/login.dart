@@ -208,9 +208,9 @@ class LoginState extends ConsumerState<Login> {
                                   ? null
                                   : onLoginButtonPressed,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF5D6AF6),
+                                backgroundColor: appPrimaryColor,
                                 foregroundColor: Colors.white,
-                                disabledBackgroundColor: const Color(0xFF5D6AF6),
+                                disabledBackgroundColor: appPrimaryColor,
                                 fixedSize: Size(screenWidth * 0.6, 56),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(

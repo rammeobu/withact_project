@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/constant.dart';
 import 'presentation/page/etc/splash_screen/splash_screen.dart';
 import 'presentation/page/etc/login&sign_up/login.dart';
 import 'presentation/page/etc/login&sign_up/sign_up.dart';
@@ -112,6 +113,20 @@ class App extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'NotoSansKR',
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: appPrimaryColor,
+        ),
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: appPrimaryColor,
+          selectionHandleColor: appPrimaryColor,
+          selectionColor: Color(0x333182F6),
+        ),
+        snackBarTheme: SnackBarThemeData(
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       ),
       initialRoute: PageRoutes.splash,
       onGenerateRoute: generateRoute,
@@ -226,6 +241,7 @@ class App extends ConsumerWidget {
           profile: getArg(args, 'profile', <String>[]),
           poster: args?['poster'] as String?,
           applicationId: getArg(args, 'applicationId', 0),
+          partyId: getArg(args, 'partyId', 0),
         );
 
       case PageRoutes.activityRecruit:

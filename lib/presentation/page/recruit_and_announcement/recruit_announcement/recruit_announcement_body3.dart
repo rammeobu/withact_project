@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 import '../../future&component/component/person.dart';
 
@@ -25,6 +27,7 @@ class RecruitAnnouncementBody3 extends StatelessWidget {
           style: TextStyle(
             fontSize: screenWidth * 0.058,
             fontWeight: FontWeight.w800,
+            color: cardInk,
           ),
         ),
         Padding(
@@ -43,11 +46,24 @@ class RecruitAnnouncementBody3 extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Center(
-                        child: Text(
-                          pos,
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.036,
-                            fontWeight: FontWeight.w600,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: cardChipBg,
+                            borderRadius: BorderRadius.circular(
+                              screenWidth * 0.05,
+                            ),
+                          ),
+                          child: Text(
+                            pos,
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.036,
+                              fontWeight: FontWeight.w600,
+                              color: appPrimaryColor,
+                            ),
                           ),
                         ),
                       ),

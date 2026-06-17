@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
 
 class BasicLayout extends StatelessWidget {
   final String? title;
@@ -38,15 +39,18 @@ class BasicLayout extends StatelessWidget {
           systemNavigationBarIconBrightness: Brightness.dark,
         ),
         child: Container(
-          color: const Color(0xFF6D4C41),
+          color: appHeaderColor,
           child: SafeArea(
             child: Scaffold(
               resizeToAvoidBottomInset: true,
               backgroundColor: const Color(0xFFF6F7F9),
               appBar: AppBar(
-                backgroundColor: const Color(0xFF6D4C41),
+                backgroundColor: Colors.transparent,
                 foregroundColor: Colors.white,
                 elevation: 0,
+                flexibleSpace: Container(
+                  decoration: const BoxDecoration(gradient: appPrimaryGradient),
+                ),
                 title: (needTitleExpand != null && needTitleExpand!)
                     ? Row(children: needWidget ?? [])
                     : Text(
@@ -78,9 +82,7 @@ class BasicLayout extends StatelessWidget {
                                     ),
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.black,
-                                disabledForegroundColor: const Color(
-                                  0xFFA64B2A,
-                                ),
+                                disabledForegroundColor: appPrimaryColor,
                                 fixedSize: Size(screenWidth * 0.292, 57),
                               ),
                               child: Icon(Icons.map, size: screenWidth * 0.097),
@@ -95,9 +97,7 @@ class BasicLayout extends StatelessWidget {
                                     ),
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.black,
-                                disabledForegroundColor: const Color(
-                                  0xFFA64B2A,
-                                ),
+                                disabledForegroundColor: appPrimaryColor,
                                 fixedSize: Size(screenWidth * 0.292, 57),
                               ),
                               child: Icon(
@@ -115,9 +115,7 @@ class BasicLayout extends StatelessWidget {
                                     ),
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.black,
-                                disabledForegroundColor: const Color(
-                                  0xFFA64B2A,
-                                ),
+                                disabledForegroundColor: appPrimaryColor,
                                 fixedSize: Size(screenWidth * 0.292, 57),
                               ),
                               child: Icon(

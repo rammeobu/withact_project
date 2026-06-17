@@ -4,6 +4,7 @@ class RecruitItem {
   final List<String>? timePlace;
   final String? applyStatus;
   final String? poster;
+  final int? activityId;
 
   const RecruitItem({
     required this.id,
@@ -11,12 +12,24 @@ class RecruitItem {
     this.timePlace,
     this.applyStatus,
     this.poster,
+    this.activityId,
   });
+
+  RecruitItem copyWith({String? poster}) => RecruitItem(
+        id: id,
+        name: name,
+        timePlace: timePlace,
+        applyStatus: applyStatus,
+        poster: poster ?? this.poster,
+        activityId: activityId,
+      );
 
   factory RecruitItem.fromJson(Map<String, dynamic> json) {
     return RecruitItem(
       id: json['id'] ?? 0,
       name: json['title'] ?? '',
+      poster: json['imageUrl'] ?? json['activityImageUrl'] ?? json['poster'],
+      activityId: (json['activityId'] as num?)?.toInt(),
     );
   }
 }

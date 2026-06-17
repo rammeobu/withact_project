@@ -1,28 +1,41 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
 import 'package:party_maker/data/models/recruit_data_structures.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/activity_recruit/activity_recruit_body2.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/activity_recruit/activity_recruit_body3.dart';
+import 'package:party_maker/presentation/page/recruit_and_announcement/activity_recruit/activity_recruit_body4.dart';
 import '../../future&component/layout/basic_layout.dart';
 import 'activity_recruit_body.dart';
 import 'activity_recruit_footer.dart';
 
 class ActivityRecruitNotifier
     extends Notifier<
-      ({List<String> preferences, List<String> positions, List<int> counts})
+      ({
+        List<String> preferences,
+        List<String> positions,
+        List<int> counts,
+        String region,
+      })
     > {
   @override
-  ({List<String> preferences, List<String> positions, List<int> counts})
-  build() => (preferences: [], positions: [''], counts: [1]);
+  ({
+    List<String> preferences,
+    List<String> positions,
+    List<int> counts,
+    String region,
+  })
+  build() => (preferences: [], positions: [''], counts: [1], region: '');
 
   void addPreference(String text) {
     state = (
       preferences: [...state.preferences, text],
       positions: state.positions,
       counts: state.counts,
+      region: state.region,
     );
   }
 
@@ -32,6 +45,7 @@ class ActivityRecruitNotifier
       preferences: newPrefs,
       positions: state.positions,
       counts: state.counts,
+      region: state.region,
     );
   }
 
@@ -40,6 +54,7 @@ class ActivityRecruitNotifier
       preferences: state.preferences,
       positions: [...state.positions, ''],
       counts: [...state.counts, 1],
+      region: state.region,
     );
   }
 
@@ -50,6 +65,7 @@ class ActivityRecruitNotifier
       preferences: state.preferences,
       positions: newPositions,
       counts: newCounts,
+      region: state.region,
     );
   }
 
@@ -60,6 +76,7 @@ class ActivityRecruitNotifier
       preferences: state.preferences,
       positions: state.positions,
       counts: newCounts,
+      region: state.region,
     );
   }
 
@@ -70,6 +87,16 @@ class ActivityRecruitNotifier
       preferences: state.preferences,
       positions: state.positions,
       counts: newCounts,
+      region: state.region,
+    );
+  }
+
+  void setRegion(String name) {
+    state = (
+      preferences: state.preferences,
+      positions: state.positions,
+      counts: state.counts,
+      region: name,
     );
   }
 }
@@ -77,7 +104,12 @@ class ActivityRecruitNotifier
 final activityRecruitProvider =
     NotifierProvider.autoDispose<
       ActivityRecruitNotifier,
-      ({List<String> preferences, List<String> positions, List<int> counts})
+      ({
+        List<String> preferences,
+        List<String> positions,
+        List<int> counts,
+        String region,
+      })
     >(ActivityRecruitNotifier.new);
 
 class ActivityRecruit extends ConsumerStatefulWidget {
@@ -92,6 +124,7 @@ class ActivityRecruitState extends ConsumerState<ActivityRecruit> {
   late List<ScrollController> scrollControllers;
   late List<TextEditingController> staticTextControllers;
   late List<TextEditingController> dynamicTextControllers;
+  late MapController mapController;
   int? selectedActivityId;
 
   @override
@@ -100,6 +133,7 @@ class ActivityRecruitState extends ConsumerState<ActivityRecruit> {
     scrollControllers = List.generate(3, (i) => ScrollController());
     staticTextControllers = List.generate(3, (i) => TextEditingController());
     dynamicTextControllers = [TextEditingController()];
+    mapController = MapController();
   }
 
   @override
@@ -146,6 +180,13 @@ class ActivityRecruitState extends ConsumerState<ActivityRecruit> {
                       section: '파티 이름/소개',
                       textEditingController: staticTextControllers[1],
                       isRequired: true,
+                    ),
+                    ActivityRecruitBody4(
+                      mapController: mapController,
+                      selectedRegion: recruitState.region,
+                      onRegionSelected: (name) => ref
+                          .read(activityRecruitProvider.notifier)
+                          .setRegion(name),
                     ),
                     ActivityRecruitBody2(
                       preferences: recruitState.preferences,

@@ -3,10 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
 import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
-import 'package:party_maker/presentation/page/recruit_and_announcement/recruit_announcement/recruit_announcement_body2.dart';
-import 'package:party_maker/presentation/page/recruit_and_announcement/recruit_announcement/recruit_announcement_body3.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
+import '../../future&component/component/role_progress_row.dart';
 import '../../future&component/layout/basic_layout.dart';
-import 'recruit_announcement_body.dart';
 import 'recruit_announcement_footer.dart';
 
 class RecruitAnnouncement extends ConsumerStatefulWidget {
@@ -30,19 +29,24 @@ class RecruitAnnouncement extends ConsumerStatefulWidget {
 }
 
 class RecruitAnnouncementState extends ConsumerState<RecruitAnnouncement> {
-  late List<ScrollController> scrollControllers;
+  late ScrollController scrollController;
   late String activityName;
   late String partyNameIntroduction;
   late List<String> position;
+  late List<String> preferences;
+  List<int> targets = [];
+  List<int> currents = [];
+  String? poster;
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    scrollControllers = List.generate(5, (_) => ScrollController());
+    scrollController = ScrollController();
     activityName = widget.activityName;
     partyNameIntroduction = widget.partyNameIntroduction;
     position = widget.position;
+    preferences = widget.preferences ?? [];
     fetchAnnouncement();
   }
 
@@ -55,6 +59,15 @@ class RecruitAnnouncementState extends ConsumerState<RecruitAnnouncement> {
       final detail = await ref
           .read(recruitRepositoryProvider)
           .getAnnouncement(widget.partyId.toString());
+      String? fetchedPoster;
+      if (detail.activityId != null) {
+        try {
+          final actData = await ref
+              .read(findRepositoryProvider)
+              .getActivityDetail('${detail.activityId}');
+          fetchedPoster = actData['imageUrl']?.toString();
+        } catch (_) {}
+      }
       if (!mounted) return;
       setState(() {
         if (detail.activityName.isNotEmpty) activityName = detail.activityName;
@@ -62,6 +75,11 @@ class RecruitAnnouncementState extends ConsumerState<RecruitAnnouncement> {
           partyNameIntroduction = detail.partyNameIntroduction;
         }
         if (detail.position.isNotEmpty) position = detail.position;
+        targets = detail.targets;
+        currents = detail.currents;
+        if (fetchedPoster != null && fetchedPoster.isNotEmpty) {
+          poster = fetchedPoster;
+        }
         isLoading = false;
       });
     } catch (_) {
@@ -71,9 +89,7 @@ class RecruitAnnouncementState extends ConsumerState<RecruitAnnouncement> {
 
   @override
   void dispose() {
-    for (ScrollController controller in scrollControllers) {
-      controller.dispose();
-    }
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -90,38 +106,79 @@ class RecruitAnnouncementState extends ConsumerState<RecruitAnnouncement> {
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                    controller: scrollControllers[0],
+                    controller: scrollController,
                     child: Padding(
                       padding: EdgeInsets.only(
-                        left: screenWidth * 0.036,
-                        top: 13,
-                        right: screenWidth * 0.036,
+                        left: screenWidth * 0.045,
+                        top: 14,
+                        right: screenWidth * 0.045,
+                        bottom: 18,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          RecruitAnnouncementBody(
-                            section: '활동 이름',
-                            content: activityName,
-                            onSearchButtonPressed: onSearchButtonPressed,
-                            scrollController: scrollControllers[1],
-                          ),
-                          RecruitAnnouncementBody(
-                            section: '파티 이름/소개',
-                            content: partyNameIntroduction,
-                            scrollController: scrollControllers[2],
-                          ),
-                          RecruitAnnouncementBody2(
-                            preferences: widget.preferences,
-                            scrollController: scrollControllers[3],
+                          detailHero(
+                            poster,
+                            activityName.isEmpty ? '모집 공고' : activityName,
+                            screenWidth,
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 23),
-                            child: RecruitAnnouncementBody3(
-                              position: position,
-                              primaryScrollController: scrollControllers[0],
-                              horizontalScrollController: scrollControllers[4],
-                            ),
+                            padding: const EdgeInsets.only(top: 14),
+                            child: sectionCard(screenWidth, [
+                              sectionBlock(
+                                screenWidth,
+                                '파티 소개',
+                                sectionText(partyNameIntroduction, screenWidth),
+                              ),
+                              sectionDivider(),
+                              sectionBlock(
+                                screenWidth,
+                                '우대사항',
+                                preferences.where((p) => p.trim().isNotEmpty).isEmpty
+                                    ? sectionText('', screenWidth)
+                                    : cardRoleChips(
+                                        preferences
+                                            .where((p) => p.trim().isNotEmpty)
+                                            .toList(),
+                                        screenWidth,
+                                      ),
+                              ),
+                              sectionDivider(),
+                              sectionBlock(
+                                screenWidth,
+                                '모집 역할 / 인원',
+                                position.isEmpty
+                                    ? sectionText('', screenWidth)
+                                    : Column(
+                                        children: position
+                                            .asMap()
+                                            .entries
+                                            .map((entry) {
+                                              final int i = entry.key;
+                                              final int target =
+                                                  i < targets.length
+                                                  ? targets[i]
+                                                  : 1;
+                                              final int current =
+                                                  i < currents.length
+                                                  ? currents[i]
+                                                  : 0;
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                  bottom: 6,
+                                                ),
+                                                child: RoleProgressRow(
+                                                  roleName: entry.value,
+                                                  target: target,
+                                                  current: current,
+                                                  fontSize: screenWidth * 0.034,
+                                                ),
+                                              );
+                                            })
+                                            .toList(),
+                                      ),
+                              ),
+                            ]),
                           ),
                         ],
                       ),
@@ -130,7 +187,7 @@ class RecruitAnnouncementState extends ConsumerState<RecruitAnnouncement> {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.036,
+                    horizontal: screenWidth * 0.045,
                     vertical: 6,
                   ),
                   child: RecruitAnnouncementFooter(
@@ -146,10 +203,6 @@ class RecruitAnnouncementState extends ConsumerState<RecruitAnnouncement> {
     );
   }
 
-  void onSearchButtonPressed() {
-    Navigator.pushNamed(context, PageRoutes.findActivity);
-  }
-
   void onEditAnnouncementButtonPressed() {
     Navigator.pushNamed(
       context,
@@ -158,7 +211,7 @@ class RecruitAnnouncementState extends ConsumerState<RecruitAnnouncement> {
         'activityName': activityName,
         'partyNameIntroduction': partyNameIntroduction,
         'positions': position,
-        'preferences': widget.preferences,
+        'preferences': preferences,
         'partyId': widget.partyId,
       },
     );

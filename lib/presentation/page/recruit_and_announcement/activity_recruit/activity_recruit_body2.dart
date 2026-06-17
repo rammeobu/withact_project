@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
-import '../../future&component/layout/default_container.dart';
+import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 class ActivityRecruitBody2 extends StatelessWidget {
   final List<String> preferences;
@@ -33,64 +34,100 @@ class ActivityRecruitBody2 extends StatelessWidget {
                 style: TextStyle(
                   fontSize: screenWidth * 0.058,
                   fontWeight: FontWeight.w800,
+                  color: cardInk,
                 ),
               ),
             ],
           ),
           Padding(
             padding: const EdgeInsets.only(top: 7),
-            child: DefaultContainer(
-              color: const Color(0xffebedf0),
-              width: screenWidth,
-              height: 68,
-              child: Padding(
-                padding: EdgeInsets.all(screenWidth * 0.019),
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      ...List.generate(
-                        preferences.length,
-                        (i) => Padding(
-                          padding: EdgeInsets.only(right: screenWidth * 0.019),
-                          child: Chip(
-                            label: Text('#${preferences[i]}'),
-                            onDeleted: () => onDeletePreferenceButtonPressed(i),
-                            visualDensity: VisualDensity.compact,
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                screenWidth * 0.049,
+            child: Material(
+              color: cardColor,
+              elevation: 2,
+              shadowColor: Colors.black26,
+              borderRadius: BorderRadius.circular(screenWidth * 0.05),
+              clipBehavior: Clip.antiAlias,
+              child: SizedBox(
+                width: screenWidth,
+                height: 68,
+                child: Padding(
+                  padding: EdgeInsets.all(screenWidth * 0.04),
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        ...List.generate(
+                          preferences.length,
+                          (i) => Padding(
+                            padding: EdgeInsets.only(
+                              right: screenWidth * 0.019,
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.only(
+                                left: 12,
+                                right: 6,
+                                top: 6,
+                                bottom: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: cardChipBg,
+                                borderRadius: BorderRadius.circular(
+                                  screenWidth * 0.05,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '#${preferences[i]}',
+                                    style: TextStyle(
+                                      fontSize: screenWidth * 0.034,
+                                      fontWeight: FontWeight.w600,
+                                      color: appPrimaryColor,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 4),
+                                    child: InkWell(
+                                      onTap: () =>
+                                          onDeletePreferenceButtonPressed(i),
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Icon(
+                                        Icons.close,
+                                        size: screenWidth * 0.04,
+                                        color: appPrimaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ),
-                      ),
-
-                      IntrinsicWidth(
-                        stepWidth: 100.0,
-                        child: TextField(
-                          controller: textEditingController,
-                          onSubmitted: (preference) {
-                            final text = preference.trim();
-                            if (text.isNotEmpty) {
-                              onPreferenceAdded(text);
-                            }
-                          },
-                          decoration: InputDecoration(
-                            hintText: '#추가',
-                            border: InputBorder.none,
-                            isDense: true,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.010,
+                        IntrinsicWidth(
+                          stepWidth: 100.0,
+                          child: TextField(
+                            controller: textEditingController,
+                            onSubmitted: (preference) {
+                              final text = preference.trim();
+                              if (text.isNotEmpty) {
+                                onPreferenceAdded(text);
+                              }
+                            },
+                            decoration: InputDecoration(
+                              hintText: '#추가',
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: screenWidth * 0.010,
+                              ),
                             ),
+                            style: TextStyle(fontSize: screenWidth * 0.032),
                           ),
-                          style: TextStyle(fontSize: screenWidth * 0.032),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

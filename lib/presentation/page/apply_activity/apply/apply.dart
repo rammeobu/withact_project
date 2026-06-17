@@ -37,6 +37,7 @@ class ApplyState extends ConsumerState<Apply> {
   List<PartyRole> roles = [];
   int? selectedRoleId;
   bool rolesLoading = true;
+  String? poster;
 
   late final List<TextEditingController> bodyTextControllers = [];
   late final List<ScrollController> bodyScrollControllers = [];
@@ -60,7 +61,23 @@ class ApplyState extends ConsumerState<Apply> {
     timeTextController = TextEditingController();
     whenToMeetScrollController = ScrollController();
     selectedRoleId = widget.roleId;
+    poster = widget.poster;
     fetchRoles();
+    fetchPoster();
+  }
+
+  Future<void> fetchPoster() async {
+    final activityId = widget.activityId;
+    if (activityId == null || (poster != null && poster!.isNotEmpty)) return;
+    try {
+      final data = await ref
+          .read(findRepositoryProvider)
+          .getActivityDetail('$activityId');
+      final fetched = data['imageUrl']?.toString();
+      if (mounted && fetched != null && fetched.isNotEmpty) {
+        setState(() => poster = fetched);
+      }
+    } catch (_) {}
   }
 
   Future<void> fetchRoles() async {
@@ -120,7 +137,7 @@ class ApplyState extends ConsumerState<Apply> {
                       padding: const EdgeInsets.only(top: 17),
                       child: ApplyInformation(
                         activityOverview: widget.activityName,
-                        poster: widget.poster,
+                        poster: poster,
                         scrollController: bodyScrollControllers[0],
                       ),
                     ),

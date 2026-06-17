@@ -94,8 +94,12 @@ class FindActivityState extends ConsumerState<FindActivity> {
 
     return BasicLayout(
       title: '활동 찾기',
-      body: ListView.builder(
+      body: RefreshIndicator(
+        onRefresh: fetchActivityList,
+        color: appPrimaryColor,
+        child: ListView.builder(
         controller: scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.only(
           left: screenWidth * 0.036,
           top: 13,
@@ -144,6 +148,7 @@ class FindActivityState extends ConsumerState<FindActivity> {
           return RepaintBoundary(
             child: ActivityCardFind(
               activityName: activity.activityName,
+              poster: activity.poster,
               timePlace: ['${activity.startDate} ~ ${activity.endDate}', activity.location],
               onActivityInformationButtonPressed: () =>
                   onActivityInformationButtonPressed(activity),
@@ -157,6 +162,7 @@ class FindActivityState extends ConsumerState<FindActivity> {
             ),
           );
         },
+      ),
       ),
       bottomNavigationBar: true,
     );
@@ -202,7 +208,7 @@ class FindActivityState extends ConsumerState<FindActivity> {
           'activityDetail': detail,
           'leaderProfile': <String>[],
           'position': <String>[],
-          'poster': null,
+          'poster': activity.poster,
         },
       );
     }

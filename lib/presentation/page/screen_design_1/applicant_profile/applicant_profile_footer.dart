@@ -26,15 +26,16 @@ class ApplicantProfileFooter extends StatelessWidget {
         children: [
           Row(
             children: [
-              OutlinedButton(
+              ElevatedButton(
                 onPressed: onAcceptButtonPressed,
-                style: OutlinedButton.styleFrom(
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
                   backgroundColor: const Color(0xFF1AB97A),
+                  foregroundColor: Colors.white,
                   fixedSize: Size(screenWidth * 0.389, 59),
                   padding: EdgeInsets.zero,
-                  side: const BorderSide(width: 0.0),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(screenWidth * 0.073),
+                    borderRadius: BorderRadius.circular(screenWidth * 0.03),
                   ),
                 ),
                 child: Text(
@@ -46,24 +47,27 @@ class ApplicantProfileFooter extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: screenWidth * 0.024),
-              OutlinedButton(
-                onPressed: onRejectButtonPressed,
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: const Color(0xFFF34343),
-                  fixedSize: Size(screenWidth * 0.389, 59),
-                  padding: EdgeInsets.zero,
-                  side: const BorderSide(width: 0.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(screenWidth * 0.073),
+              Padding(
+                padding: EdgeInsets.only(left: screenWidth * 0.024),
+                child: ElevatedButton(
+                  onPressed: onRejectButtonPressed,
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: const Color(0xFFF34343),
+                    foregroundColor: Colors.white,
+                    fixedSize: Size(screenWidth * 0.389, 59),
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                    ),
                   ),
-                ),
-                child: Text(
-                  '거절',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: screenWidth * 0.049,
-                    fontWeight: FontWeight.w700,
+                  child: Text(
+                    '거절',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: screenWidth * 0.049,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),

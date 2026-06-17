@@ -90,7 +90,10 @@ class RecruitListState extends ConsumerState<RecruitList> {
                                   applyStatus: apply.applyStatus ?? '',
                                   poster: apply.poster,
                                   onDetailButtonPressed: () =>
-                                      onDetailButtonPressed(apply.name),
+                                      onDetailButtonPressed(
+                                        apply.name,
+                                        apply.poster,
+                                      ),
                                   onAnnouncementManageButtonPressed: () =>
                                       onAnnouncementManageButtonPressed(
                                           apply.name, apply.id),
@@ -109,7 +112,7 @@ class RecruitListState extends ConsumerState<RecruitList> {
     );
   }
 
-  void onDetailButtonPressed(String name) {
+  void onDetailButtonPressed(String name, String? poster) {
     Navigator.pushNamed(
       context,
       PageRoutes.activityInformation,
@@ -119,7 +122,7 @@ class RecruitListState extends ConsumerState<RecruitList> {
         'activityDetail': '',
         'leaderProfile': <String>[],
         'position': <String>[],
-        'poster': null,
+        'poster': poster,
       },
     );
   }

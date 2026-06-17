@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
 
 class PartyExitFail extends StatelessWidget {
   const PartyExitFail({super.key});
@@ -46,20 +47,25 @@ class PartyExitFail extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                OutlinedButton(
+                ElevatedButton(
                   onPressed: () => onRetryButtonPressed(context),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.black,
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: appPrimaryColor,
+                    foregroundColor: Colors.white,
                     minimumSize: Size(screenWidth * 0.487, 57),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(
+                      borderRadius: BorderRadius.circular(
                         screenWidth * 0.049,
                       ),
                     ),
                   ),
                   child: Text(
                     '다시 시도',
-                    style: TextStyle(fontSize: screenWidth * 0.049),
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.049,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
                 Padding(
@@ -67,17 +73,21 @@ class PartyExitFail extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () => onHomeScreenButtonPressed(context),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black,
+                      foregroundColor: appPrimaryColor,
                       minimumSize: Size(screenWidth * 0.487, 57),
+                      side: const BorderSide(color: appPrimaryColor, width: 1),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(
+                        borderRadius: BorderRadius.circular(
                           screenWidth * 0.049,
                         ),
                       ),
                     ),
                     child: Text(
                       '대기 화면',
-                      style: TextStyle(fontSize: screenWidth * 0.049),
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.049,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),

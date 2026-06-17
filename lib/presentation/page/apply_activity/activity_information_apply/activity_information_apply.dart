@@ -5,10 +5,9 @@ import 'package:party_maker/app.dart';
 import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/models/find_data_structures.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
-import 'package:party_maker/presentation/page/screen_design_1/activity_information/activity_information_body1.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 import 'package:party_maker/presentation/page/apply_activity/activity_information_apply/activity_information_apply_body2.dart';
 import '../../future&component/component/role_progress_row.dart';
-import '../../future&component/layout/default_container.dart';
 import '../../future&component/layout/basic_layout.dart';
 import '../../future&component/profile/profile_card_leader.dart';
 
@@ -48,6 +47,7 @@ class ActivityInformationApplyState
   late String activityOverview;
   late String activityDetail;
   late List<String> leaderProfile;
+  String? poster;
   List<PartyRole> roles = [];
   bool rolesExpanded = false;
   bool isLoading = true;
@@ -60,6 +60,7 @@ class ActivityInformationApplyState
     activityOverview = widget.activityOverview;
     activityDetail = widget.activityDetail;
     leaderProfile = widget.leaderProfile;
+    poster = widget.poster;
     fetchRoles();
     fetchActivityDetail();
     fetchLeader();
@@ -86,11 +87,19 @@ class ActivityInformationApplyState
           .read(findRepositoryProvider)
           .getActivityDetail('$activityId');
       final detail = data['description']?.toString() ?? '';
-      if (mounted && detail.isNotEmpty) {
+      final fetchedPoster = data['imageUrl']?.toString();
+      if (mounted) {
         setState(() {
-          activityDetail = detail;
-          if (activityOverview.trim().isEmpty) {
-            activityOverview = summarize(detail);
+          if (detail.isNotEmpty) {
+            activityDetail = detail;
+            if (activityOverview.trim().isEmpty) {
+              activityOverview = summarize(detail);
+            }
+          }
+          if ((poster == null || poster!.isEmpty) &&
+              fetchedPoster != null &&
+              fetchedPoster.isNotEmpty) {
+            poster = fetchedPoster;
           }
         });
       }
@@ -152,83 +161,37 @@ class ActivityInformationApplyState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    ActivityInformationBody1(
-                      activityOverview: widget.activityName,
-                      poster: widget.poster,
-                      scrollController: body1ScrollController,
+                    detailHero(
+                      poster,
+                      widget.activityName.isEmpty
+                          ? '활동 정보'
+                          : widget.activityName,
+                      screenWidth,
                     ),
 
                     Padding(
-                      padding: const EdgeInsets.only(top: 17),
-                      child: Text(
-                        '요약설명',
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.044,
-                          fontWeight: FontWeight.w700,
+                      padding: const EdgeInsets.only(top: 14),
+                      child: sectionCard(screenWidth, [
+                        sectionBlock(
+                          screenWidth,
+                          '요약',
+                          sectionText(activityOverview, screenWidth),
                         ),
-                      ),
+                        sectionDivider(),
+                        sectionBlock(
+                          screenWidth,
+                          '상세',
+                          sectionText(activityDetail, screenWidth),
+                        ),
+                      ]),
                     ),
 
                     Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: DefaultContainer(
-                        width: double.infinity,
-                        height: 101,
-                        color: const Color(0xFFF0F2F5),
-                        child: Padding(
-                          padding: EdgeInsets.all(screenWidth * 0.029),
-                          child: SingleChildScrollView(
-                            child: Text(
-                              activityOverview,
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.034,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ),
-                        ),
+                      padding: const EdgeInsets.only(top: 14),
+                      child: ProfileCardLeader(
+                        profileContent: leaderProfile,
+                        onCallButtonPressed: onCallButtonPressed,
                       ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(top: 17),
-                      child: Text(
-                        '상세설명',
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.044,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: DefaultContainer(
-                        width: double.infinity,
-                        height: 211,
-                        color: const Color(0xFFF7F8F9),
-                        child: Padding(
-                          padding: EdgeInsets.all(screenWidth * 0.029),
-                          child: Scrollbar(
-                            controller: detailScrollController,
-                            child: SingleChildScrollView(
-                              controller: detailScrollController,
-                              child: Text(
-                                activityDetail,
-                                style: TextStyle(
-                                  fontSize: screenWidth * 0.036,
-                                  height: 1.6,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    ProfileCardLeader(
-                      profileContent: leaderProfile,
-                      onCallButtonPressed: onCallButtonPressed,
                     ),
 
                     Padding(
@@ -415,7 +378,7 @@ class ActivityInformationApplyState
       arguments: {
         'activityName': widget.activityName,
         'profile': widget.leaderProfile,
-        'poster': widget.poster,
+        'poster': poster,
         'partyId': widget.partyId,
         'activityId': widget.activityId,
       },

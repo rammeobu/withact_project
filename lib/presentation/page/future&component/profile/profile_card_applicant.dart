@@ -1,7 +1,8 @@
-﻿import 'dart:io';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 class ProfileCardApplicant extends StatelessWidget {
   final List<String> profileContent;
@@ -17,78 +18,101 @@ class ProfileCardApplicant extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
+    final String name = profileContent.isNotEmpty ? profileContent[0] : '';
+    final String role = profileContent.length > 1 ? profileContent[1] : '';
+    final String skill = profileContent.length > 2 ? profileContent[2] : '';
     return Padding(
       padding: const EdgeInsets.only(top: 12),
-      child: SizedBox(
-        width: double.infinity,
-        height: 150,
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.049),
-          ),
-          color: const Color(0xfff0f3f6),
-          child: InkWell(
-            onTap: onTap,
+      child: Material(
+        color: cardColor,
+        elevation: 2,
+        shadowColor: Colors.black26,
+        borderRadius: BorderRadius.circular(screenWidth * 0.05),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.all(screenWidth * 0.04),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Flexible(
-                  flex: 2,
+                Container(
+                  width: screenWidth * 0.16,
+                  height: screenWidth * 0.16,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: const BoxDecoration(
+                    color: cardChipBg,
+                    shape: BoxShape.circle,
+                  ),
+                  child: (profileImage != null)
+                      ? Image.file(File(profileImage!), fit: BoxFit.cover, cacheWidth: 300)
+                      : Icon(
+                          Icons.person,
+                          size: screenWidth * 0.095,
+                          color: appPrimaryColor,
+                        ),
+                ),
+                Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(left: screenWidth * 0.024),
-                    child: Container(
-                      width: screenWidth * 0.195,
-                      height: screenWidth * 0.195,
-                      decoration: const BoxDecoration(
-                        color: cardColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: profileImage != null
-                          ? Image.file(File(profileImage!), cacheWidth: 300)
-                          : Icon(
-                              Icons.person,
-                              size: screenWidth * 0.158,
-                              color: Colors.grey,
+                    padding: EdgeInsets.only(left: screenWidth * 0.04),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                name.isEmpty ? '-' : name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.046,
+                                  fontWeight: FontWeight.w800,
+                                  color: cardInk,
+                                ),
+                              ),
                             ),
+                            if (role.isNotEmpty)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 9,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: cardChipBg,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  role,
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.03,
+                                    fontWeight: FontWeight.w700,
+                                    color: appPrimaryColor,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        if (skill.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: cardInfoRow(
+                              Icons.workspace_premium_outlined,
+                              skill,
+                              screenWidth,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
-                Flexible(
-                  flex: 5,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: screenWidth * 0.024,
-                      right: screenWidth * 0.024,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Table(
-                          border: TableBorder.all(
-                            color: Colors.grey,
-                            width: 0.5,
-                            borderRadius: BorderRadius.circular(
-                              screenWidth * 0.036,
-                            ),
-                          ),
-                          columnWidths: {
-                            0: FixedColumnWidth(screenWidth * 0.097),
-                            1: const FlexColumnWidth(),
-                          },
-                          children: [
-                            infoRow('이름',
-                                profileContent.isNotEmpty ? profileContent[0] : '',
-                                screenWidth),
-                            infoRow('역할',
-                                profileContent.length > 1 ? profileContent[1] : '',
-                                screenWidth),
-                            infoRow('기술',
-                                profileContent.length > 2 ? profileContent[2] : '',
-                                screenWidth),
-                          ],
-                        ),
-                      ],
-                    ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Icon(
+                    Icons.chevron_right,
+                    size: screenWidth * 0.05,
+                    color: cardPosterIcon,
                   ),
                 ),
               ],
@@ -96,37 +120,6 @@ class ProfileCardApplicant extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  TableRow infoRow(String label, String value, double screenWidth) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: EdgeInsets.all(screenWidth * 0.007),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: screenWidth * 0.032,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            left: screenWidth * 0.019,
-            top: screenWidth * 0.007,
-            right: screenWidth * 0.007,
-            bottom: screenWidth * 0.007,
-          ),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(value),
-          ),
-        ),
-      ],
     );
   }
 }

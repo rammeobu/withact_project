@@ -1,7 +1,8 @@
-﻿import 'dart:io';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 class ProfileCardEdit extends StatelessWidget {
   final List<TextEditingController> controllers;
@@ -21,197 +22,161 @@ class ProfileCardEdit extends StatelessWidget {
     this.profileImage,
   });
 
+  Widget _editField(String label, TextEditingController controller, double screenWidth) {
+    return Row(
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: screenWidth * 0.03,
+            fontWeight: FontWeight.w600,
+            color: cardSub,
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 6),
+            child: TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.only(bottom: 4),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFE0E3E8)),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: appPrimaryColor),
+                ),
+              ),
+              style: TextStyle(
+                fontSize: screenWidth * 0.036,
+                fontWeight: FontWeight.w600,
+                color: cardInk,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    return SizedBox(
-      height: 250,
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(screenWidth * 0.049),
-        ),
-        color: cardColor,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 7),
-          child: Column(
-            children: [
-              Flexible(
-                flex: 4,
-                child: Row(
-                  children: [
-                    Flexible(
-                      flex: 2,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: screenWidth * 0.024),
-                        child: GestureDetector(
-                          onTap: onProfileImageTap,
-                          child: Container(
-                            width: screenWidth * 0.195,
-                            height: screenWidth * 0.195,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFECEEFD),
-                              shape: BoxShape.circle,
-                            ),
-                            child: (profileImage != null)
-                                ? ClipOval(
-                                    child: Image.file(
-                                      File(profileImage!),
-                                      fit: BoxFit.cover,
-                                      cacheWidth: 300,
-                                    ),
-                                  )
-                                : Icon(
-                                    Icons.person,
-                                    size: screenWidth * 0.158,
-                                    color: appPrimaryColor,
-                                  ),
-                          ),
-                        ),
-                      ),
+    return Material(
+      color: cardColor,
+      elevation: 2,
+      shadowColor: Colors.black26,
+      borderRadius: BorderRadius.circular(screenWidth * 0.05),
+      child: Padding(
+        padding: EdgeInsets.all(screenWidth * 0.045),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: onProfileImageTap,
+                  child: Container(
+                    width: screenWidth * 0.17,
+                    height: screenWidth * 0.17,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: const BoxDecoration(
+                      color: cardChipBg,
+                      shape: BoxShape.circle,
                     ),
-                    Flexible(
-                      flex: 5,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: screenWidth * 0.036,
-                          top: 6,
-                        ),
-                        child: Table(
-                          border: TableBorder.all(
-                            color: Colors.grey,
-                            width: 0.5,
-                            borderRadius: BorderRadius.circular(
-                              screenWidth * 0.036,
-                            ),
+                    child: (profileImage != null)
+                        ? Image.file(File(profileImage!), fit: BoxFit.cover, cacheWidth: 300)
+                        : Icon(
+                            Icons.camera_alt_outlined,
+                            size: screenWidth * 0.07,
+                            color: appPrimaryColor,
                           ),
-                          columnWidths: {
-                            0: FixedColumnWidth(screenWidth * 0.097),
-                            1: const FlexColumnWidth(),
-                          },
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: screenWidth * 0.04),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
                           children: [
-                            editRow(
-                              '이름',
-                              controllers[0],
-                              screenWidth,
-                              isRequired: true,
-                            ),
-                            editRow(
-                              '기술',
-                              controllers[1],
-                              screenWidth,
-                              isRequired: true,
-                            ),
-                            editRow(
-                              '소속',
-                              controllers[2],
-                              screenWidth,
-                              isRequired: true,
-                            ),
-                            editRow(
-                              '전공',
-                              controllers[3],
-                              screenWidth,
-                              isRequired: true,
+                            Expanded(child: _editField('이름', controllers[0], screenWidth)),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: _editField('기술', controllers[1], screenWidth),
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Flexible(
-                flex: 2,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.036,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: anonymousFlag,
-                            onChanged: onAnonymousChanged,
-                          ),
-                          GestureDetector(
-                            onTap: () => onAnonymousChanged(!anonymousFlag),
-                            child: const Text('익명 사용'),
-                          ),
-                        ],
-                      ),
-                      OutlinedButton(
-                        onPressed: onProfileSaveButtonPressed,
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: const Color(0xFF10B880),
-                          foregroundColor: Colors.white,
-                          fixedSize: Size(screenWidth * 0.287, 44),
-                          side: BorderSide.none,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              screenWidth * 0.036,
-                            ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: Row(
+                            children: [
+                              Expanded(child: _editField('소속', controllers[2], screenWidth)),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: _editField('전공', controllers[3], screenWidth),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            '프로필 저장',
-                            maxLines: 1,
-                            style: TextStyle(fontSize: screenWidth * 0.034),
-                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: anonymousFlag,
+                        onChanged: onAnonymousChanged,
+                        activeColor: appPrimaryColor,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      GestureDetector(
+                        onTap: () => onAnonymousChanged(!anonymousFlag),
+                        child: Text(
+                          '익명 사용',
+                          style: TextStyle(fontSize: screenWidth * 0.034),
                         ),
                       ),
                     ],
                   ),
-                ),
+                  ElevatedButton(
+                    onPressed: onProfileSaveButtonPressed,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: appPrimaryColor,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                      minimumSize: const Size(0, 40),
+                      shape: const StadiumBorder(),
+                    ),
+                    child: Text(
+                      '프로필 저장',
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.034,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
-  }
-
-  TableRow editRow(
-    String label,
-    TextEditingController controller,
-    double screenWidth, {
-    bool isRequired = false,
-  }) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 7),
-          child: Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(label),
-                if (isRequired)
-                  const Text('*', style: TextStyle(color: Colors.red)),
-              ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            left: screenWidth * 0.019,
-            top: 7,
-            bottom: 7,
-          ),
-          child: TextField(
-            controller: controller,
-            decoration: const InputDecoration(
-              isDense: true,
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
-            ),
-            style: TextStyle(fontSize: screenWidth * 0.034),
-          ),
-        ),
-      ],
     );
   }
 }

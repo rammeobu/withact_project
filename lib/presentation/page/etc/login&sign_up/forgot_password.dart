@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/future&component/layout/basic_layout.dart';
 
@@ -59,17 +60,18 @@ class ForgotPasswordState extends ConsumerState<ForgotPassword> {
               isRequired: true,
               additionalButton: Padding(
                 padding: EdgeInsets.only(right: screenWidth * 0.019),
-                child: OutlinedButton(
+                child: ElevatedButton(
                   onPressed: isSendingCode ? null : onSendCodeButtonPressed,
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: appPrimaryColor,
+                    foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(
                       horizontal: screenWidth * 0.019,
                     ),
                     fixedSize: Size(screenWidth * 0.22, 44),
-                    side: const BorderSide(width: 0.4),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(screenWidth * 0.024),
+                      borderRadius: BorderRadius.circular(screenWidth * 0.03),
                     ),
                   ),
                   child: isSendingCode
@@ -78,15 +80,15 @@ class ForgotPasswordState extends ConsumerState<ForgotPassword> {
                           height: 18,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Color(0xFF3F3F3F),
+                            color: Colors.white,
                           ),
                         )
                       : Text(
                           '코드 발송',
                           style: TextStyle(
-                            color: const Color(0xFF3F3F3F),
+                            color: Colors.white,
                             fontSize: screenWidth * 0.032,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                 ),
@@ -128,14 +130,15 @@ class ForgotPasswordState extends ConsumerState<ForgotPassword> {
                 horizontal: screenWidth * 0.049,
                 vertical: 42,
               ),
-              child: OutlinedButton(
+              child: ElevatedButton(
                 onPressed: isSubmitting ? null : onResetButtonPressed,
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: Colors.white,
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: appPrimaryColor,
+                  foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 63),
-                  side: const BorderSide(width: 0.4),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(screenWidth * 0.024),
+                    borderRadius: BorderRadius.circular(screenWidth * 0.03),
                   ),
                 ),
                 child: isSubmitting
@@ -144,14 +147,15 @@ class ForgotPasswordState extends ConsumerState<ForgotPassword> {
                         height: 22,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Color(0xFF3F3F3F),
+                          color: Colors.white,
                         ),
                       )
                     : Text(
                         '비밀번호 변경',
                         style: TextStyle(
-                          color: const Color(0xFF3F3F3F),
+                          color: Colors.white,
                           fontSize: screenWidth * 0.044,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
               ),

@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 
 class ActivityRecruitFooter extends StatelessWidget {
   final VoidCallback onRecruitStartButtonPressed;
@@ -26,7 +27,7 @@ class ActivityRecruitFooter extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.036),
           ),
-          backgroundColor: const Color(0xFF1AB97A),
+          backgroundColor: appPrimaryColor,
           foregroundColor: Colors.white,
         ),
         onPressed: onRecruitStartButtonPressed,

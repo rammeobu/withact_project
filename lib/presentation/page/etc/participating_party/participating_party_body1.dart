@@ -1,6 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:party_maker/core/constant.dart';
-import '../../future&component/layout/default_container.dart';
+import '../../future&component/card_ui.dart';
 
 class ParticipatingPartyBody1 extends StatelessWidget {
   final String activityOverview;
@@ -21,47 +21,36 @@ class ParticipatingPartyBody1 extends StatelessWidget {
       children: [
         Expanded(
           flex: 1,
-          child: DefaultContainer(
-            height: screenWidth * 0.195,
-            width: screenWidth * 0.195,
-            color: posterColor,
-            child: Center(
-              child: (poster != null && poster!.startsWith('http'))
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(screenWidth * 0.024),
-                      child: Image.network(
-                        poster!,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        cacheWidth: 300,
-                      ),
-                    )
-                  : const Text('포스터'),
-            ),
-          ),
+          child: cardThumb(poster, screenWidth, screenWidth * 0.195),
         ),
         Expanded(
           flex: 3,
           child: Padding(
             padding: EdgeInsets.only(left: screenWidth * 0.024),
-            child: DefaultContainer(
-              color: const Color(0xffebedfc),
-              width: screenWidth,
-              child: Padding(
-                padding: EdgeInsets.all(screenWidth * 0.019),
-                child: Scrollbar(
-                  controller: scrollController,
-                  child: SingleChildScrollView(
+            child: Material(
+              color: cardChipBg,
+              elevation: 2,
+              shadowColor: Colors.black26,
+              borderRadius: BorderRadius.circular(screenWidth * 0.05),
+              clipBehavior: Clip.antiAlias,
+              child: SizedBox(
+                width: screenWidth,
+                height: screenWidth * 0.195,
+                child: Padding(
+                  padding: EdgeInsets.all(screenWidth * 0.03),
+                  child: Scrollbar(
                     controller: scrollController,
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        activityOverview,
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.039,
-                          color: appPrimaryColor,
-                          fontWeight: FontWeight.w700,
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          activityOverview,
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.039,
+                            color: appPrimaryColor,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),

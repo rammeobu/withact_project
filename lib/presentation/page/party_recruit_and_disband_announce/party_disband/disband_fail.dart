@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
 
 class DisbandFail extends StatelessWidget {
   const DisbandFail({super.key});
@@ -46,20 +47,23 @@ class DisbandFail extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                OutlinedButton(
+                ElevatedButton(
                   onPressed: () => onRetryButtonPressed(context),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.black,
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: appPrimaryColor,
+                    foregroundColor: Colors.white,
                     minimumSize: Size(screenWidth * 0.487, 57),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(
-                        screenWidth * 0.049,
-                      ),
+                      borderRadius: BorderRadius.circular(screenWidth * 0.03),
                     ),
                   ),
                   child: Text(
                     '다시 시도하기',
-                    style: TextStyle(fontSize: screenWidth * 0.049),
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.049,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
                 Padding(
@@ -67,12 +71,14 @@ class DisbandFail extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () => onRecruitListButtonPressed(context),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black,
+                      foregroundColor: appPrimaryColor,
+                      side: const BorderSide(
+                        width: 1.2,
+                        color: appPrimaryColor,
+                      ),
                       minimumSize: Size(screenWidth * 0.487, 57),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(
-                          screenWidth * 0.049,
-                        ),
+                        borderRadius: BorderRadius.circular(screenWidth * 0.03),
                       ),
                     ),
                     child: Text(

@@ -1,6 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:party_maker/core/constant.dart';
-import '../../future&component/layout/default_container.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 class ApplyInformation extends StatelessWidget {
   final String activityOverview;
@@ -19,41 +19,34 @@ class ApplyInformation extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        cardThumb(poster, screenWidth, 116),
         Expanded(
-          flex: 1,
-          child: DefaultContainer(
-            height: 116,
-            width: screenWidth * 0.195,
-            color: posterColor,
-            child: Center(
-              child: (poster != null && poster!.startsWith('http'))
-                  ? Image.network(poster!, fit: BoxFit.cover, cacheWidth: 300)
-                  : const Text('포스터'),
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 3,
           child: Padding(
             padding: EdgeInsets.only(left: screenWidth * 0.024),
-            child: DefaultContainer(
-              color: const Color(0xffebedfc),
-              width: screenWidth,
-              height: 116,
-              child: Padding(
-                padding: EdgeInsets.all(screenWidth * 0.019),
-                child: Scrollbar(
-                  controller: scrollController,
-                  child: SingleChildScrollView(
+            child: Material(
+              color: cardColor,
+              elevation: 2,
+              shadowColor: Colors.black26,
+              borderRadius: BorderRadius.circular(screenWidth * 0.05),
+              clipBehavior: Clip.antiAlias,
+              child: SizedBox(
+                height: 116,
+                width: double.infinity,
+                child: Padding(
+                  padding: EdgeInsets.all(screenWidth * 0.032),
+                  child: Scrollbar(
                     controller: scrollController,
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        activityOverview,
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.041,
-                          color: appPrimaryColor,
-                          fontWeight: FontWeight.w700,
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          activityOverview,
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.041,
+                            color: appPrimaryColor,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),

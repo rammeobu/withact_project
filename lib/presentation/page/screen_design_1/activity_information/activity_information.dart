@@ -4,11 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
 import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
-import 'package:party_maker/presentation/page/screen_design_1/activity_information/activity_information_body1.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 import 'package:party_maker/presentation/page/screen_design_1/activity_information/activity_information_body2.dart';
-import '../../future&component/component/no_scale.dart';
 import '../../future&component/component/role_progress_row.dart';
-import '../../future&component/layout/default_container.dart';
 import '../../future&component/layout/basic_layout.dart';
 import '../../future&component/profile/profile_card_leader.dart';
 
@@ -42,10 +40,12 @@ class ActivityInformation extends ConsumerStatefulWidget {
 class ActivityInformationState extends ConsumerState<ActivityInformation> {
   late ScrollController detailScrollController;
   late ScrollController body1ScrollController;
+  late String activityName;
   late String activityOverview;
   late String activityDetail;
   late List<String> position;
   late List<String> leaderProfile;
+  String? poster;
   List<int> targets = [];
   List<int> currents = [];
   bool rolesExpanded = false;
@@ -56,10 +56,12 @@ class ActivityInformationState extends ConsumerState<ActivityInformation> {
     super.initState();
     detailScrollController = ScrollController();
     body1ScrollController = ScrollController();
+    activityName = widget.activityName;
     activityOverview = widget.activityOverview;
     activityDetail = widget.activityDetail;
     position = widget.position;
     leaderProfile = widget.leaderProfile;
+    poster = widget.poster;
     fetchDetail();
   }
 
@@ -73,17 +75,32 @@ class ActivityInformationState extends ConsumerState<ActivityInformation> {
       final detail = await ref
           .read(recruitRepositoryProvider)
           .getAnnouncement(id.toString());
+      String? fetchedPoster;
+      if ((poster == null || poster!.isEmpty) && detail.activityId != null) {
+        try {
+          final actData = await ref
+              .read(findRepositoryProvider)
+              .getActivityDetail('${detail.activityId}');
+          fetchedPoster = actData['imageUrl']?.toString();
+        } catch (_) {}
+      }
       if (!mounted) return;
       setState(() {
         if (activityOverview.isEmpty &&
             detail.partyNameIntroduction.isNotEmpty) {
           activityOverview = detail.partyNameIntroduction;
         }
+        if (activityName.isEmpty && detail.activityName.isNotEmpty) {
+          activityName = detail.activityName;
+        }
         if (position.isEmpty && detail.position.isNotEmpty) {
           position = detail.position;
         }
         if (leaderProfile.isEmpty && detail.leaderProfile.isNotEmpty) {
           leaderProfile = detail.leaderProfile;
+        }
+        if (fetchedPoster != null && fetchedPoster.isNotEmpty) {
+          poster = fetchedPoster;
         }
         targets = detail.targets;
         currents = detail.currents;
@@ -104,9 +121,10 @@ class ActivityInformationState extends ConsumerState<ActivityInformation> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isParty = widget.partyId != null && widget.partyId != 0;
 
     return BasicLayout(
-      title: '활동 정보',
+      title: isParty ? '파티 정보' : '활동 정보',
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(color: appPrimaryColor),
@@ -125,82 +143,33 @@ class ActivityInformationState extends ConsumerState<ActivityInformation> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          ActivityInformationBody1(
-                            activityOverview: widget.activityName,
-                            poster: widget.poster,
-                            scrollController: body1ScrollController,
+                          detailHero(
+                            poster,
+                            activityName.isEmpty ? '활동 정보' : activityName,
+                            screenWidth,
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 17),
-                            child: Text(
-                              '요약설명',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.044,
-                                fontWeight: FontWeight.w700,
+                            padding: const EdgeInsets.only(top: 14),
+                            child: sectionCard(screenWidth, [
+                              sectionBlock(
+                                screenWidth,
+                                '요약',
+                                sectionText(activityOverview, screenWidth),
                               ),
-                            ),
+                              sectionDivider(),
+                              sectionBlock(
+                                screenWidth,
+                                '상세',
+                                sectionText(activityDetail, screenWidth),
+                              ),
+                            ]),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: DefaultContainer(
-                              width: double.infinity,
-                              height: 101,
-                              color: const Color(0xFFF0F2F5),
-                              child: Padding(
-                                padding: EdgeInsets.all(screenWidth * 0.029),
-                                child: SingleChildScrollView(
-                                  child: NoScale(
-                                    child: Text(
-                                      activityOverview,
-                                      style: TextStyle(
-                                        fontSize: screenWidth * 0.034,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            padding: const EdgeInsets.only(top: 14),
+                            child: ProfileCardLeader(
+                              profileContent: leaderProfile,
+                              onCallButtonPressed: onCallButtonPressed,
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 17),
-                            child: Text(
-                              '상세설명',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.044,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: DefaultContainer(
-                              width: double.infinity,
-                              height: 211,
-                              color: const Color(0xFFF7F8F9),
-                              child: Padding(
-                                padding: EdgeInsets.all(screenWidth * 0.029),
-                                child: Scrollbar(
-                                  controller: detailScrollController,
-                                  child: SingleChildScrollView(
-                                    controller: detailScrollController,
-                                    child: NoScale(
-                                      child: Text(
-                                        activityDetail,
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.036,
-                                          height: 1.6,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          ProfileCardLeader(
-                            profileContent: leaderProfile,
-                            onCallButtonPressed: onCallButtonPressed,
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 17),

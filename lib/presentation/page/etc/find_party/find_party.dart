@@ -94,8 +94,12 @@ class FindPartyState extends ConsumerState<FindParty> {
 
     return BasicLayout(
       title: '파티 찾기',
-      body: ListView.builder(
+      body: RefreshIndicator(
+        onRefresh: fetchPartyList,
+        color: appPrimaryColor,
+        child: ListView.builder(
         controller: scrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.only(
           left: screenWidth * 0.036,
           top: 13,
@@ -154,6 +158,7 @@ class FindPartyState extends ConsumerState<FindParty> {
             ),
           );
         },
+      ),
       ),
       bottomNavigationBar: true,
     );

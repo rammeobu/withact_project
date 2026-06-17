@@ -4,6 +4,8 @@ class ApplyItem {
   final int roleId;
   final String name;
   final String applyStatus;
+  final String introduction;
+  final String spec;
   final List<String>? timePlace;
   final String? poster;
 
@@ -13,6 +15,8 @@ class ApplyItem {
     this.roleId = 0,
     required this.name,
     required this.applyStatus,
+    this.introduction = '',
+    this.spec = '',
     this.timePlace,
     this.poster,
   });
@@ -29,6 +33,9 @@ class ApplyItem {
         'REJECTED' => '불합격',
         final status => status ?? '',
       },
+      introduction: json['introduction'] ?? json['motivation'] ?? '',
+      spec: json['skill']?.toString() ?? '',
+      poster: json['imageUrl'] ?? json['activityImageUrl'] ?? json['poster'],
     );
   }
 }

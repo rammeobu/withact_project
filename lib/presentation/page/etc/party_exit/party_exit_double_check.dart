@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
 
 class PartyExitDoubleCheck extends ConsumerStatefulWidget {
@@ -59,14 +60,16 @@ class PartyExitDoubleCheckState extends ConsumerState<PartyExitDoubleCheck> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 23),
-                  child: OutlinedButton(
+                  child: ElevatedButton(
                     onPressed:
                         isSubmitting ? null : onPartyExitConfirmButtonPressed,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black,
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: const Color(0xFFF34343),
+                      foregroundColor: Colors.white,
                       minimumSize: Size(screenWidth * 0.365, 69),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(
+                        borderRadius: BorderRadius.circular(
                           screenWidth * 0.055,
                         ),
                       ),
@@ -77,7 +80,7 @@ class PartyExitDoubleCheckState extends ConsumerState<PartyExitDoubleCheck> {
                             height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.black,
+                              color: Colors.white,
                             ),
                           )
                         : Text(
@@ -91,14 +94,16 @@ class PartyExitDoubleCheckState extends ConsumerState<PartyExitDoubleCheck> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 23),
-                  child: OutlinedButton(
+                  child: ElevatedButton(
                     onPressed:
                         isSubmitting ? null : () => Navigator.pop(context),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black,
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: appPrimaryColor,
+                      foregroundColor: Colors.white,
                       minimumSize: Size(screenWidth * 0.365, 69),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(
+                        borderRadius: BorderRadius.circular(
                           screenWidth * 0.055,
                         ),
                       ),

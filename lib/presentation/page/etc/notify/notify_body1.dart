@@ -22,6 +22,8 @@ class NotifyBody1 extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 13),
       child: Material(
         color: cardColor,
+        elevation: 2,
+        shadowColor: Colors.black26,
         borderRadius: BorderRadius.circular(screenWidth * 0.122),
         clipBehavior: Clip.antiAlias,
         child: InkWell(

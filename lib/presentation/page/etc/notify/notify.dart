@@ -127,8 +127,12 @@ class NotifyState extends ConsumerState<Notify> {
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.036),
-              child: SingleChildScrollView(
+              child: RefreshIndicator(
+                onRefresh: fetchNotifications,
+                color: appPrimaryColor,
+                child: SingleChildScrollView(
                 controller: scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -196,6 +200,7 @@ class NotifyState extends ConsumerState<Notify> {
                     ),
                   ],
                 ),
+              ),
               ),
             ),
           ),

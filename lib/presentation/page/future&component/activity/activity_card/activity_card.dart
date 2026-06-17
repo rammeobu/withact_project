@@ -1,7 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:party_maker/core/constant.dart';
-import 'package:party_maker/presentation/page/future&component/activity/activity_card/activity_card_body.dart';
-import '../../layout/default_container.dart';
+
+const Color _cardInk = Color(0xFF20232A);
+const Color _cardSub = Color(0xFF8A8F98);
+const Color _chipBg = Color(0xFFEAF2FE);
+const Color _posterIcon = Color(0xFFB7BDC6);
+
+Widget _poster(String? poster, double screenWidth, double height) {
+  final bool hasImage = poster != null && poster.startsWith('http');
+  return Container(
+    height: height,
+    width: double.infinity,
+    color: posterColor,
+    child: hasImage
+        ? Image.network(
+            poster,
+            fit: BoxFit.cover,
+            cacheWidth: 600,
+            loadingBuilder: (context, child, progress) => progress == null
+                ? child
+                : const Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+            errorBuilder: (context, error, stackTrace) =>
+                _posterEmpty(screenWidth),
+          )
+        : _posterEmpty(screenWidth),
+  );
+}
+
+Widget _posterEmpty(double screenWidth) {
+  return Center(
+    child: Icon(
+      Icons.image_outlined,
+      size: screenWidth * 0.12,
+      color: _posterIcon,
+    ),
+  );
+}
+
+Widget _infoRow(IconData icon, String text, double screenWidth) {
+  return Row(
+    children: [
+      Icon(icon, size: screenWidth * 0.042, color: _cardSub),
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 6),
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: screenWidth * 0.034, color: _cardSub),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _roleChips(List<String> position, double screenWidth) {
+  return Wrap(
+    spacing: 6,
+    runSpacing: 6,
+    children: position
+        .take(4)
+        .map(
+          (roleName) => Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: _chipBg,
+              borderRadius: BorderRadius.circular(screenWidth * 0.05),
+            ),
+            child: Text(
+              roleName,
+              style: TextStyle(
+                fontSize: screenWidth * 0.03,
+                fontWeight: FontWeight.w600,
+                color: appPrimaryColor,
+              ),
+            ),
+          ),
+        )
+        .toList(),
+  );
+}
 
 class ActivityCardBasic extends StatelessWidget {
   final String name;
@@ -22,117 +108,82 @@ class ActivityCardBasic extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    return SizedBox(
-      height: 420,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.036),
-        child: Card(
-          elevation: 3,
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.049),
-          ),
-          color: cardColor,
-          child: InkWell(
-            onTap: onTap,
-            enableFeedback: true,
-            splashFactory: InkRipple.splashFactory,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 12),
-              child: Column(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: Center(
-                      child: DefaultContainer(
-                        height: 190,
-                        width: screenWidth * 0.316,
-                        color: posterColor,
-                        child: Center(
-                          child: (poster != null && poster!.startsWith('http'))
-                              ? Image.network(
-                                  poster!,
-                                  fit: BoxFit.cover,
-                                  cacheWidth: 400,
-                                )
-                              : const Text('포스터'),
+    final String date = timePlace.isNotEmpty ? timePlace[0] : '';
+    final String place = timePlace.length > 1 ? timePlace[1] : '';
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02, vertical: 6),
+      child: Material(
+        color: cardColor,
+        elevation: 2,
+        shadowColor: Colors.black26,
+        borderRadius: BorderRadius.circular(screenWidth * 0.05),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: SizedBox(
+            height: 410,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _poster(poster, screenWidth, 196),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      screenWidth * 0.045,
+                      14,
+                      screenWidth * 0.045,
+                      16,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.05,
+                                fontWeight: FontWeight.w800,
+                                color: _cardInk,
+                                height: 1.25,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 12),
+                              child: _infoRow(
+                                Icons.event_outlined,
+                                date.isEmpty ? '기간 미정' : date,
+                                screenWidth,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 7),
+                              child: _infoRow(
+                                Icons.place_outlined,
+                                place.isEmpty ? '장소 미정' : place,
+                                screenWidth,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: 10,
-                      left: screenWidth * 0.036,
-                      right: screenWidth * 0.036,
-                      bottom: 8,
-                    ),
-                    child: Center(child: Text(name, style: sectionTitleFont)),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: screenWidth * 0.049,
-                      right: screenWidth * 0.049,
-                      top: 8,
-                    ),
-                    child: Table(
-                      border: TableBorder.all(
-                        color: Colors.grey,
-                        width: 0.5,
-                        borderRadius: BorderRadius.circular(screenWidth * 0.036),
-                      ),
-                      columnWidths: {
-                        0: FixedColumnWidth(screenWidth * 0.097),
-                        1: const FlexColumnWidth(),
-                      },
-                      children: [
-                        activityDetailRow('일시', timePlace.isNotEmpty ? timePlace[0] : '', screenWidth),
-                        activityDetailRow('장소', timePlace.length > 1 ? timePlace[1] : '', screenWidth),
+                        if (position.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: _roleChips(position, screenWidth),
+                          ),
                       ],
                     ),
                   ),
-                  Expanded(
-                    flex: 2,
-                    child: Row(
-                      children: [
-                        Expanded(child: ActivityCardBody(position: position)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
       ),
-    );
-  }
-
-  TableRow activityDetailRow(String label, String value, double screenWidth) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(
-            left: screenWidth * 0.007,
-            top: 1,
-            right: screenWidth * 0.007,
-            bottom: 1,
-          ),
-          child: Center(child: Text(label, style: tableCellFont)),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            left: screenWidth * 0.019,
-            top: 1,
-            right: screenWidth * 0.007,
-            bottom: 1,
-          ),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(value),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -154,217 +205,158 @@ class ActivityCardApply extends StatelessWidget {
     required this.onProfileCheckPressed,
   });
 
+  Color get _statusColor {
+    if (applyStatus.contains('합격') && !applyStatus.contains('불')) {
+      return const Color(0xFF1AB97A);
+    }
+    if (applyStatus.contains('불합격')) return const Color(0xFFF34343);
+    return _cardSub;
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    return SizedBox(
-      height: 420,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.036),
-        child: Card(
-          elevation: 3,
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.049),
-          ),
-          color: cardColor,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: Column(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Center(
-                    child: DefaultContainer(
-                      height: 190,
-                      width: screenWidth * 0.316,
-                      color: posterColor,
-                      child: Center(
-                        child: (poster != null && poster!.startsWith('http'))
-                            ? Image.network(
-                                poster!,
-                                fit: BoxFit.cover,
-                                cacheWidth: 400,
-                              )
-                            : const Text('포스터'),
-                      ),
-                    ),
+    final String date = timePlace.isNotEmpty ? timePlace[0] : '';
+    final String place = timePlace.length > 1 ? timePlace[1] : '';
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02, vertical: 6),
+      child: Material(
+        color: cardColor,
+        elevation: 2,
+        shadowColor: Colors.black26,
+        borderRadius: BorderRadius.circular(screenWidth * 0.05),
+        clipBehavior: Clip.antiAlias,
+        child: SizedBox(
+          height: 410,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _poster(poster, screenWidth, 168),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    screenWidth * 0.045,
+                    14,
+                    screenWidth * 0.045,
+                    10,
                   ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: screenWidth * 0.049),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 10,
-                            right: screenWidth * 0.049,
-                            bottom: 8,
-                          ),
-                          child: Center(
-                            child: Text(name, style: sectionTitleFont),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            right: screenWidth * 0.049,
-                            top: 8,
-                          ),
-                          child: Table(
-                            border: TableBorder.all(
-                              color: Colors.grey,
-                              width: 0.5,
-                              borderRadius: BorderRadius.circular(
-                                screenWidth * 0.036,
-                              ),
-                            ),
-                            columnWidths: {
-                              0: FixedColumnWidth(screenWidth * 0.097),
-                              1: const FlexColumnWidth(),
-                            },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              activityDetailRow('일시', timePlace.isNotEmpty ? timePlace[0] : '', screenWidth),
-                              activityDetailRow('장소', timePlace.length > 1 ? timePlace[1] : '', screenWidth),
+                              Expanded(
+                                child: Text(
+                                  name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.048,
+                                    fontWeight: FontWeight.w800,
+                                    color: _cardInk,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _statusColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  applyStatus,
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.03,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF0F3F8),
-                            border: BoxBorder.fromLTRB(
-                              top: const BorderSide(
-                                width: 0.5,
-                                color: Colors.grey,
-                              ),
-                              right: const BorderSide(
-                                width: 0.5,
-                                color: Colors.grey,
-                              ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: _infoRow(
+                              Icons.event_outlined,
+                              date.isEmpty ? '기간 미정' : date,
+                              screenWidth,
                             ),
                           ),
-                          child: Center(
-                            child: Text(
-                              applyStatus,
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.034,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey,
-                              ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 7),
+                            child: _infoRow(
+                              Icons.place_outlined,
+                              place.isEmpty ? '장소 미정' : place,
+                              screenWidth,
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: BoxBorder.fromLTRB(
-                              top: const BorderSide(
-                                width: 0.5,
-                                color: Colors.grey,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: onDetailButtonPressed,
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: appPrimaryColor,
+                                side: const BorderSide(color: appPrimaryColor),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    screenWidth * 0.03,
+                                  ),
+                                ),
                               ),
-                              right: const BorderSide(
-                                width: 0.5,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              foregroundColor: appPrimaryColor,
-                            ),
-                            onPressed: onDetailButtonPressed,
-                            child: Text(
-                              '활동 설명',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.034,
-                                fontWeight: FontWeight.w600,
+                              child: Text(
+                                '활동 설명',
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.034,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: BoxBorder.fromLTRB(
-                              top: const BorderSide(
-                                width: 0.5,
-                                color: Colors.grey,
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: ElevatedButton(
+                                onPressed: onProfileCheckPressed,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: appPrimaryColor,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      screenWidth * 0.03,
+                                    ),
+                                  ),
+                                ),
+                                child: Text(
+                                  '지원서 확인',
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.034,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                          child: TextButton(
-                            style: TextButton.styleFrom(
-                              foregroundColor: appPrimaryColor,
-                            ),
-                            onPressed: onProfileCheckPressed,
-                            child: Text(
-                              '지원서 확인',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.034,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
-
-  TableRow activityDetailRow(String label, String value, double screenWidth) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(
-            left: screenWidth * 0.007,
-            top: 1,
-            right: screenWidth * 0.007,
-            bottom: 1,
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(fontSize: screenWidth * 0.032),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            left: screenWidth * 0.019,
-            top: 1,
-            right: screenWidth * 0.007,
-            bottom: 1,
-          ),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(value),
-          ),
-        ),
-      ],
     );
   }
 }

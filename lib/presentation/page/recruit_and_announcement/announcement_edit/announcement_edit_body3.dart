@@ -1,4 +1,6 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 import '../../future&component/component/person.dart';
 
@@ -36,6 +38,7 @@ class AnnouncementEditBody3 extends StatelessWidget {
                   style: TextStyle(
                     fontSize: screenWidth * 0.058,
                     fontWeight: FontWeight.w800,
+                    color: cardInk,
                   ),
                 ),
                 const Text(' *', style: TextStyle(color: Colors.red)),
@@ -43,6 +46,7 @@ class AnnouncementEditBody3 extends StatelessWidget {
             ),
             IconButton(
               onPressed: onAddPositionButtonPressed,
+              color: appPrimaryColor,
               icon: Icon(Icons.add_circle_outline, size: screenWidth * 0.073),
             ),
           ],

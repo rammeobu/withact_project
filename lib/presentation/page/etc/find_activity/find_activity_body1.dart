@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 class FindActivityBody1 extends StatelessWidget {
   final VoidCallback onActivitySearch;
@@ -65,21 +66,36 @@ class FindActivityBody1 extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: screenWidth * 0.05),
-            ElevatedButton(
-              onPressed: onFilterApplyButtonPressed,
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size(screenWidth * 0.15, 46),
-                padding: EdgeInsets.zero,
-                foregroundColor: const Color(0xFF636370),
-                backgroundColor: posterColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(screenWidth * 0.036),
+            Padding(
+              padding: EdgeInsets.only(left: screenWidth * 0.05),
+              child: ElevatedButton(
+                onPressed: onFilterApplyButtonPressed,
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  fixedSize: Size(screenWidth * 0.15, 46),
+                  padding: EdgeInsets.zero,
+                  foregroundColor: appPrimaryColor,
+                  backgroundColor: cardChipBg,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(screenWidth * 0.036),
+                  ),
                 ),
-              ),
-              child: Text(
-                '필터',
-                style: TextStyle(fontSize: screenWidth * 0.036),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.tune, size: screenWidth * 0.04),
+                    Padding(
+                      padding: EdgeInsets.only(left: screenWidth * 0.012),
+                      child: Text(
+                        '필터',
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.036,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

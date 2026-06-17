@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
 import 'package:party_maker/core/constant.dart';
@@ -45,12 +46,14 @@ class ApplyingActivity extends ConsumerStatefulWidget {
   final List<String> profile;
   final String? poster;
   final int applicationId;
+  final int partyId;
   const ApplyingActivity({
     super.key,
     required this.activityName,
     required this.profile,
     this.poster,
     this.applicationId = 0,
+    this.partyId = 0,
   });
 
   @override
@@ -62,6 +65,8 @@ class ApplyingActivityState extends ConsumerState<ApplyingActivity> {
   late final List<ScrollController> bodyScrollControllers = [];
   late TextEditingController timeTextController;
   late ScrollController whenToMeetScrollController;
+  int resolvedActivityId = 0;
+  String? poster;
 
   @override
   void initState() {
@@ -69,6 +74,7 @@ class ApplyingActivityState extends ConsumerState<ApplyingActivity> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(applyingActivityProvider.notifier).init(widget.profile);
     });
+    poster = widget.poster;
     timeTextController = TextEditingController();
     whenToMeetScrollController = ScrollController();
     for (int i = 0; i < 4; i++) {
@@ -84,6 +90,39 @@ class ApplyingActivityState extends ConsumerState<ApplyingActivity> {
         bodyScrollControllers[0].jumpTo(0.0);
       }
     }
+    fetchAvailableTime();
+  }
+
+  Future<void> fetchAvailableTime() async {
+    final userId = ref.read(currentUserProvider);
+    if (userId == null || widget.partyId == 0) return;
+    try {
+      final announcement = await ref
+          .read(recruitRepositoryProvider)
+          .getAnnouncement('${widget.partyId}');
+      final activityId = announcement.activityId;
+      if (activityId == null) return;
+      resolvedActivityId = activityId;
+      if (poster == null || poster!.isEmpty) {
+        try {
+          final actData = await ref
+              .read(findRepositoryProvider)
+              .getActivityDetail('$activityId');
+          final fetched = actData['imageUrl']?.toString();
+          if (mounted && fetched != null && fetched.isNotEmpty) {
+            setState(() => poster = fetched);
+          }
+        } catch (_) {}
+      }
+      final schedule = await ref
+          .read(applyRepositoryProvider)
+          .getAvailableTime(userId, activityId);
+      if (mounted) {
+        ref
+            .read(whenToMeetAvailableTimesProvider.notifier)
+            .setTimes(WhenToMeet.fromSchedule(schedule));
+      }
+    } catch (_) {}
   }
 
   @override
@@ -123,7 +162,7 @@ class ApplyingActivityState extends ConsumerState<ApplyingActivity> {
                       padding: const EdgeInsets.only(top: 17),
                       child: ApplyingActivityInformation(
                         activityOverview: widget.activityName,
-                        poster: widget.poster,
+                        poster: poster,
                         scrollController: bodyScrollControllers[0],
                       ),
                     ),
@@ -177,11 +216,15 @@ class ApplyingActivityState extends ConsumerState<ApplyingActivity> {
                                 : const Color(0xff1cb879),
                             foregroundColor: Colors.white,
                           ),
-                          child: Text(
-                            activityState.editingMode[2] ? '저장' : '수정',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.041,
-                              fontWeight: FontWeight.w700,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 200),
+                            child: Text(
+                              activityState.editingMode[2] ? '저장' : '수정',
+                              key: ValueKey(activityState.editingMode[2]),
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.041,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ),
                         ),
@@ -241,6 +284,7 @@ class ApplyingActivityState extends ConsumerState<ApplyingActivity> {
   }
 
   void onEditButtonPressed(int i) {
+    HapticFeedback.selectionClick();
     final wasEditing = ref.read(applyingActivityProvider).editingMode[i];
     final textContent = i < bodyTextControllers.length
         ? bodyTextControllers[i].text
@@ -252,10 +296,43 @@ class ApplyingActivityState extends ConsumerState<ApplyingActivity> {
           .putApplication(widget.applicationId, introduction: textContent.trim())
           .catchError((_) {});
     }
+    if (wasEditing && i == 1) {
+      saveSpec(textContent.trim());
+    }
+    if (wasEditing && i == 2 && resolvedActivityId != 0) {
+      final userId = ref.read(currentUserProvider);
+      if (userId != null) {
+        ref
+            .read(applyRepositoryProvider)
+            .submitAvailableTime(
+              userId,
+              resolvedActivityId,
+              WhenToMeet.toSchedule(ref.read(whenToMeetAvailableTimesProvider)),
+            )
+            .catchError((_) {});
+      }
+    }
     if (wasEditing && i < 2) {
       if (bodyScrollControllers[i + 1].hasClients) {
         bodyScrollControllers[i + 1].jumpTo(0.0);
       }
     }
+  }
+
+  Future<void> saveSpec(String newSpec) async {
+    final userId = ref.read(currentUserProvider);
+    if (userId == null) return;
+    try {
+      final current = await ref
+          .read(accountRepositoryProvider)
+          .getProfile('$userId');
+      final newContent = List<String>.from(current.profileContent);
+      if (newContent.length > 1) newContent[1] = newSpec;
+      final updated = current.copyWith(spec: newSpec, profileContent: newContent);
+      await ref.read(accountRepositoryProvider).putProfile('$userId', updated);
+      if (mounted) {
+        ref.read(profileProvider.notifier).setProfile(updated);
+      }
+    } catch (_) {}
   }
 }

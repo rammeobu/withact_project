@@ -1,7 +1,8 @@
-﻿import 'dart:io';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 class ProfileCardLeader extends StatelessWidget {
   final List<String> profileContent;
@@ -17,112 +18,87 @@ class ProfileCardLeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
+    final String name = profileContent.isNotEmpty ? profileContent[0] : '';
+    final String skill = profileContent.length > 1 ? profileContent[1] : '';
     return Padding(
       padding: const EdgeInsets.only(top: 17),
-      child: SizedBox(
-        width: double.infinity,
-        height: 114,
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.049),
-          ),
-          color: const Color(0xFFECEEFD),
+      child: Material(
+        color: cardColor,
+        elevation: 2,
+        shadowColor: Colors.black26,
+        borderRadius: BorderRadius.circular(screenWidth * 0.05),
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.045),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Flexible(
-                flex: 2,
+              Container(
+                width: screenWidth * 0.15,
+                height: screenWidth * 0.15,
+                clipBehavior: Clip.antiAlias,
+                decoration: const BoxDecoration(
+                  color: cardChipBg,
+                  shape: BoxShape.circle,
+                ),
+                child: (profileImage != null)
+                    ? Image.file(File(profileImage!), fit: BoxFit.cover, cacheWidth: 300)
+                    : Icon(
+                        Icons.person,
+                        size: screenWidth * 0.09,
+                        color: appPrimaryColor,
+                      ),
+              ),
+              Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(left: screenWidth * 0.024),
-                  child: Container(
-                    width: 93,
-                    height: 89,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFECEEFD),
-                      shape: BoxShape.circle,
-                    ),
-                    child: (profileImage != null)
-                        ? Image.file(File(profileImage!), cacheWidth: 300)
-                        : Icon(
-                            Icons.person,
-                            size: screenWidth * 0.158,
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.035),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 9,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: cardChipBg,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '파티장',
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.03,
+                            fontWeight: FontWeight.w700,
                             color: appPrimaryColor,
                           ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: cardField('이름', name, screenWidth),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6),
+                        child: cardField('기술', skill, screenWidth),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              Flexible(
-                flex: 5,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: screenWidth * 0.024,
-                    right: screenWidth * 0.024,
-                    bottom: 4,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '파티장',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.039,
-                              color: appPrimaryColor,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.black,
-                              padding: EdgeInsets.zero,
-                              side: const BorderSide(
-                                color: Colors.grey,
-                                width: 0.5,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadiusGeometry.circular(
-                                  screenWidth * 0.024,
-                                ),
-                              ),
-                              fixedSize: Size(screenWidth * 0.195, 44),
-                              minimumSize: const Size(0, 0),
-                            ),
-                            onPressed: onCallButtonPressed,
-                            child: Text(
-                              '문의하기',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.032,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Table(
-                        border: TableBorder.all(
-                          color: Colors.grey,
-                          width: 0.5,
-                          borderRadius: BorderRadius.circular(
-                            screenWidth * 0.036,
-                          ),
-                        ),
-                        columnWidths: {
-                          0: FixedColumnWidth(screenWidth * 0.097),
-                          1: const FlexColumnWidth(),
-                        },
-                        children: [
-                          infoRow('이름',
-                              profileContent.isNotEmpty ? profileContent[0] : '',
-                              screenWidth),
-                          infoRow('기술',
-                              profileContent.length > 1 ? profileContent[1] : '',
-                              screenWidth),
-                        ],
-                      ),
-                    ],
+              OutlinedButton(
+                onPressed: onCallButtonPressed,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: appPrimaryColor,
+                  side: const BorderSide(color: appPrimaryColor, width: 1),
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.025),
+                  minimumSize: const Size(0, 36),
+                  shape: const StadiumBorder(),
+                ),
+                child: Text(
+                  '문의하기',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.032,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -130,34 +106,6 @@ class ProfileCardLeader extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  TableRow infoRow(String label, String value, double screenWidth) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.007,
-            vertical: 1,
-          ),
-          child: Center(
-            child: Text(label, style: TextStyle(fontSize: screenWidth * 0.029)),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            left: screenWidth * 0.019,
-            top: 1,
-            right: screenWidth * 0.007,
-            bottom: 1,
-          ),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(value, style: TextStyle(fontSize: screenWidth * 0.029)),
-          ),
-        ),
-      ],
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
 
 class DisbandDoubleCheck extends ConsumerStatefulWidget {
@@ -58,16 +59,16 @@ class DisbandDoubleCheckState extends ConsumerState<DisbandDoubleCheck> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 23),
-                  child: OutlinedButton(
+                  child: ElevatedButton(
                     onPressed:
                         isSubmitting ? null : onDisbandConfirmButtonPressed,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black,
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: const Color(0xFFF34343),
+                      foregroundColor: Colors.white,
                       minimumSize: Size(screenWidth * 0.365, 69),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(
-                          screenWidth * 0.055,
-                        ),
+                        borderRadius: BorderRadius.circular(screenWidth * 0.03),
                       ),
                     ),
                     child: isSubmitting
@@ -76,7 +77,7 @@ class DisbandDoubleCheckState extends ConsumerState<DisbandDoubleCheck> {
                             height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.black,
+                              color: Colors.white,
                             ),
                           )
                         : Text(
@@ -94,12 +95,14 @@ class DisbandDoubleCheckState extends ConsumerState<DisbandDoubleCheck> {
                     onPressed:
                         isSubmitting ? null : () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black,
+                      foregroundColor: appPrimaryColor,
+                      side: const BorderSide(
+                        width: 1.2,
+                        color: appPrimaryColor,
+                      ),
                       minimumSize: Size(screenWidth * 0.365, 69),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(
-                          screenWidth * 0.055,
-                        ),
+                        borderRadius: BorderRadius.circular(screenWidth * 0.03),
                       ),
                     ),
                     child: Text(

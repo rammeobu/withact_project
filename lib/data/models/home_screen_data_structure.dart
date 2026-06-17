@@ -20,6 +20,8 @@ class ApplyCardItem {
   final String name;
   final List<String> timePlace;
   final String applyStatus;
+  final String introduction;
+  final String spec;
 
   const ApplyCardItem({
     this.applicationId = 0,
@@ -27,6 +29,8 @@ class ApplyCardItem {
     required this.name,
     required this.timePlace,
     required this.applyStatus,
+    this.introduction = '',
+    this.spec = '',
   });
 }
 

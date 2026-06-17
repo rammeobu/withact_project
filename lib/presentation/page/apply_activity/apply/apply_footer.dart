@@ -15,14 +15,14 @@ class ApplyFooter extends StatelessWidget {
         right: screenWidth * 0.039,
         bottom: 23,
       ),
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          side: const BorderSide(width: 0.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
           padding: EdgeInsets.zero,
           minimumSize: const Size(0, 0),
           fixedSize: Size(screenWidth, 57),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.036),
+            borderRadius: BorderRadius.circular(screenWidth * 0.03),
           ),
           backgroundColor: appPrimaryColor,
           foregroundColor: Colors.white,

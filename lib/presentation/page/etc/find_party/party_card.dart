@@ -1,7 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:party_maker/core/constant.dart';
-
-import '../../future&component/layout/default_container.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 class PartyCard extends StatelessWidget {
   final String partyName;
@@ -23,154 +22,130 @@ class PartyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    return SizedBox(
-      height: 169,
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.049),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Material(
         color: cardColor,
-        child: Column(
-          children: [
-            Expanded(
-              flex: 7,
-              child: Padding(
-                padding: EdgeInsets.only(left: screenWidth * 0.029),
+        elevation: 2,
+        shadowColor: Colors.black26,
+        borderRadius: BorderRadius.circular(screenWidth * 0.045),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.04),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  cardThumb(poster, screenWidth, screenWidth * 0.2),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: screenWidth * 0.04),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            partyName,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.046,
+                              fontWeight: FontWeight.w800,
+                              color: cardInk,
+                              height: 1.2,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: cardInfoRow(
+                              Icons.local_activity_outlined,
+                              activityName.isEmpty ? '활동 미지정' : activityName,
+                              screenWidth,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 14),
                 child: Row(
                   children: [
                     Expanded(
-                      flex: 1,
-                      child: Center(
-                        child: DefaultContainer(
-                          height: screenWidth * 0.170,
-                          width: screenWidth * 0.170,
-                          color: posterColor,
-                          child: Center(
-                            child:
-                                (poster != null && poster!.startsWith('http'))
-                                ? Image.network(
-                                    poster!,
-                                    fit: BoxFit.cover,
-                                    cacheWidth: 300,
-                                  )
-                                : const Text('포스터'),
+                      child: OutlinedButton(
+                        onPressed: onPartyLeaderInformationCheckButtonPressed,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: appPrimaryColor,
+                          side: const BorderSide(color: appPrimaryColor),
+                          padding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                          ),
+                        ),
+                        child: Text(
+                          '파티장 정보',
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.03,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
                     ),
                     Expanded(
-                      flex: 4,
                       child: Padding(
-                        padding: EdgeInsets.only(left: screenWidth * 0.049),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 7),
-                              child: Text(
-                                partyName,
-                                style: TextStyle(
-                                  fontSize: screenWidth * 0.049,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
+                        padding: const EdgeInsets.only(left: 6),
+                        child: OutlinedButton(
+                          onPressed: onRecruitAnnouncementCheckButtonPressed,
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: appPrimaryColor,
+                            side: const BorderSide(color: appPrimaryColor),
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(screenWidth * 0.03),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 7),
-                              child: Text(
-                                activityName,
-                                style: TextStyle(
-                                  fontSize: screenWidth * 0.041,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
+                          ),
+                          child: Text(
+                            '모집 공고',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.03,
+                              fontWeight: FontWeight.w600,
                             ),
-                          ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 6),
+                        child: ElevatedButton(
+                          onPressed: onApplyButtonPressed,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: appPrimaryColor,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                            ),
+                          ),
+                          child: Text(
+                            '지원하기',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.03,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: BoxBorder.fromLTRB(
-                          top: const BorderSide(width: 0.5, color: Colors.grey),
-                          right: const BorderSide(
-                            width: 0.5,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: appPrimaryColor,
-                        ),
-                        onPressed: onPartyLeaderInformationCheckButtonPressed,
-                        child: const Text(
-                          '파티장 정보',
-                          style: TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: BoxBorder.fromLTRB(
-                          top: const BorderSide(width: 0.5, color: Colors.grey),
-                          right: const BorderSide(
-                            width: 0.5,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: appPrimaryColor,
-                        ),
-                        onPressed: onRecruitAnnouncementCheckButtonPressed,
-                        child: const Text(
-                          '모집 공고',
-                          style: TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: BoxBorder.fromLTRB(
-                          top: const BorderSide(width: 0.5, color: Colors.grey),
-                        ),
-                      ),
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: appPrimaryColor,
-                        ),
-                        onPressed: onApplyButtonPressed,
-                        child: const Text(
-                          '지원하기',
-                          style: TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 
 class ApplyingActivityFooter extends StatelessWidget {
   final VoidCallback? onApplyCancelButtonPressed;
@@ -21,15 +22,16 @@ class ApplyingActivityFooter extends StatelessWidget {
       ),
       child: Row(
         children: [
-          OutlinedButton(
+          ElevatedButton(
             onPressed: onApplyCancelButtonPressed,
-            style: OutlinedButton.styleFrom(
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
               backgroundColor: const Color(0xFFF34343),
+              foregroundColor: Colors.white,
               fixedSize: Size(screenWidth * 0.401, 63),
               padding: EdgeInsets.zero,
-              side: const BorderSide(width: 0.0),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(screenWidth * 0.073),
+                borderRadius: BorderRadius.circular(screenWidth * 0.03),
               ),
             ),
             child: Text(
@@ -41,24 +43,26 @@ class ApplyingActivityFooter extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: screenWidth * 0.024),
-          OutlinedButton(
-            onPressed: onApplyListButtonPressed,
-            style: OutlinedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              fixedSize: Size(screenWidth * 0.401, 63),
-              padding: EdgeInsets.zero,
-              side: const BorderSide(width: 0.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(screenWidth * 0.073),
+          Padding(
+            padding: EdgeInsets.only(left: screenWidth * 0.024),
+            child: OutlinedButton(
+              onPressed: onApplyListButtonPressed,
+              style: OutlinedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: appPrimaryColor,
+                fixedSize: Size(screenWidth * 0.401, 63),
+                padding: EdgeInsets.zero,
+                side: const BorderSide(color: appPrimaryColor),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(screenWidth * 0.03),
+                ),
               ),
-            ),
-            child: Text(
-              '지원 목록',
-              style: TextStyle(
-                fontSize: screenWidth * 0.049,
-                fontWeight: FontWeight.w700,
+              child: Text(
+                '지원 목록',
+                style: TextStyle(
+                  fontSize: screenWidth * 0.049,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),

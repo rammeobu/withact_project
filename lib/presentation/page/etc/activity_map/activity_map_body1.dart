@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/presentation/page/etc/activity_map/province_map.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 class ActivityMapBody1 extends StatelessWidget {
   final MapController mapController;
@@ -22,38 +24,52 @@ class ActivityMapBody1 extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 13),
-          child: Container(
-            height: 68,
-            width: screenWidth,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey, width: 1.0),
-              borderRadius: BorderRadius.circular(screenWidth * 0.049),
-            ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: EdgeInsets.only(left: screenWidth * 0.024),
-                child: Text(
-                  locationName,
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.044,
-                    fontWeight: FontWeight.w600,
+          child: Material(
+            color: cardColor,
+            elevation: 2,
+            shadowColor: Colors.black26,
+            borderRadius: BorderRadius.circular(screenWidth * 0.05),
+            clipBehavior: Clip.antiAlias,
+            child: SizedBox(
+              height: 68,
+              width: screenWidth,
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: screenWidth * 0.04),
+                    child: Icon(
+                      Icons.place_outlined,
+                      size: screenWidth * 0.05,
+                      color: appPrimaryColor,
+                    ),
                   ),
-                ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: screenWidth * 0.02),
+                      child: Text(
+                        locationName,
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.044,
+                          fontWeight: FontWeight.w700,
+                          color: cardInk,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
-        Container(
-          height: 380,
-          width: screenWidth,
-          decoration: BoxDecoration(
-            color: const Color(0xFFEAEFF4),
-            border: Border.all(color: Colors.grey, width: 1.0),
-            borderRadius: BorderRadius.circular(screenWidth * 0.049),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(screenWidth * 0.049),
+        Material(
+          color: const Color(0xFFEAEFF4),
+          elevation: 2,
+          shadowColor: Colors.black26,
+          borderRadius: BorderRadius.circular(screenWidth * 0.05),
+          clipBehavior: Clip.antiAlias,
+          child: SizedBox(
+            height: 380,
+            width: screenWidth,
             child: ProvinceMap(
               mapController: mapController,
               selectedName: selectedName,

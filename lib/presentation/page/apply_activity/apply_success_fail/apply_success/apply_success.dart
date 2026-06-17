@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/core/constant.dart';
 
 class ApplySuccess extends StatelessWidget {
   const ApplySuccess({super.key});
@@ -46,15 +47,15 @@ class ApplySuccess extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                OutlinedButton(
+                ElevatedButton(
                   onPressed: () => onApplyListButtonPressed(context),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.black,
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: appPrimaryColor,
+                    foregroundColor: Colors.white,
                     minimumSize: Size(screenWidth * 0.487, 57),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(
-                        screenWidth * 0.049,
-                      ),
+                      borderRadius: BorderRadius.circular(screenWidth * 0.03),
                     ),
                   ),
                   child: Text(
@@ -67,12 +68,11 @@ class ApplySuccess extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () => onHomeScreenButtonPressed(context),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black,
+                      foregroundColor: appPrimaryColor,
+                      side: const BorderSide(color: appPrimaryColor),
                       minimumSize: Size(screenWidth * 0.487, 57),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(
-                          screenWidth * 0.049,
-                        ),
+                        borderRadius: BorderRadius.circular(screenWidth * 0.03),
                       ),
                     ),
                     child: Text(

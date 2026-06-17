@@ -98,7 +98,11 @@ class ParticipatingListState extends ConsumerState<ParticipatingList> {
                 left: screenWidth * 0.036,
                 right: screenWidth * 0.036,
               ),
-              child: ListView.separated(
+              child: RefreshIndicator(
+                onRefresh: fetchParticipating,
+                color: appPrimaryColor,
+                child: ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
                 itemCount: participating.length,
                 separatorBuilder: (context, i) =>
                     Container(height: 0.5, color: const Color(0xFFBDBDBD)),
@@ -128,6 +132,7 @@ class ParticipatingListState extends ConsumerState<ParticipatingList> {
                     ),
                   );
                 },
+              ),
               ),
             ),
       bottomNavigationBar: true,

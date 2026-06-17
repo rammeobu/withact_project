@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
 
 class NewPasswordMatchNotifier extends Notifier<bool> {
@@ -65,7 +67,7 @@ class PersonalInfoState extends ConsumerState<PersonalInfo> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF6D4C41),
+        backgroundColor: appPrimaryColor,
         title: Text(
           '개인정보 관리',
           style: TextStyle(
@@ -164,12 +166,13 @@ class PersonalInfoState extends ConsumerState<PersonalInfo> {
                 horizontal: screenWidth * 0.049,
                 vertical: 42,
               ),
-              child: OutlinedButton(
+              child: ElevatedButton(
                 onPressed: onSaveButtonPressed,
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: Colors.white,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: appPrimaryColor,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
                   minimumSize: const Size(double.infinity, 63),
-                  side: const BorderSide(width: 0.4),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(screenWidth * 0.024),
                   ),
@@ -177,8 +180,8 @@ class PersonalInfoState extends ConsumerState<PersonalInfo> {
                 child: Text(
                   '저장',
                   style: TextStyle(
-                    color: const Color(0xFF3F3F3F),
                     fontSize: screenWidth * 0.044,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -337,34 +340,70 @@ class PersonalInfoState extends ConsumerState<PersonalInfo> {
     }
   }
 
-  void onSaveButtonPressed() {
+  bool isSaving = false;
+
+  Future<void> onSaveButtonPressed() async {
     final bool anyPasswordFilled =
         currentPasswordTextController.text.isNotEmpty ||
         newPasswordTextController.text.isNotEmpty ||
         confirmPasswordTextController.text.isNotEmpty;
-    if (anyPasswordFilled) {
-      if (currentPasswordTextController.text.isEmpty ||
-          newPasswordTextController.text.isEmpty ||
-          confirmPasswordTextController.text.isEmpty) {
+    if (!anyPasswordFilled) {
+      Navigator.pop(context);
+      return;
+    }
+    if (currentPasswordTextController.text.isEmpty ||
+        newPasswordTextController.text.isEmpty ||
+        confirmPasswordTextController.text.isEmpty) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text(
+              '비밀번호를 변경하려면 현재 비밀번호, 새 비밀번호, 비밀번호 확인을 모두 입력해 주세요.',
+            ),
+          ),
+        );
+      return;
+    }
+    if (newPasswordTextController.text != confirmPasswordTextController.text) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('새 비밀번호가 일치하지 않습니다.')));
+      return;
+    }
+    final userId = ref.read(currentUserProvider);
+    if (userId == null) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('로그인이 필요합니다.')));
+      return;
+    }
+    if (isSaving) return;
+    HapticFeedback.mediumImpact();
+    setState(() => isSaving = true);
+    try {
+      await ref
+          .read(accountRepositoryProvider)
+          .changePassword(
+            userId,
+            currentPasswordTextController.text,
+            newPasswordTextController.text,
+          );
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(const SnackBar(content: Text('비밀번호가 변경되었습니다.')));
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => isSaving = false);
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
-            const SnackBar(
-              content: Text(
-                '비밀번호를 변경하려면 현재 비밀번호, 새 비밀번호, 비밀번호 확인을 모두 입력해 주세요.',
-              ),
-            ),
+            SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
           );
-        return;
-      }
-      if (newPasswordTextController.text !=
-          confirmPasswordTextController.text) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(const SnackBar(content: Text('새 비밀번호가 일치하지 않습니다.')));
-        return;
       }
     }
-    Navigator.pop(context);
   }
 }

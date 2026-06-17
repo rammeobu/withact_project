@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
 
 class ProfileAndDetailEditFooter extends StatelessWidget {
   final VoidCallback onSaveAndExitButtonPressed;
@@ -26,7 +27,7 @@ class ProfileAndDetailEditFooter extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.036),
           ),
-          backgroundColor: const Color(0xFFF34343),
+          backgroundColor: appPrimaryColor,
           foregroundColor: Colors.white,
         ),
         onPressed: onSaveAndExitButtonPressed,

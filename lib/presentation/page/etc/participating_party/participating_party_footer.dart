@@ -10,15 +10,15 @@ class ParticipatingPartyFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        elevation: 0,
         padding: EdgeInsets.zero,
         fixedSize: Size(screenWidth * 0.927, 57),
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFFF34343),
-        side: const BorderSide(width: 0.0, color: Color(0xFFF34343)),
+        backgroundColor: const Color(0xFFF34343),
+        foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(screenWidth * 0.036),
+          borderRadius: BorderRadius.circular(screenWidth * 0.03),
         ),
       ),
       onPressed: onPartyExitButtonPressed,

@@ -1,7 +1,8 @@
-﻿import 'dart:io';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 class ProfileCardBasic extends StatelessWidget {
   final List<String> profileContent;
@@ -14,100 +15,120 @@ class ProfileCardBasic extends StatelessWidget {
     required this.onProfileEditButtonPressed,
   });
 
+  Widget _field(String label, String value, double screenWidth) {
+    return Row(
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: screenWidth * 0.03,
+            fontWeight: FontWeight.w600,
+            color: cardSub,
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 6),
+            child: Text(
+              value.isEmpty ? '-' : value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: screenWidth * 0.036,
+                fontWeight: FontWeight.w600,
+                color: cardInk,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    return SizedBox(
-      height: 175,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.036),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.049),
-          ),
-          color: cardColor,
+    final String name = profileContent.isNotEmpty ? profileContent[0] : '';
+    final String skill = profileContent.length > 1 ? profileContent[1] : '';
+    final String belong = profileContent.length > 2 ? profileContent[2] : '';
+    final String major = profileContent.length > 3 ? profileContent[3] : '';
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.036, vertical: 6),
+      child: Material(
+        color: cardColor,
+        elevation: 2,
+        shadowColor: Colors.black26,
+        borderRadius: BorderRadius.circular(screenWidth * 0.05),
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.045),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Flexible(
-                flex: 2,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: screenWidth * 0.024,
-                    bottom: 23,
-                  ),
-                  child: Container(
-                    width: screenWidth * 0.195,
-                    height: screenWidth * 0.195,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFECEEFD),
-                      shape: BoxShape.circle,
-                    ),
-                    child: (profileImage != null)
-                        ? Image.file(File(profileImage!), fit: BoxFit.cover, cacheWidth: 300)
-                        : Icon(
-                            Icons.person,
-                            size: screenWidth * 0.158,
-                            color: appPrimaryColor,
-                          ),
-                  ),
+              Container(
+                width: screenWidth * 0.15,
+                height: screenWidth * 0.15,
+                clipBehavior: Clip.antiAlias,
+                decoration: const BoxDecoration(
+                  color: cardChipBg,
+                  shape: BoxShape.circle,
                 ),
-              ),
-              Flexible(
-                flex: 5,
-                child: Padding(
-                  padding: EdgeInsets.only(left: screenWidth * 0.036, top: 6),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Table(
-                        border: TableBorder.all(
-                          color: Colors.grey,
-                          width: 0.5,
-                          borderRadius: BorderRadius.circular(
-                            screenWidth * 0.036,
-                          ),
-                        ),
-                        columnWidths: {
-                          0: FixedColumnWidth(screenWidth * 0.097),
-                          1: const FlexColumnWidth(),
-                        },
-                        children: [
-                          infoRow('이름',
-                              profileContent.isNotEmpty ? profileContent[0] : '',
-                              screenWidth),
-                          infoRow('기술',
-                              profileContent.length > 1 ? profileContent[1] : '',
-                              screenWidth),
-                          infoRow('소속',
-                              profileContent.length > 2 ? profileContent[2] : '',
-                              screenWidth),
-                          infoRow('전공',
-                              profileContent.length > 3 ? profileContent[3] : '',
-                              screenWidth),
-                        ],
+                child: (profileImage != null)
+                    ? Image.file(File(profileImage!), fit: BoxFit.cover, cacheWidth: 300)
+                    : Icon(
+                        Icons.person,
+                        size: screenWidth * 0.09,
+                        color: appPrimaryColor,
                       ),
-                      OutlinedButton(
-                        onPressed: onProfileEditButtonPressed,
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: const Color(0xFF10B880),
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size(screenWidth * 0.122, 0),
-                          fixedSize: Size(screenWidth * 0.243, 42),
-                          side: BorderSide.none,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              screenWidth * 0.036,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.035),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(child: _field('이름', name, screenWidth)),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: _field('기술', skill, screenWidth),
                             ),
                           ),
-                        ),
-                        child: Text(
-                          '프로필 수정',
-                          style: TextStyle(fontSize: screenWidth * 0.034),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Row(
+                          children: [
+                            Expanded(child: _field('소속', belong, screenWidth)),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8),
+                                child: _field('전공', major, screenWidth),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
+                  ),
+                ),
+              ),
+              OutlinedButton(
+                onPressed: onProfileEditButtonPressed,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: appPrimaryColor,
+                  side: const BorderSide(color: appPrimaryColor, width: 1),
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.025),
+                  minimumSize: const Size(0, 36),
+                  shape: const StadiumBorder(),
+                ),
+                child: Text(
+                  '수정',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.032,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -115,32 +136,6 @@ class ProfileCardBasic extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  TableRow infoRow(String label, String value, double screenWidth) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.007,
-            vertical: 1,
-          ),
-          child: Center(child: Text(label)),
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            left: screenWidth * 0.019,
-            top: 1,
-            right: screenWidth * 0.007,
-            bottom: 1,
-          ),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(value),
-          ),
-        ),
-      ],
     );
   }
 }

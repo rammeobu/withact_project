@@ -105,12 +105,12 @@ class ApplyListState extends ConsumerState<ApplyList> {
                                     applyStatus: apply.applyStatus,
                                     poster: apply.poster,
                                     onDetailButtonPressed: () =>
-                                        onDetailButtonPressed(apply.name),
-                                    onCheckProfileButtonPressed: () =>
-                                        onCheckProfileButtonPressed(
+                                        onDetailButtonPressed(
                                           apply.name,
-                                          apply.id,
+                                          apply.poster,
                                         ),
+                                    onCheckProfileButtonPressed: () =>
+                                        onCheckProfileButtonPressed(apply),
                                   ),
                                 ),
                               ),
@@ -126,7 +126,7 @@ class ApplyListState extends ConsumerState<ApplyList> {
     );
   }
 
-  void onDetailButtonPressed(String name) {
+  void onDetailButtonPressed(String name, String? poster) {
     Navigator.pushNamed(
       context,
       PageRoutes.activityInformation,
@@ -136,20 +136,21 @@ class ApplyListState extends ConsumerState<ApplyList> {
         'activityDetail': '',
         'leaderProfile': <String>[],
         'position': <String>[],
-        'poster': null,
+        'poster': poster,
       },
     );
   }
 
-  void onCheckProfileButtonPressed(String name, int applicationId) {
+  void onCheckProfileButtonPressed(ApplyItem apply) {
     Navigator.pushNamed(
       context,
       PageRoutes.applyingActivity,
       arguments: {
-        'activityName': name,
-        'profile': <String>[],
-        'poster': null,
-        'applicationId': applicationId,
+        'activityName': apply.name,
+        'profile': [apply.introduction, apply.spec],
+        'poster': apply.poster,
+        'applicationId': apply.id,
+        'partyId': apply.partyId,
       },
     );
   }

@@ -1,4 +1,6 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 class PartyMemberProfileBody3 extends StatelessWidget {
   final String favoriteRole;
@@ -15,40 +17,32 @@ class PartyMemberProfileBody3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    return Column(
-      children: [
-        Table(
-          border: TableBorder.all(
-            color: Colors.grey,
-            width: 0.5,
-            borderRadius: BorderRadius.circular(screenWidth * 0.036),
-          ),
-          columnWidths: {
-            0: FixedColumnWidth(screenWidth * 0.243),
-            1: const FlexColumnWidth(),
-          },
+    return Material(
+      color: cardColor,
+      elevation: 2,
+      shadowColor: Colors.black26,
+      borderRadius: BorderRadius.circular(screenWidth * 0.05),
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.04,
+          vertical: screenWidth * 0.03,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            infoRow('선호 역할', favoriteRole, screenWidth),
-            infoRow('선호 분야', favoriteField, screenWidth),
-            infoRow('선호 도메인', favoriteDomain, screenWidth),
+            cardField('선호 역할', favoriteRole, screenWidth),
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: cardField('선호 분야', favoriteField, screenWidth),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: cardField('선호 도메인', favoriteDomain, screenWidth),
+            ),
           ],
         ),
-      ],
-    );
-  }
-
-  TableRow infoRow(String label, String value, double screenWidth) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: screenWidth * 0.019),
-          child: Text(label),
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: screenWidth * 0.019),
-          child: Text(value, style: TextStyle(fontSize: screenWidth * 0.034)),
-        ),
-      ],
+      ),
     );
   }
 }

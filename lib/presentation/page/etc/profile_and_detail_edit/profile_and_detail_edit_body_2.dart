@@ -1,4 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 
 class ProfileAndDetailEditBody2 extends StatelessWidget {
   final List<TextEditingController> controllers;
@@ -14,39 +16,53 @@ class ProfileAndDetailEditBody2 extends StatelessWidget {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Table(
-          border: TableBorder.all(
-            color: Colors.grey,
-            width: 0.5,
-            borderRadius: BorderRadius.circular(screenWidth * 0.036),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(screenWidth * 0.04),
+            border: Border.all(color: const Color(0xFFE0E3E8)),
           ),
-          columnWidths: {
-            0: FixedColumnWidth(screenWidth * 0.243),
-            1: const FlexColumnWidth(),
-          },
-          children: [
-            editRow('선호 역할', controllers[0], screenWidth),
-            editRow('선호 분야', controllers[1], screenWidth),
-            editRow('선호 도메인', controllers[2], screenWidth),
-          ],
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.04,
+            vertical: 4,
+          ),
+          child: Table(
+            columnWidths: {
+              0: FixedColumnWidth(screenWidth * 0.243),
+              1: const FlexColumnWidth(),
+            },
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            children: [
+              editRow('선호 역할', controllers[0], screenWidth),
+              editRow('선호 분야', controllers[1], screenWidth),
+              editRow('선호 도메인', controllers[2], screenWidth),
+            ],
+          ),
         ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: OutlinedButton(
-            onPressed: onDetailSaveButtonPressed,
-            style: OutlinedButton.styleFrom(
-              backgroundColor: const Color(0xFF10B880),
-              foregroundColor: Colors.white,
-              fixedSize: Size(screenWidth * 0.316, 44),
-              side: BorderSide.none,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(screenWidth * 0.024),
+        Padding(
+          padding: const EdgeInsets.only(top: 14),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton(
+              onPressed: onDetailSaveButtonPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: appPrimaryColor,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
+                minimumSize: const Size(0, 44),
+                shape: const StadiumBorder(),
               ),
-            ),
-            child: Text(
-              '상세정보 저장',
-              style: TextStyle(fontSize: screenWidth * 0.034),
+              child: Text(
+                '상세정보 저장',
+                maxLines: 1,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.034,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ),
@@ -62,27 +78,35 @@ class ProfileAndDetailEditBody2 extends StatelessWidget {
     return TableRow(
       children: [
         Padding(
-          padding: EdgeInsets.only(
-            left: screenWidth * 0.019,
-            top: 10,
-            bottom: 10,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: screenWidth * 0.034,
+              fontWeight: FontWeight.w600,
+              color: cardSub,
+            ),
           ),
-          child: Text(label),
         ),
         Padding(
-          padding: EdgeInsets.only(
-            left: screenWidth * 0.019,
-            top: 10,
-            bottom: 10,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 6),
           child: TextField(
             controller: controller,
             decoration: const InputDecoration(
               isDense: true,
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
+              contentPadding: EdgeInsets.only(bottom: 4),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color(0xFFE0E3E8)),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: appPrimaryColor),
+              ),
             ),
-            style: TextStyle(fontSize: screenWidth * 0.034),
+            style: TextStyle(
+              fontSize: screenWidth * 0.034,
+              fontWeight: FontWeight.w600,
+              color: cardInk,
+            ),
           ),
         ),
       ],

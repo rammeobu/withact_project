@@ -86,7 +86,7 @@ class RecentSearchedActivity extends ConsumerWidget {
           'activityDetail': detail,
           'leaderProfile': <String>[],
           'position': <String>[],
-          'poster': null,
+          'poster': activity.poster,
         },
       );
     }

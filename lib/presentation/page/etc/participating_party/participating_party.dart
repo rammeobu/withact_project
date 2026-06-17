@@ -4,9 +4,8 @@ import 'package:party_maker/app.dart';
 import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/etc/participating_party/participating_part_body2.dart';
-import 'package:party_maker/presentation/page/etc/participating_party/participating_party_body1.dart';
 import 'package:party_maker/presentation/page/etc/participating_party/participating_party_footer.dart';
-import '../../future&component/layout/default_container.dart';
+import 'package:party_maker/presentation/page/future&component/card_ui.dart';
 import '../../future&component/layout/basic_layout.dart';
 import '../../future&component/profile/profile_card_leader.dart';
 
@@ -43,6 +42,7 @@ class ParticipatingPartyState extends ConsumerState<ParticipatingParty> {
   String activityDetail = '';
   String activityOverview = '';
   List<String> leaderProfile = [];
+  String? poster;
 
   @override
   void initState() {
@@ -53,6 +53,7 @@ class ParticipatingPartyState extends ConsumerState<ParticipatingParty> {
     activityDetail = widget.activityDetail;
     activityOverview = widget.activityOverview;
     leaderProfile = widget.leaderProfile;
+    poster = widget.poster;
     fetchActivityDetail();
   }
 
@@ -73,11 +74,19 @@ class ParticipatingPartyState extends ConsumerState<ParticipatingParty> {
           .read(findRepositoryProvider)
           .getActivityDetail('$activityId');
       final detail = data['description']?.toString() ?? '';
-      if (mounted && detail.isNotEmpty) {
+      final fetchedPoster = data['imageUrl']?.toString();
+      if (mounted) {
         setState(() {
-          activityDetail = detail;
-          if (activityOverview.trim().isEmpty) {
-            activityOverview = summarize(detail);
+          if (detail.isNotEmpty) {
+            activityDetail = detail;
+            if (activityOverview.trim().isEmpty) {
+              activityOverview = summarize(detail);
+            }
+          }
+          if ((poster == null || poster!.isEmpty) &&
+              fetchedPoster != null &&
+              fetchedPoster.isNotEmpty) {
+            poster = fetchedPoster;
           }
         });
       }
@@ -120,71 +129,37 @@ class ParticipatingPartyState extends ConsumerState<ParticipatingParty> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    ParticipatingPartyBody1(
-                      activityOverview: widget.activityName,
-                      poster: widget.poster,
-                      scrollController: body1ScrollController,
+                    detailHero(
+                      poster,
+                      widget.activityName.isEmpty
+                          ? '참여 중인 파티'
+                          : widget.activityName,
+                      screenWidth,
                     ),
 
                     Padding(
-                      padding: const EdgeInsets.only(top: 17),
-                      child: Text('활동 개요', style: subTitleFont),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: DefaultContainer(
-                        width: double.infinity,
-                        height: 101,
-                        color: const Color(0xFFF0F2F5),
-                        child: Padding(
-                          padding: EdgeInsets.all(screenWidth * 0.029),
-                          child: SingleChildScrollView(
-                            child: Text(
-                              activityOverview,
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.034,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(top: 14),
+                      child: sectionCard(screenWidth, [
+                        sectionBlock(
+                          screenWidth,
+                          '활동 개요',
+                          sectionText(activityOverview, screenWidth),
                         ),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(top: 17),
-                      child: Text('활동 설명', style: subTitleFont),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: DefaultContainer(
-                        width: double.infinity,
-                        height: 211, // 높이 조절
-                        color: const Color(0xFFF7F8F9),
-                        child: Padding(
-                          padding: EdgeInsets.all(screenWidth * 0.029),
-                          child: Scrollbar(
-                            controller: detailScrollController,
-                            child: SingleChildScrollView(
-                              controller: detailScrollController,
-                              child: Text(
-                                activityDetail,
-                                style: TextStyle(
-                                  fontSize: screenWidth * 0.036,
-                                  height: 1.6,
-                                ),
-                              ),
-                            ),
-                          ),
+                        sectionDivider(),
+                        sectionBlock(
+                          screenWidth,
+                          '활동 설명',
+                          sectionText(activityDetail, screenWidth),
                         ),
-                      ),
+                      ]),
                     ),
 
-                    ProfileCardLeader(
-                      profileContent: leaderProfile,
-                      onCallButtonPressed: onCallButtonPressed,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 14),
+                      child: ProfileCardLeader(
+                        profileContent: leaderProfile,
+                        onCallButtonPressed: onCallButtonPressed,
+                      ),
                     ),
 
                     Padding(
