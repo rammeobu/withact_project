@@ -1,2 +1,113 @@
-# team-project
-강원대 컴퓨터공학과 캡스톤 디자인 프로젝
+# withact 🎯
+
+> 대외활동 정보 탐색 및 팀원 모집 플랫폼
+
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=flat&logo=springboot&logoColor=white)
+![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=flat&logo=flutter&logoColor=white)
+![MariaDB](https://img.shields.io/badge/MariaDB-11.x-003545?style=flat&logo=mariadb&logoColor=white)
+![Raspberry Pi](https://img.shields.io/badge/Raspberry_Pi-5-A22846?style=flat&logo=raspberrypi&logoColor=white)
+
+## 📌 프로젝트 소개
+
+**withact**는 대학생을 위한 대외활동 정보 탐색 및 팀원 모집 플랫폼입니다.  
+크롤링을 통해 수집된 대외활동 정보를 제공하고, 함께할 팀원을 모집할 수 있는 파티 시스템을 제공합니다.
+
+- 🔍 대외활동 정보 자동 수집 및 탐색
+- 👥 팀원 모집 파티 생성 및 직군별 모집 관리
+- 📱 Flutter 기반 모바일 앱 제공
+- 🔐 회원가입 / 로그인 / 인증 기능
+
+---
+
+## 🛠 기술 스택
+
+| 분류 | 기술 |
+|------|------|
+| Backend | Spring Boot 3.x, Java, JPA, Swagger (OAS 3.1) |
+| Frontend | Flutter |
+| Database | MariaDB |
+| Server | Raspberry Pi 5, Cloudflare Tunnel |
+| Crawler | Python, Playwright |
+| DevOps | systemd, cron, Git |
+
+---
+
+## 🗂 프로젝트 구조
+
+```
+src/main/java/com/example/capstone/
+├── config/          # 환경설정 (Dotenv, Swagger, CORS)
+├── controller/      # REST API 컨트롤러
+├── dto/             # 데이터 전송 객체
+├── entity/          # JPA 엔티티
+├── enums/           # Enum 타입
+├── exception/       # 전역 예외 처리
+├── repository/      # JPA 리포지토리
+└── service/         # 비즈니스 로직
+```
+
+---
+
+## 📡 API 목록
+
+| 컨트롤러 | 설명 |
+|----------|------|
+| Auth | 회원가입 / 로그인 |
+| Member | 사용자 프로필 관리 |
+| Party | 팀원 모집 파티 CRUD |
+| PartyRole | 파티 직군 관리 |
+| Application | 파티 지원 / 승인 / 거절 |
+| AvailableTime | 가능 시간 등록 |
+| Activity | 대외활동 정보 조회 |
+| Notify | 알림 관리 |
+
+> Swagger UI: `https://backend.withact.xyz/swagger-ui.html`
+
+---
+
+## 🖥 서버 구성
+
+```
+Raspberry Pi 5
+├── Spring Boot API (capstone.service)
+├── MariaDB
+├── Cloudflare Tunnel → backend.withact.xyz
+└── Python Crawler (cron, 매일 03:00)
+```
+
+---
+
+## 👨‍👩‍👧 팀원
+
+| 이름 | 역할 |
+|------|------|
+| 익명1 (대표) | Spring Boot REST API 설계 및 구현, DB 설계, 서버 구축 및 운영, Python 크롤러 개발, Swagger 문서화, 배포 |
+| 익명2 | Spring Boot 인증 및 보안 구현, 사용자 관리 API, 서비스 디자인 및 UI 가이드 |
+| 익명3 | Flutter 모바일 앱 개발, 화면 구현, REST API 연동, UI/UX 설계 |
+
+---
+
+## 🚀 실행 방법
+
+### Backend
+
+```bash
+./gradlew bootJar
+scp build/libs/capstone-0.0.1-SNAPSHOT.jar user@server:~/
+ssh user@server
+sudo systemctl restart capstone
+```
+
+### Crawler
+
+```bash
+cd crawler
+source venv/bin/activate
+python3 crawling.py
+```
+
+---
+
+## 📁 Repository
+
+- Backend: [https://github.com/rammeobu/team-project](https://github.com/rammeobu/team-project)
