@@ -3,35 +3,15 @@ import 'package:party_maker/core/constant.dart';
 import '../../future&component/layout/default_container.dart';
 
 class ParticipatingPartyBody1 extends StatelessWidget {
-  final String workOverview;
+  final String activityOverview;
   final String? poster;
   final ScrollController scrollController;
   const ParticipatingPartyBody1({
     super.key,
-    required this.workOverview,
+    required this.activityOverview,
     required this.scrollController,
     this.poster,
   });
-
-  double dynamicFontSize(double maxWidth, String text) {
-    double fontSize = 16.0;
-    final textPainter = TextPainter(
-      textDirection: TextDirection.ltr,
-      maxLines: 1,
-    );
-
-    while (fontSize > 9.0) {
-      textPainter.text = TextSpan(
-        text: text,
-        style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w700),
-      );
-      textPainter.layout();
-
-      if (textPainter.width <= maxWidth) break;
-      fontSize -= 1.0;
-    }
-    return fontSize;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,39 +45,29 @@ class ParticipatingPartyBody1 extends StatelessWidget {
           flex: 3,
           child: Padding(
             padding: EdgeInsets.only(left: screenWidth * 0.024),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final double usableWidth = constraints.maxWidth - 16.0;
-                final double fontSize = dynamicFontSize(
-                  usableWidth,
-                  workOverview,
-                );
-
-                return DefaultContainer(
-                  color: const Color(0xffebedfc),
-                  width: screenWidth,
-                  child: Padding(
-                    padding: EdgeInsets.all(screenWidth * 0.019),
-                    child: Scrollbar(
-                      controller: scrollController,
-                      child: SingleChildScrollView(
-                        controller: scrollController,
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            workOverview,
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.039,
-                              color: appPrimaryColor,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
+            child: DefaultContainer(
+              color: const Color(0xffebedfc),
+              width: screenWidth,
+              child: Padding(
+                padding: EdgeInsets.all(screenWidth * 0.019),
+                child: Scrollbar(
+                  controller: scrollController,
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        activityOverview,
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.039,
+                          color: appPrimaryColor,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
                   ),
-                );
-              },
+                ),
+              ),
             ),
           ),
         ),

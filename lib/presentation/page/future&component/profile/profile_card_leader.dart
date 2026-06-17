@@ -41,7 +41,7 @@ class ProfileCardLeader extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                     child: (profileImage != null)
-                        ? Image.file(File(profileImage!))
+                        ? Image.file(File(profileImage!), cacheWidth: 300)
                         : Icon(
                             Icons.person,
                             size: screenWidth * 0.158,
@@ -87,7 +87,7 @@ class ProfileCardLeader extends StatelessWidget {
                                   screenWidth * 0.024,
                                 ),
                               ),
-                              fixedSize: Size(screenWidth * 0.195, 26),
+                              fixedSize: Size(screenWidth * 0.195, 44),
                               minimumSize: const Size(0, 0),
                             ),
                             onPressed: onCallButtonPressed,
@@ -114,8 +114,12 @@ class ProfileCardLeader extends StatelessWidget {
                           1: const FlexColumnWidth(),
                         },
                         children: [
-                          infoRow('이름', profileContent[0], screenWidth),
-                          infoRow('기술', profileContent[1], screenWidth),
+                          infoRow('이름',
+                              profileContent.isNotEmpty ? profileContent[0] : '',
+                              screenWidth),
+                          infoRow('기술',
+                              profileContent.length > 1 ? profileContent[1] : '',
+                              screenWidth),
                         ],
                       ),
                     ],

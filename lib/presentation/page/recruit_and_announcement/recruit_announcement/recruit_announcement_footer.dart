@@ -86,7 +86,7 @@ class RecruitAnnouncementFooter extends StatelessWidget {
                 ),
               ),
               child: Text(
-                '모집목록으로',
+                '목록으로',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: screenWidth * 0.044,

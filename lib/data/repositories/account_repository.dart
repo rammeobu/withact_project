@@ -1,20 +1,38 @@
 import 'package:party_maker/data/models/profile_data_structures.dart';
 import 'package:party_maker/data/network/api_client.dart';
+import 'package:party_maker/data/network/token_storage.dart';
 
 class AccountRepository {
   final ApiClient client;
-  AccountRepository(this.client);
+  final TokenStorage tokenStorage;
+  AccountRepository(this.client, this.tokenStorage);
 
-  Future<String> postLogin(String id, String password) async {
+  Future<int?> postLogin(String id, String password) async {
     try {
       final data = await client.post('/api/auth/login', {
         'loginId': id,
         'password': password,
       });
-      return data?.toString() ?? '';
+      if (data is Map<String, dynamic>) {
+        final token = data['token'] ?? data['accessToken'] ?? data['access_token'];
+        if (token is String && token.isNotEmpty) {
+          client.setAuthToken(token);
+          await tokenStorage.write(token);
+        }
+        return (data['userId'] ?? data['id']) as int?;
+      }
+      if (data is int) {
+        return data;
+      }
+      return int.tryParse(data?.toString() ?? '');
     } catch (e) {
-      throw Exception('로그인 실패: $e');
+      throw Exception('로그인 실패');
     }
+  }
+
+  Future<void> logout() async {
+    client.clearAuthToken();
+    await tokenStorage.clear();
   }
 
   Future<void> postSignUp(
@@ -36,7 +54,7 @@ class AccountRepository {
         'skill': skill,
       });
     } catch (e) {
-      throw Exception('회원가입 실패: $e');
+      throw Exception('회원가입 실패');
     }
   }
 
@@ -44,43 +62,47 @@ class AccountRepository {
     try {
       await client.post('/api/email/request', {'email': email});
     } catch (e) {
-      throw Exception('인증번호 발송 실패: $e');
+      throw Exception('인증번호 발송 실패');
     }
   }
 
-  Future<void> postEmailVerify(String email, String code) async {
+  Future<void> postEmailAuth(String email, String code) async {
     try {
       await client.post('/api/email/verify', {'email': email, 'code': code});
     } catch (e) {
-      throw Exception('이메일 인증 실패: $e');
+      throw Exception('이메일 인증 실패');
     }
   }
 
   Future<void> postLogout() async {
-    throw UnimplementedError();
-  }
-
-  Future<ProfileAndDetailEditDataStructure> getProfile(String id) async {
     try {
-      final data = await client.get('/api/User/v1/$id');
-      return ProfileAndDetailEditDataStructure.fromJson(
-          data as Map<String, dynamic>);
+      await client.post('/api/auth/logout', {});
     } catch (e) {
-      throw Exception('프로필 조회 실패: $e');
+      throw Exception('로그아웃 실패');
     }
   }
 
-  Future<void> putProfile(
-      String id, ProfileAndDetailEditDataStructure profile) async {
+  Future<ProfileState> getProfile(String id) async {
     try {
-      await client.put('/api/User/v1/$id/profile', {
-        'name': profile.profileContent.length > 0 ? profile.profileContent[0] : '',
-        'skill': profile.profileContent.length > 1 ? profile.profileContent[1] : '',
+      final data = await client.get('/api/user/v1/$id');
+      return ProfileState.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('프로필 조회 실패');
+    }
+  }
+
+  Future<void> putProfile(String id, ProfileState profile) async {
+    try {
+      await client.put('/api/user/v1/$id/personal', {
+        'name': profile.profileContent.isNotEmpty ? profile.profileContent[0] : '',
         'belong': profile.profileContent.length > 2 ? profile.profileContent[2] : '',
         'major': profile.profileContent.length > 3 ? profile.profileContent[3] : '',
+        'spec': profile.spec,
+        'introduction': profile.introduction,
+        'preference': profile.favorites.where((value) => value.isNotEmpty).join(', '),
       });
     } catch (e) {
-      throw Exception('프로필 수정 실패: $e');
+      throw Exception('프로필 수정 실패');
     }
   }
 

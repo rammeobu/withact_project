@@ -4,6 +4,7 @@ import 'package:party_maker/presentation/page/recruit_and_announcement/announcem
 import 'package:party_maker/presentation/page/recruit_and_announcement/announcement_edit/announcement_edit_body2.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/announcement_edit/announcement_edit_body3.dart';
 import 'package:party_maker/presentation/page/recruit_and_announcement/announcement_edit/announcement_edit_footer.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 import '../../../../app.dart';
 import '../../future&component/layout/basic_layout.dart';
 
@@ -49,23 +50,25 @@ final announcementEditProvider =
     >(AnnouncementEditNotifier.new);
 
 class AnnouncementEdit extends ConsumerStatefulWidget {
-  final String workName;
+  final String activityName;
   final String partyNameIntroduction;
   final List<String>? preferences;
   final List<String> positions;
+  final int partyId;
   const AnnouncementEdit({
     super.key,
-    required this.workName,
+    required this.activityName,
     required this.partyNameIntroduction,
     this.preferences,
     required this.positions,
+    this.partyId = 0,
   });
 
   @override
-  ConsumerState<AnnouncementEdit> createState() => _AnnouncementEditState();
+  ConsumerState<AnnouncementEdit> createState() => AnnouncementEditState();
 }
 
-class _AnnouncementEditState extends ConsumerState<AnnouncementEdit> {
+class AnnouncementEditState extends ConsumerState<AnnouncementEdit> {
   late List<ScrollController> scrollControllers;
   late List<TextEditingController> staticTextControllers;
   late List<TextEditingController> dynamicTextControllers;
@@ -77,7 +80,7 @@ class _AnnouncementEditState extends ConsumerState<AnnouncementEdit> {
     scrollControllers = List.generate(3, (i) => ScrollController());
 
     staticTextControllers = [
-      TextEditingController(text: widget.workName),
+      TextEditingController(text: widget.activityName),
       TextEditingController(text: widget.partyNameIntroduction),
       TextEditingController(),
     ];
@@ -135,7 +138,7 @@ class _AnnouncementEditState extends ConsumerState<AnnouncementEdit> {
                       section: '활동 이름',
                       textEditingController: staticTextControllers[0],
                       onSearchButtonPressed: onSearchButtonPressed,
-                      content: widget.workName,
+                      content: widget.activityName,
                       isRequired: true,
                     ),
                     AnnouncementEditBody(
@@ -182,11 +185,18 @@ class _AnnouncementEditState extends ConsumerState<AnnouncementEdit> {
     );
   }
 
-  void onSearchButtonPressed() {
-    Navigator.pushNamed(context, PageRoutes.findWork);
+  Future<void> onSearchButtonPressed() async {
+    final selected = await Navigator.pushNamed(
+      context,
+      PageRoutes.findActivity,
+      arguments: {'selectMode': true},
+    );
+    if (selected is Map && mounted) {
+      staticTextControllers[0].text = selected['activityName'] as String? ?? '';
+    }
   }
 
-  void onSaveAndExitButtonPressed() {
+  Future<void> onSaveAndExitButtonPressed() async {
     if (staticTextControllers[0].text.trim().isEmpty) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -211,7 +221,13 @@ class _AnnouncementEditState extends ConsumerState<AnnouncementEdit> {
         );
       return;
     }
-    Navigator.pop(context);
+    try {
+      await ref.read(recruitRepositoryProvider).putAnnouncement(
+        widget.partyId,
+        staticTextControllers[1].text.trim(),
+      );
+    } catch (_) {}
+    if (mounted) Navigator.pop(context);
   }
 
   void onPreferenceAdded(String text) {

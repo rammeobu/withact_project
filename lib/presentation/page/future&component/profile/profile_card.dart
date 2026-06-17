@@ -43,7 +43,7 @@ class ProfileCardBasic extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                     child: (profileImage != null)
-                        ? Image.file(File(profileImage!), fit: BoxFit.cover)
+                        ? Image.file(File(profileImage!), fit: BoxFit.cover, cacheWidth: 300)
                         : Icon(
                             Icons.person,
                             size: screenWidth * 0.158,
@@ -73,10 +73,18 @@ class ProfileCardBasic extends StatelessWidget {
                           1: const FlexColumnWidth(),
                         },
                         children: [
-                          infoRow('이름', profileContent[0], screenWidth),
-                          infoRow('기술', profileContent[1], screenWidth),
-                          infoRow('소속', profileContent[2], screenWidth),
-                          infoRow('전공', profileContent[3], screenWidth),
+                          infoRow('이름',
+                              profileContent.isNotEmpty ? profileContent[0] : '',
+                              screenWidth),
+                          infoRow('기술',
+                              profileContent.length > 1 ? profileContent[1] : '',
+                              screenWidth),
+                          infoRow('소속',
+                              profileContent.length > 2 ? profileContent[2] : '',
+                              screenWidth),
+                          infoRow('전공',
+                              profileContent.length > 3 ? profileContent[3] : '',
+                              screenWidth),
                         ],
                       ),
                       OutlinedButton(

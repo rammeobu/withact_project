@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import '../../future&component/component/no_scale.dart';
 import '../../future&component/layout/default_container.dart';
 
 class ApplicantProfileBody1 extends StatelessWidget {
@@ -40,9 +41,11 @@ class ApplicantProfileBody1 extends StatelessWidget {
                   controller: scrollController,
                   child: SingleChildScrollView(
                     controller: scrollController,
-                    child: Text(
-                      content,
-                      style: TextStyle(fontSize: screenWidth * 0.036),
+                    child: NoScale(
+                      child: Text(
+                        content,
+                        style: TextStyle(fontSize: screenWidth * 0.036),
+                      ),
                     ),
                   ),
                 ),

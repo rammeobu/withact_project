@@ -43,7 +43,7 @@ class ProfileCardApplicant extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: profileImage != null
-                          ? Image.file(File(profileImage!))
+                          ? Image.file(File(profileImage!), cacheWidth: 300)
                           : Icon(
                               Icons.person,
                               size: screenWidth * 0.158,
@@ -76,9 +76,15 @@ class ProfileCardApplicant extends StatelessWidget {
                             1: const FlexColumnWidth(),
                           },
                           children: [
-                            infoRow('이름', profileContent[0], screenWidth),
-                            infoRow('역할', profileContent[1], screenWidth),
-                            infoRow('기술', profileContent[2], screenWidth),
+                            infoRow('이름',
+                                profileContent.isNotEmpty ? profileContent[0] : '',
+                                screenWidth),
+                            infoRow('역할',
+                                profileContent.length > 1 ? profileContent[1] : '',
+                                screenWidth),
+                            infoRow('기술',
+                                profileContent.length > 2 ? profileContent[2] : '',
+                                screenWidth),
                           ],
                         ),
                       ],

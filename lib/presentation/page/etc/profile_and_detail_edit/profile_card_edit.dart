@@ -57,6 +57,7 @@ class ProfileCardEdit extends StatelessWidget {
                                     child: Image.file(
                                       File(profileImage!),
                                       fit: BoxFit.cover,
+                                      cacheWidth: 300,
                                     ),
                                   )
                                 : Icon(
@@ -145,7 +146,7 @@ class ProfileCardEdit extends StatelessWidget {
                         style: OutlinedButton.styleFrom(
                           backgroundColor: const Color(0xFF10B880),
                           foregroundColor: Colors.white,
-                          fixedSize: Size(screenWidth * 0.287, 34),
+                          fixedSize: Size(screenWidth * 0.287, 44),
                           side: BorderSide.none,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
@@ -153,9 +154,13 @@ class ProfileCardEdit extends StatelessWidget {
                             ),
                           ),
                         ),
-                        child: Text(
-                          '프로필 저장',
-                          style: TextStyle(fontSize: screenWidth * 0.034),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            '프로필 저장',
+                            maxLines: 1,
+                            style: TextStyle(fontSize: screenWidth * 0.034),
+                          ),
                         ),
                       ),
                     ],

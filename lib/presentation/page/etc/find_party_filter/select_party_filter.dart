@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/core/constant.dart';
 import 'find_party_filter.dart';
@@ -23,24 +24,33 @@ class SelectPartyFilter extends ConsumerWidget {
         bool isSelected = currentFilter == pos;
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.010),
-          child: OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.039),
-              minimumSize: const Size(0, 41),
-              backgroundColor: isSelected ? appPrimaryColor : Colors.white,
-              foregroundColor: isSelected ? Colors.white : Colors.black,
-              side: const BorderSide(width: 0.5, color: Colors.grey),
-            ),
-            onPressed: () {
+          child: InkWell(
+            customBorder: const StadiumBorder(),
+            onTap: () {
+              HapticFeedback.selectionClick();
               ref
                   .read(findPartyFilterProvider.notifier)
                   .setCurrent(filterIndex, pos);
             },
-            child: Text(
-              pos,
-              style: TextStyle(
-                fontSize: screenWidth * 0.036,
-                fontWeight: FontWeight.w700,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              constraints: const BoxConstraints(minHeight: 44),
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.039),
+              decoration: ShapeDecoration(
+                color: isSelected ? appPrimaryColor : Colors.white,
+                shape: const StadiumBorder(
+                  side: BorderSide(width: 0.5, color: Colors.grey),
+                ),
+              ),
+              child: Text(
+                pos,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.036,
+                  fontWeight: FontWeight.w700,
+                  color: isSelected ? Colors.white : Colors.black,
+                ),
               ),
             ),
           ),

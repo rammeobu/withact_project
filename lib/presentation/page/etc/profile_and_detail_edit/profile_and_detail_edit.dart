@@ -1,30 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:party_maker/data/models/profile_data_structures.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/etc/profile_and_detail_edit/profile_and_detail_edit_body_1.dart';
 import 'package:party_maker/presentation/page/etc/profile_and_detail_edit/profile_and_detail_edit_body_2.dart';
 import 'package:party_maker/presentation/page/etc/profile_and_detail_edit/profile_and_detail_edit_footer.dart';
 import 'package:party_maker/presentation/page/etc/profile_and_detail_edit/profile_card_edit.dart';
 import 'package:party_maker/presentation/page/future&component/layout/basic_layout.dart';
 
-class _ProfileAnonymousNotifier extends Notifier<bool> {
+class ProfileAnonymousNotifier extends Notifier<bool> {
   @override
   bool build() => false;
+
+  void setAnonymous(bool anonymous) {
+    state = anonymous;
+  }
 }
 
 final profileAnonymousProvider =
-    NotifierProvider.autoDispose<_ProfileAnonymousNotifier, bool>(
-      _ProfileAnonymousNotifier.new,
+    NotifierProvider.autoDispose<ProfileAnonymousNotifier, bool>(
+      ProfileAnonymousNotifier.new,
     );
 
-class _ProfileImagePathNotifier extends Notifier<String?> {
+class ProfileImagePathNotifier extends Notifier<String?> {
   @override
   String? build() => null;
+
+  void setPath(String? path) {
+    state = path;
+  }
 }
 
 final profileImagePathProvider =
-    NotifierProvider.autoDispose<_ProfileImagePathNotifier, String?>(
-      _ProfileImagePathNotifier.new,
+    NotifierProvider.autoDispose<ProfileImagePathNotifier, String?>(
+      ProfileImagePathNotifier.new,
     );
 
 class ProfileAndDetailEdit extends ConsumerStatefulWidget {
@@ -43,10 +53,10 @@ class ProfileAndDetailEdit extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<ProfileAndDetailEdit> createState() =>
-      _ProfileAndDetailEditState();
+      ProfileAndDetailEditState();
 }
 
-class _ProfileAndDetailEditState extends ConsumerState<ProfileAndDetailEdit> {
+class ProfileAndDetailEditState extends ConsumerState<ProfileAndDetailEdit> {
   late ScrollController scrollController;
   late List<TextEditingController> textControllers;
 
@@ -55,22 +65,35 @@ class _ProfileAndDetailEditState extends ConsumerState<ProfileAndDetailEdit> {
     super.initState();
     scrollController = ScrollController();
 
+    final saved = ref.read(profileProvider);
+    final content = saved.hasData ? saved.profileContent : widget.profileContent;
+    final introduction = saved.hasData ? saved.introduction : widget.introduction;
+    final spec = saved.hasData ? saved.spec : widget.spec;
+    final favorites = saved.hasData ? saved.favorites : widget.favorites;
+
     textControllers = [
       ...List.generate(
         4,
-        (int i) => TextEditingController(
-          text: i < widget.profileContent.length ? widget.profileContent[i] : '',
-        ),
+        (int i) =>
+            TextEditingController(text: i < content.length ? content[i] : ''),
       ),
-      TextEditingController(text: widget.introduction),
-      TextEditingController(text: widget.spec),
+      TextEditingController(text: introduction),
+      TextEditingController(text: spec),
       ...List.generate(
         3,
-        (int i) => TextEditingController(
-          text: i < widget.favorites.length ? widget.favorites[i] : '',
-        ),
+        (int i) =>
+            TextEditingController(text: i < favorites.length ? favorites[i] : ''),
       ),
     ];
+
+    if (saved.hasData) {
+      WidgetsBinding.instance.addPostFrameCallback((timestamp) {
+        ref.read(profileImagePathProvider.notifier).setPath(saved.imagePath);
+        ref
+            .read(profileAnonymousProvider.notifier)
+            .setAnonymous(saved.anonymous);
+      });
+    }
   }
 
   @override
@@ -115,8 +138,8 @@ class _ProfileAndDetailEditState extends ConsumerState<ProfileAndDetailEdit> {
                       onProfileImageTap: onProfileImageTap,
                       anonymousFlag: anonymousFlag,
                       onAnonymousChanged: (bool? isAnonymous) =>
-                          ref.read(profileAnonymousProvider.notifier).state =
-                              isAnonymous ?? false,
+                          ref.read(profileAnonymousProvider.notifier).setAnonymous(
+                              isAnonymous ?? false),
                       onProfileSaveButtonPressed: onProfileSaveButtonPressed,
                     ),
                     Padding(
@@ -191,12 +214,20 @@ class _ProfileAndDetailEditState extends ConsumerState<ProfileAndDetailEdit> {
 
     final XFile? image = await ImagePicker().pickImage(source: source);
     if (image != null && mounted) {
-      ref.read(profileImagePathProvider.notifier).state = image.path;
+      ref.read(profileImagePathProvider.notifier).setPath(image.path);
     }
   }
 
   void onProfileSaveButtonPressed() {
-    // TODO: 입력된 프로필 카드 정보를 서버에 저장하는 기능 구현 (백엔드와 협의 필요)
+    ref.read(profileProvider.notifier).setCard(
+          profileContent: textControllers
+              .sublist(0, 4)
+              .map((controller) => controller.text.trim())
+              .toList(),
+          imagePath: ref.read(profileImagePathProvider),
+          anonymous: ref.read(profileAnonymousProvider),
+        );
+    persistProfile();
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -208,7 +239,15 @@ class _ProfileAndDetailEditState extends ConsumerState<ProfileAndDetailEdit> {
   }
 
   void onDetailSaveButtonPressed() {
-    // TODO: 입력된 상세정보(선호 역할, 분야, 도메인)를 서버에 저장하는 기능 구현 (백엔드와 협의 필요)
+    ref.read(profileProvider.notifier).setDetail(
+          introduction: textControllers[4].text.trim(),
+          spec: textControllers[5].text.trim(),
+          favorites: textControllers
+              .sublist(6, 9)
+              .map((controller) => controller.text.trim())
+              .toList(),
+        );
+    persistProfile();
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
@@ -231,6 +270,32 @@ class _ProfileAndDetailEditState extends ConsumerState<ProfileAndDetailEdit> {
         return;
       }
     }
+    ref.read(profileProvider.notifier).setProfile(
+          ProfileState(
+            profileContent: textControllers
+                .sublist(0, 4)
+                .map((controller) => controller.text.trim())
+                .toList(),
+            introduction: textControllers[4].text.trim(),
+            spec: textControllers[5].text.trim(),
+            favorites: textControllers
+                .sublist(6, 9)
+                .map((controller) => controller.text.trim())
+                .toList(),
+            imagePath: ref.read(profileImagePathProvider),
+            anonymous: ref.read(profileAnonymousProvider),
+          ),
+        );
+    persistProfile();
     Navigator.pop(context);
+  }
+
+  void persistProfile() {
+    final userId = ref.read(currentUserProvider);
+    if (userId == null) return;
+    ref
+        .read(accountRepositoryProvider)
+        .putProfile(userId.toString(), ref.read(profileProvider))
+        .catchError((error) {});
   }
 }

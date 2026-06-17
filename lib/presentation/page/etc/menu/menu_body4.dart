@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_item.dart';
 
 class MenuBody4 extends StatelessWidget {
-  final VoidCallback recruitingWorkMenuSelect;
+  final VoidCallback recruitingActivityMenuSelect;
   final VoidCallback recruitAnnouncementManagementMenuSelect;
   const MenuBody4({
     super.key,
-    required this.recruitingWorkMenuSelect,
+    required this.recruitingActivityMenuSelect,
     required this.recruitAnnouncementManagementMenuSelect,
   });
 
@@ -33,7 +33,7 @@ class MenuBody4 extends StatelessWidget {
             ),
           ),
         ),
-        menuItem('모집중인 활동', screenWidth, recruitingWorkMenuSelect),
+        menuItem('모집중인 활동', screenWidth, recruitingActivityMenuSelect),
         menuItem('모집정보 관리', screenWidth, recruitAnnouncementManagementMenuSelect),
       ],
     );

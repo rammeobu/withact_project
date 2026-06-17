@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:party_maker/app.dart';
 
 class BasicLayout extends StatelessWidget {
@@ -52,7 +51,8 @@ class BasicLayout extends StatelessWidget {
                     ? Row(children: needWidget ?? [])
                     : Text(
                         title ?? '',
-                        style: GoogleFonts.notoSansKr(
+                        style: const TextStyle(
+                          fontFamily: 'NotoSansKR',
                           fontWeight: FontWeight.w900,
                           color: Colors.white,
                         ),

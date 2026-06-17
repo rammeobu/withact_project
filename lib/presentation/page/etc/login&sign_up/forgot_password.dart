@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
@@ -8,14 +9,18 @@ class ForgotPassword extends ConsumerStatefulWidget {
   const ForgotPassword({super.key});
 
   @override
-  ConsumerState<ForgotPassword> createState() => _ForgotPasswordState();
+  ConsumerState<ForgotPassword> createState() => ForgotPasswordState();
 }
 
-class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
+class ForgotPasswordState extends ConsumerState<ForgotPassword> {
   late TextEditingController emailTextController;
   late TextEditingController verificationCodeTextController;
   late TextEditingController newPasswordTextController;
   late TextEditingController confirmPasswordTextController;
+  bool obscureNewPassword = true;
+  bool obscureConfirmPassword = true;
+  bool isSendingCode = false;
+  bool isSubmitting = false;
 
   @override
   void initState() {
@@ -55,26 +60,35 @@ class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
               additionalButton: Padding(
                 padding: EdgeInsets.only(right: screenWidth * 0.019),
                 child: OutlinedButton(
-                  onPressed: onSendCodeButtonPressed,
+                  onPressed: isSendingCode ? null : onSendCodeButtonPressed,
                   style: OutlinedButton.styleFrom(
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(
                       horizontal: screenWidth * 0.019,
                     ),
-                    fixedSize: Size(screenWidth * 0.22, 41),
+                    fixedSize: Size(screenWidth * 0.22, 44),
                     side: const BorderSide(width: 0.4),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(screenWidth * 0.024),
                     ),
                   ),
-                  child: Text(
-                    '코드 발송',
-                    style: TextStyle(
-                      color: const Color(0xFF3F3F3F),
-                      fontSize: screenWidth * 0.032,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  child: isSendingCode
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Color(0xFF3F3F3F),
+                          ),
+                        )
+                      : Text(
+                          '코드 발송',
+                          style: TextStyle(
+                            color: const Color(0xFF3F3F3F),
+                            fontSize: screenWidth * 0.032,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                 ),
               ),
             ),
@@ -93,7 +107,9 @@ class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
               '새 비밀번호를 입력해 주세요.',
               screenWidth,
               isRequired: true,
-              isObscure: true,
+              isObscure: obscureNewPassword,
+              onToggleObscure: () =>
+                  setState(() => obscureNewPassword = !obscureNewPassword),
             ),
             fieldRow(
               '비밀번호 확인',
@@ -101,7 +117,10 @@ class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
               '새 비밀번호를 다시 한 번 입력해 주세요.',
               screenWidth,
               isRequired: true,
-              isObscure: true,
+              isObscure: obscureConfirmPassword,
+              onToggleObscure: () => setState(
+                () => obscureConfirmPassword = !obscureConfirmPassword,
+              ),
             ),
 
             Padding(
@@ -110,7 +129,7 @@ class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
                 vertical: 42,
               ),
               child: OutlinedButton(
-                onPressed: onResetButtonPressed,
+                onPressed: isSubmitting ? null : onResetButtonPressed,
                 style: OutlinedButton.styleFrom(
                   backgroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 63),
@@ -119,13 +138,22 @@ class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
                     borderRadius: BorderRadius.circular(screenWidth * 0.024),
                   ),
                 ),
-                child: Text(
-                  '비밀번호 변경',
-                  style: TextStyle(
-                    color: const Color(0xFF3F3F3F),
-                    fontSize: screenWidth * 0.044,
-                  ),
-                ),
+                child: isSubmitting
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xFF3F3F3F),
+                        ),
+                      )
+                    : Text(
+                        '비밀번호 변경',
+                        style: TextStyle(
+                          color: const Color(0xFF3F3F3F),
+                          fontSize: screenWidth * 0.044,
+                        ),
+                      ),
               ),
             ),
           ],
@@ -159,6 +187,7 @@ class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
     double width, {
     bool isRequired = false,
     bool isObscure = false,
+    VoidCallback? onToggleObscure,
     Widget? additionalButton,
   }) {
     return Container(
@@ -200,6 +229,16 @@ class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
                   fontSize: width * 0.034,
                   color: Colors.grey,
                 ),
+                suffixIcon: onToggleObscure != null
+                    ? IconButton(
+                        onPressed: onToggleObscure,
+                        icon: Icon(
+                          isObscure ? Icons.visibility_off : Icons.visibility,
+                          size: width * 0.05,
+                          color: Colors.grey,
+                        ),
+                      )
+                    : null,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(horizontal: width * 0.024),
               ),
@@ -212,6 +251,7 @@ class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
   }
 
   Future<void> onSendCodeButtonPressed() async {
+    if (isSendingCode) return;
     final email = emailTextController.text.trim();
     if (email.isEmpty) {
       ScaffoldMessenger.of(context)
@@ -219,6 +259,8 @@ class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
         ..showSnackBar(const SnackBar(content: Text('이메일을 입력해 주세요.')));
       return;
     }
+    setState(() => isSendingCode = true);
+    HapticFeedback.lightImpact();
     try {
       await ref.read(accountRepositoryProvider).postEmailRequest(email);
       if (mounted) {
@@ -230,12 +272,19 @@ class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(e.toString())));
+          ..showSnackBar(
+            const SnackBar(
+              content: Text('인증번호 발송에 실패했습니다. 대학 이메일(.ac.kr)인지 확인해 주세요.'),
+            ),
+          );
       }
+    } finally {
+      if (mounted) setState(() => isSendingCode = false);
     }
   }
 
   Future<void> onResetButtonPressed() async {
+    if (isSubmitting) return;
     final requiredFields = [
       (emailTextController, '이메일'),
       (verificationCodeTextController, '인증코드'),
@@ -256,20 +305,27 @@ class _ForgotPasswordState extends ConsumerState<ForgotPassword> {
         ..showSnackBar(const SnackBar(content: Text('새 비밀번호가 일치하지 않습니다.')));
       return;
     }
+    setState(() => isSubmitting = true);
+    HapticFeedback.lightImpact();
+    bool verified = false;
     try {
-      await ref.read(accountRepositoryProvider).postEmailVerify(
+      await ref.read(accountRepositoryProvider).postEmailAuth(
         emailTextController.text.trim(),
         verificationCodeTextController.text.trim(),
       );
+      verified = true;
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(e.toString())));
+          ..showSnackBar(
+            const SnackBar(content: Text('인증번호가 올바르지 않습니다.')),
+          );
       }
-      return;
+    } finally {
+      if (mounted) setState(() => isSubmitting = false);
     }
-    if (mounted) {
+    if (verified && mounted) {
       Navigator.pushNamedAndRemoveUntil(
         context,
         PageRoutes.login,

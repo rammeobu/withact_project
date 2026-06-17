@@ -20,10 +20,10 @@ class ApplicantProfile extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<ApplicantProfile> createState() => _ApplicantProfileState();
+  ConsumerState<ApplicantProfile> createState() => ApplicantProfileState();
 }
 
-class _ApplicantProfileState extends ConsumerState<ApplicantProfile> {
+class ApplicantProfileState extends ConsumerState<ApplicantProfile> {
   late ScrollController scrollController;
   late ScrollController whenToMeetOuterScrollController;
   late ScrollController whenToMeetScrollController;
@@ -127,7 +127,7 @@ class _ApplicantProfileState extends ConsumerState<ApplicantProfile> {
 
   Future<void> onAcceptButtonPressed() async {
     try {
-      await ref.read(applyRepositoryProvider).putApprove(widget.applicationId);
+      await ref.read(applyRepositoryProvider).putAccept(widget.applicationId);
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
@@ -143,14 +143,16 @@ class _ApplicantProfileState extends ConsumerState<ApplicantProfile> {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(e.toString())));
+          ..showSnackBar(
+            const SnackBar(content: Text('승인 처리에 실패했습니다.')),
+          );
       }
     }
   }
 
   Future<void> onRejectButtonPressed() async {
     try {
-      await ref.read(applyRepositoryProvider).putReject(widget.applicationId);
+      await ref.read(applyRepositoryProvider).putDeny(widget.applicationId);
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
@@ -166,7 +168,9 @@ class _ApplicantProfileState extends ConsumerState<ApplicantProfile> {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(e.toString())));
+          ..showSnackBar(
+            const SnackBar(content: Text('거절 처리에 실패했습니다.')),
+          );
       }
     }
   }

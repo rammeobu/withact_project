@@ -40,7 +40,7 @@ class NotifyBody1 extends StatelessWidget {
                     borderRadius: BorderRadius.circular(screenWidth * 0.122),
                   ),
                   child: (profileImage != null)
-                      ? ClipOval(child: Image.file(File(profileImage!)))
+                      ? ClipOval(child: Image.file(File(profileImage!), cacheWidth: 300))
                       : const ClipOval(
                           child: Icon(
                             Icons.person,

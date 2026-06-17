@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/models/notify_data_structure.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/etc/notify/notify_body1.dart';
 import 'package:party_maker/presentation/page/etc/notify/notify_footer.dart';
 import 'package:party_maker/presentation/page/etc/notify/notify_position_select.dart';
+import 'package:party_maker/presentation/page/future&component/component/load_failed_view.dart';
 import 'package:party_maker/presentation/page/future&component/layout/basic_layout.dart';
 
-class _NotifyPositionNotifier extends Notifier<String> {
+class NotifyPositionNotifier extends Notifier<String> {
   @override
   String build() => '전체';
+
+  void setPosition(String position) {
+    state = position;
+  }
 }
 
 final notifyPositionProvider =
-    NotifierProvider.autoDispose<_NotifyPositionNotifier, String>(
-      _NotifyPositionNotifier.new,
+    NotifierProvider.autoDispose<NotifyPositionNotifier, String>(
+      NotifyPositionNotifier.new,
     );
 
 class NotifyListNotifier extends Notifier<List<NotificationItem>> {
@@ -52,11 +59,13 @@ class Notify extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<Notify> createState() => _NotifyState();
+  ConsumerState<Notify> createState() => NotifyState();
 }
 
-class _NotifyState extends ConsumerState<Notify> {
+class NotifyState extends ConsumerState<Notify> {
   late ScrollController scrollController;
+  bool isLoading = true;
+  bool loadFailed = false;
 
   @override
   void initState() {
@@ -64,7 +73,40 @@ class _NotifyState extends ConsumerState<Notify> {
     scrollController = ScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(notifyListProvider.notifier).init(widget.notification);
+      fetchNotifications();
     });
+  }
+
+  Future<void> fetchNotifications() async {
+    final userId = ref.read(currentUserProvider);
+    if (userId == null) {
+      if (mounted) setState(() => isLoading = false);
+      return;
+    }
+    try {
+      final result =
+          await ref.read(notifyRepositoryProvider).getNotificationList(userId);
+      if (mounted) {
+        ref.read(notifyListProvider.notifier).init(result);
+        setState(() {
+          isLoading = false;
+          loadFailed = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() {
+        isLoading = false;
+        loadFailed = true;
+      });
+    }
+  }
+
+  void retryFetch() {
+    setState(() {
+      isLoading = true;
+      loadFailed = false;
+    });
+    fetchNotifications();
   }
 
   @override
@@ -102,7 +144,18 @@ class _NotifyState extends ConsumerState<Notify> {
                     NotifyPositionSelect(position: widget.position),
                     Padding(
                       padding: const EdgeInsets.only(top: 13),
-                      child: notifications.isEmpty
+                      child: isLoading
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 40),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: appPrimaryColor,
+                              ),
+                            ),
+                          )
+                        : loadFailed
+                        ? LoadFailedView(onRetry: retryFetch)
+                        : notifications.isEmpty
                         ? Padding(
                             padding: const EdgeInsets.symmetric(vertical: 40),
                             child: Center(

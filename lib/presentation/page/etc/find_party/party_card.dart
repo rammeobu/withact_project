@@ -6,7 +6,7 @@ import '../../future&component/layout/default_container.dart';
 class PartyCard extends StatelessWidget {
   final String partyName;
   final String? poster;
-  final String workName;
+  final String activityName;
   final VoidCallback? onPartyLeaderInformationCheckButtonPressed;
   final VoidCallback? onRecruitAnnouncementCheckButtonPressed;
   final VoidCallback? onApplyButtonPressed;
@@ -14,7 +14,7 @@ class PartyCard extends StatelessWidget {
     super.key,
     required this.partyName,
     this.poster,
-    required this.workName,
+    required this.activityName,
     required this.onPartyLeaderInformationCheckButtonPressed,
     required this.onRecruitAnnouncementCheckButtonPressed,
     required this.onApplyButtonPressed,
@@ -79,7 +79,7 @@ class PartyCard extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(top: 7),
                               child: Text(
-                                workName,
+                                activityName,
                                 style: TextStyle(
                                   fontSize: screenWidth * 0.041,
                                   fontWeight: FontWeight.w500,

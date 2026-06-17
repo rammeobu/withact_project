@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_item.dart';
 
 class MenuBody3 extends StatelessWidget {
-  final VoidCallback applyingWorkMenuSelect;
-  const MenuBody3({super.key, required this.applyingWorkMenuSelect});
+  final VoidCallback applyingActivityMenuSelect;
+  const MenuBody3({super.key, required this.applyingActivityMenuSelect});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class MenuBody3 extends StatelessWidget {
             ),
           ),
         ),
-        menuItem('지원중인 활동', screenWidth, applyingWorkMenuSelect),
+        menuItem('지원중인 활동', screenWidth, applyingActivityMenuSelect),
       ],
     );
   }

@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
 
-class _NewPasswordMatchNotifier extends Notifier<bool> {
+class NewPasswordMatchNotifier extends Notifier<bool> {
   @override
   bool build() => true;
+
+  void setMatch(bool match) {
+    state = match;
+  }
 }
 
 final newPasswordMatchProvider =
-    NotifierProvider.autoDispose<_NewPasswordMatchNotifier, bool>(
-      _NewPasswordMatchNotifier.new,
+    NotifierProvider.autoDispose<NewPasswordMatchNotifier, bool>(
+      NewPasswordMatchNotifier.new,
     );
 
 class PersonalInfo extends ConsumerStatefulWidget {
@@ -17,10 +21,10 @@ class PersonalInfo extends ConsumerStatefulWidget {
   const PersonalInfo({super.key, this.loginId = ''});
 
   @override
-  ConsumerState<PersonalInfo> createState() => _PersonalInfoState();
+  ConsumerState<PersonalInfo> createState() => PersonalInfoState();
 }
 
-class _PersonalInfoState extends ConsumerState<PersonalInfo> {
+class PersonalInfoState extends ConsumerState<PersonalInfo> {
   late TextEditingController loginIdTextController;
   late TextEditingController currentPasswordTextController;
   late TextEditingController newPasswordTextController;
@@ -35,12 +39,12 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
     confirmPasswordTextController = TextEditingController();
 
     newPasswordTextController.addListener(() {
-      ref.read(newPasswordMatchProvider.notifier).state =
-          newPasswordTextController.text == confirmPasswordTextController.text;
+      ref.read(newPasswordMatchProvider.notifier).setMatch(
+          newPasswordTextController.text == confirmPasswordTextController.text);
     });
     confirmPasswordTextController.addListener(() {
-      ref.read(newPasswordMatchProvider.notifier).state =
-          newPasswordTextController.text == confirmPasswordTextController.text;
+      ref.read(newPasswordMatchProvider.notifier).setMatch(
+          newPasswordTextController.text == confirmPasswordTextController.text);
     });
   }
 
@@ -90,7 +94,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                     padding: EdgeInsets.symmetric(
                       horizontal: screenWidth * 0.019,
                     ),
-                    fixedSize: Size(screenWidth * 0.22, 41),
+                    fixedSize: Size(screenWidth * 0.22, 44),
                     side: const BorderSide(width: 0.4),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(screenWidth * 0.024),
@@ -228,12 +232,19 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
             ),
             child: Row(
               children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: const Color(0xFF3F3F3F),
-                    fontSize: width * 0.036,
-                    fontWeight: FontWeight.w600,
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: const Color(0xFF3F3F3F),
+                        fontSize: width * 0.036,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
                 if (isRequired)
@@ -276,7 +287,11 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(e.toString())));
+          ..showSnackBar(
+            const SnackBar(
+              content: Text('인증번호 발송에 실패했습니다. 대학 이메일(.ac.kr)인지 확인해 주세요.'),
+            ),
+          );
       }
       return;
     }
@@ -305,7 +320,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
     codeController.dispose();
     if (code == null || code.isEmpty) return;
     try {
-      await ref.read(accountRepositoryProvider).postEmailVerify(email, code);
+      await ref.read(accountRepositoryProvider).postEmailAuth(email, code);
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
@@ -315,7 +330,9 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(e.toString())));
+          ..showSnackBar(
+            const SnackBar(content: Text('인증번호가 올바르지 않습니다.')),
+          );
       }
     }
   }

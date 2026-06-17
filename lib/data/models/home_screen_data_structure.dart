@@ -1,10 +1,12 @@
-class WorkCardItem {
+class ActivityCardItem {
+  final int id;
   final String name;
   final List<String> timePlace;
   final List<String> position;
   final String? poster;
 
-  const WorkCardItem({
+  const ActivityCardItem({
+    this.id = 0,
     required this.name,
     required this.timePlace,
     required this.position,
@@ -27,8 +29,8 @@ class ApplyCardItem {
 class HomeScreenDataStructure {
   final String? logo;
   final List<String> profileContent;
-  final List<WorkCardItem>? recruitCard;
-  final List<WorkCardItem>? participateCard;
+  final List<ActivityCardItem>? recruitCard;
+  final List<ActivityCardItem>? participateCard;
   final List<ApplyCardItem>? applyCard;
 
   const HomeScreenDataStructure({

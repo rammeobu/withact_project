@@ -52,6 +52,7 @@ class PartyMemberProfileBody1 extends StatelessWidget {
                                   ? Image.file(
                                       File(profileImage!),
                                       fit: BoxFit.cover,
+                                      cacheWidth: 300,
                                     )
                                   : Icon(
                                       Icons.person,
@@ -103,7 +104,7 @@ class PartyMemberProfileBody1 extends StatelessWidget {
                       style: OutlinedButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: const Size(0, 0),
-                        fixedSize: Size(screenWidth * 0.195, 41),
+                        fixedSize: Size(screenWidth * 0.195, 44),
                         side: const BorderSide(width: 0.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadiusGeometry.circular(

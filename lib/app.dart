@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'presentation/page/etc/splash_screen/splash_screen.dart';
 import 'presentation/page/etc/login&sign_up/login.dart';
 import 'presentation/page/etc/login&sign_up/sign_up.dart';
 import 'presentation/page/etc/login&sign_up/forgot_password.dart';
 import 'presentation/page/screen_design_1/home_screen/home_screen.dart';
-import 'presentation/page/etc/work_map/work_map.dart';
+import 'presentation/page/etc/activity_map/activity_map.dart';
 import 'presentation/page/etc/menu/menu.dart';
 import 'presentation/page/etc/notify/notify.dart';
-import 'presentation/page/screen_design_1/work_information/work_information.dart';
-import 'presentation/page/apply_work/apply/apply.dart';
-import 'presentation/page/apply_work/work_information_apply/work_information_apply.dart';
-import 'presentation/page/apply_work/apply_success_fail/apply_success/apply_success.dart';
-import 'presentation/page/apply_work/apply_success_fail/apply_fail/apply_fail.dart';
+import 'presentation/page/screen_design_1/activity_information/activity_information.dart';
+import 'presentation/page/apply_activity/apply/apply.dart';
+import 'presentation/page/apply_activity/activity_information_apply/activity_information_apply.dart';
+import 'presentation/page/apply_activity/apply_success_fail/apply_success/apply_success.dart';
+import 'presentation/page/apply_activity/apply_success_fail/apply_fail/apply_fail.dart';
 import 'presentation/page/screen_design_1/applicant_check/applicant_check.dart';
 import 'presentation/page/screen_design_1/applicant_profile/applicant_profile.dart';
-import 'presentation/page/apply_work/apply_list/apply_list.dart';
-import 'presentation/page/apply_work/applying_work/applying_work.dart';
-import 'presentation/page/recruit_and_announcement/work_recruit/work_recruit.dart';
+import 'presentation/page/apply_activity/apply_list/apply_list.dart';
+import 'presentation/page/apply_activity/applying_activity/applying_activity.dart';
+import 'presentation/page/recruit_and_announcement/activity_recruit/activity_recruit.dart';
 import 'presentation/page/party_recruit_and_disband_announce/party_recruit/recruit_success.dart';
 import 'presentation/page/party_recruit_and_disband_announce/party_recruit/recruit_fail.dart';
 import 'presentation/page/recruit_and_announcement/recruit_list/recruit_list.dart';
@@ -29,13 +28,15 @@ import 'presentation/page/party_recruit_and_disband_announce/party_disband/disba
 import 'presentation/page/party_recruit_and_disband_announce/party_disband/disband_success.dart';
 import 'presentation/page/party_recruit_and_disband_announce/party_disband/disband_fail.dart';
 import 'presentation/page/etc/participating_party/participating_party.dart';
+import 'presentation/page/etc/participating_party/participating_list.dart';
 import 'presentation/page/etc/party_member_profile/party_member_profile.dart';
 import 'presentation/page/etc/party_exit/party_exit_double_check.dart';
 import 'presentation/page/etc/party_exit/party_exit_success.dart';
 import 'presentation/page/etc/party_exit/party_exit_fail.dart';
 import 'presentation/page/etc/profile_and_detail_edit/profile_and_detail_edit.dart';
-import 'presentation/page/etc/find_work/find_work.dart';
-import 'presentation/page/etc/find_work_filter/find_work_filter.dart';
+import 'presentation/page/etc/find_activity/find_activity.dart';
+import 'presentation/page/etc/recent_searched_activity/recent_searched_activity.dart';
+import 'presentation/page/etc/find_activity_filter/find_activity_filter.dart';
 import 'presentation/page/etc/find_party/find_party.dart';
 import 'presentation/page/etc/find_party_filter/find_party_filter.dart';
 import 'presentation/page/etc/personal_info/personal_info.dart';
@@ -44,9 +45,9 @@ import 'presentation/page/etc/waiting/waiting.dart';
 
 import 'data/models/notify_data_structure.dart';
 import 'data/models/find_data_structures.dart';
-import 'data/models/applicant_check_data_structure.dart';
 import 'data/models/apply_data_structures.dart';
 import 'data/models/recruit_data_structures.dart';
+import 'data/models/home_screen_data_structure.dart';
 
 class PageRoutes {
   PageRoutes._();
@@ -61,8 +62,8 @@ class PageRoutes {
   static const menu = '/menu';
 
   static const notify = '/notify';
-  static const workInformation = '/work_information';
-  static const applyWork = '/apply_work';
+  static const activityInformation = '/activity_information';
+  static const applyActivity = '/apply_activity';
   static const applySuccess = '/apply_success';
   static const applyFail = '/apply_fail';
   static const applicantCheck = '/applicant_check';
@@ -70,9 +71,9 @@ class PageRoutes {
 
   static const apply = '/apply';
   static const applyList = '/apply_list';
-  static const applyingWork = '/applying_work';
+  static const applyingActivity = '/applying_activity';
 
-  static const workRecruit = '/work_recruit';
+  static const activityRecruit = '/activity_recruit';
   static const recruitSuccess = '/recruit_success';
   static const recruitFail = '/recruit_fail';
   static const recruitList = '/recruit_list';
@@ -83,6 +84,7 @@ class PageRoutes {
   static const disbandFail = '/disband_fail';
 
   static const participatingParty = '/participating_party';
+  static const participatingList = '/participating_list';
   static const partyMemberProfile = '/party_member_profile';
   static const partyExitDoubleCheck = '/party_exit_double_check';
   static const partyExitSuccess = '/party_exit_success';
@@ -90,8 +92,9 @@ class PageRoutes {
 
   static const profileEdit = '/profile_edit';
 
-  static const findWork = '/find_work';
-  static const findWorkFilter = '/find_work_filter';
+  static const findActivity = '/find_activity';
+  static const recentSearchedActivity = '/recent_searched_activity';
+  static const findActivityFilter = '/find_activity_filter';
   static const findParty = '/find_party';
   static const findPartyFilter = '/find_party_filter';
   static const personalInfo = '/personal_info';
@@ -108,11 +111,22 @@ class App extends ConsumerWidget {
       title: 'Party Maker',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: GoogleFonts.notoSansKr().fontFamily,
-        textTheme: GoogleFonts.notoSansKrTextTheme(),
+        fontFamily: 'NotoSansKR',
       ),
       initialRoute: PageRoutes.splash,
       onGenerateRoute: generateRoute,
+      builder: (context, child) {
+        final mediaQuery = MediaQuery.of(context);
+        return MediaQuery(
+          data: mediaQuery.copyWith(
+            textScaler: mediaQuery.textScaler.clamp(
+              minScaleFactor: 1.1,
+              maxScaleFactor: 1.3,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
   }
 
@@ -140,7 +154,7 @@ class App extends ConsumerWidget {
           ),
         );
       case PageRoutes.map:
-        destinationPage = const WorkMap();
+        destinationPage = const ActivityMap();
       case PageRoutes.menu:
         destinationPage = Menu(
           name: getArg(args, 'name', ''),
@@ -153,25 +167,28 @@ class App extends ConsumerWidget {
           position: getArg(args, 'position', <String>[]),
           profileImage: args?['profileImage'] as String?,
         );
-      case PageRoutes.workInformation:
-        destinationPage = WorkInformation(
-          workName: getArg(args, 'workName', ''),
-          workOverview: getArg(args, 'workOverview', ''),
-          workDetail: getArg(args, 'workDetail', ''),
+      case PageRoutes.activityInformation:
+        destinationPage = ActivityInformation(
+          activityName: getArg(args, 'activityName', ''),
+          activityOverview: getArg(args, 'activityOverview', ''),
+          activityDetail: getArg(args, 'activityDetail', ''),
           leaderProfile: getArg(args, 'leaderProfile', <String>[]),
           position: getArg(args, 'position', <String>[]),
           poster: args?['poster'] as String?,
           positionOccupy: args?['positionOccupy'] as List<bool>?,
+          partyId: args?['partyId'] as int?,
         );
-      case PageRoutes.applyWork:
-        destinationPage = WorkInformationApply(
-          workName: getArg(args, 'workName', ''),
-          workOverview: getArg(args, 'workOverview', ''),
-          workDetail: getArg(args, 'workDetail', ''),
+      case PageRoutes.applyActivity:
+        destinationPage = ActivityInformationApply(
+          activityName: getArg(args, 'activityName', ''),
+          activityOverview: getArg(args, 'activityOverview', ''),
+          activityDetail: getArg(args, 'activityDetail', ''),
           leaderProfile: getArg(args, 'leaderProfile', <String>[]),
           position: getArg(args, 'position', <String>[]),
           poster: args?['poster'] as String?,
           positionOccupy: args?['positionOccupy'] as List<bool>?,
+          partyId: args?['partyId'] as int?,
+          activityId: args?['activityId'] as int?,
         );
       case PageRoutes.applySuccess:
         destinationPage = const ApplySuccess();
@@ -180,7 +197,7 @@ class App extends ConsumerWidget {
       case PageRoutes.applicantCheck:
         destinationPage = ApplicantCheck(
           position: getArg(args, 'position', <String>[]),
-          applicants: args?['applicants'] as List<ApplicantItem>?,
+          partyId: args?['partyId'] as int?,
         );
       case PageRoutes.applicantProfile:
         destinationPage = ApplicantProfile(
@@ -192,21 +209,25 @@ class App extends ConsumerWidget {
 
       case PageRoutes.apply:
         destinationPage = Apply(
-          workName: getArg(args, 'workName', ''),
+          activityName: getArg(args, 'activityName', ''),
           profile: args?['profile'] as List<String>?,
           poster: args?['poster'] as String?,
+          partyId: args?['partyId'] as int?,
+          roleId: args?['roleId'] as int?,
+          activityId: args?['activityId'] as int?,
         );
       case PageRoutes.applyList:
         destinationPage = ApplyList(apply: args?['apply'] as List<ApplyItem>?);
-      case PageRoutes.applyingWork:
-        destinationPage = ApplyingWork(
-          workName: getArg(args, 'workName', ''),
+      case PageRoutes.applyingActivity:
+        destinationPage = ApplyingActivity(
+          activityName: getArg(args, 'activityName', ''),
           profile: getArg(args, 'profile', <String>[]),
           poster: args?['poster'] as String?,
+          applicationId: getArg(args, 'applicationId', 0),
         );
 
-      case PageRoutes.workRecruit:
-        destinationPage = WorkRecruit(
+      case PageRoutes.activityRecruit:
+        destinationPage = ActivityRecruit(
           profile: args?['profile'] as List<String>?,
         );
       case PageRoutes.recruitSuccess:
@@ -219,7 +240,7 @@ class App extends ConsumerWidget {
         );
       case PageRoutes.recruitAnnouncement:
         destinationPage = RecruitAnnouncement(
-          workName: getArg(args, 'workName', ''),
+          activityName: getArg(args, 'activityName', ''),
           partyNameIntroduction: getArg(args, 'partyNameIntroduction', ''),
           position: getArg(args, 'position', <String>[]),
           preferences: args?['preferences'] as List<String>?,
@@ -227,10 +248,11 @@ class App extends ConsumerWidget {
         );
       case PageRoutes.announcementEdit:
         destinationPage = AnnouncementEdit(
-          workName: getArg(args, 'workName', ''),
+          activityName: getArg(args, 'activityName', ''),
           partyNameIntroduction: getArg(args, 'partyNameIntroduction', ''),
           positions: getArg(args, 'positions', <String>[]),
           preferences: args?['preferences'] as List<String>?,
+          partyId: getArg(args, 'partyId', 0),
         );
       case PageRoutes.disbandDoubleCheck:
         destinationPage = DisbandDoubleCheck(
@@ -241,15 +263,20 @@ class App extends ConsumerWidget {
       case PageRoutes.disbandFail:
         destinationPage = const DisbandFail();
 
+      case PageRoutes.participatingList:
+        destinationPage = ParticipatingList(
+          participating: args?['participating'] as List<ActivityCardItem>?,
+        );
       case PageRoutes.participatingParty:
         destinationPage = ParticipatingParty(
-          workName: getArg(args, 'workName', ''),
-          workOverview: getArg(args, 'workOverview', ''),
-          workDetail: getArg(args, 'workDetail', ''),
+          activityName: getArg(args, 'activityName', ''),
+          activityOverview: getArg(args, 'activityOverview', ''),
+          activityDetail: getArg(args, 'activityDetail', ''),
           leaderProfile: getArg(args, 'leaderProfile', <String>[]),
           position: getArg(args, 'position', <String>[]),
           poster: args?['poster'] as String?,
           positionOccupy: args?['positionOccupy'] as List<bool>?,
+          partyId: args?['partyId'] as int?,
         );
       case PageRoutes.partyMemberProfile:
         destinationPage = PartyMemberProfile(
@@ -265,7 +292,9 @@ class App extends ConsumerWidget {
           profileImage: args?['profileImage'] as String?,
         );
       case PageRoutes.partyExitDoubleCheck:
-        destinationPage = const PartyExitDoubleCheck();
+        destinationPage = PartyExitDoubleCheck(
+          partyId: getArg(args, 'partyId', 0),
+        );
       case PageRoutes.partyExitSuccess:
         destinationPage = const PartyExitSuccess();
       case PageRoutes.partyExitFail:
@@ -283,12 +312,15 @@ class App extends ConsumerWidget {
           favorites: getArg(args, 'favorites', List.generate(3, (_) => '')),
         );
 
-      case PageRoutes.findWork:
-        destinationPage = FindWork(
-          workList: getArg(args, 'workList', <WorkItem>[]),
+      case PageRoutes.findActivity:
+        destinationPage = FindActivity(
+          activityList: getArg(args, 'activityList', <ActivityItem>[]),
+          selectMode: getArg(args, 'selectMode', false),
         );
-      case PageRoutes.findWorkFilter:
-        destinationPage = FindWorkFilter(
+      case PageRoutes.recentSearchedActivity:
+        destinationPage = const RecentSearchedActivity();
+      case PageRoutes.findActivityFilter:
+        destinationPage = FindActivityFilter(
           filterData: getArg(args, 'filterData', <FilterItem>[]),
           detailCategory: getArg(
             args,

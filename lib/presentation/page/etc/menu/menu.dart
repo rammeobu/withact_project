@@ -1,27 +1,35 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
 import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_body1.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_body2.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_body3.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_body4.dart';
 import 'package:party_maker/presentation/page/future&component/layout/basic_layout.dart';
 
-class Menu extends StatefulWidget {
+class Menu extends ConsumerStatefulWidget {
   final String? profileImage;
   final String name;
   const Menu({super.key, this.profileImage, required this.name});
 
   @override
-  State<Menu> createState() => _MenuState();
+  ConsumerState<Menu> createState() => MenuState();
 }
 
-class _MenuState extends State<Menu> {
+class MenuState extends ConsumerState<Menu> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
+    final profile = ref.watch(profileProvider);
+    final name =
+        profile.profileContent.isNotEmpty && profile.profileContent[0].isNotEmpty
+        ? profile.profileContent[0]
+        : widget.name;
+    final profileImage = profile.imagePath ?? widget.profileImage;
     return BasicLayout(
       needTitleExpand: true,
       needWidget: [
@@ -32,8 +40,8 @@ class _MenuState extends State<Menu> {
             color: Color(0xFFECEEFD),
             shape: BoxShape.circle,
           ),
-          child: (widget.profileImage != null)
-              ? Image.file(File(widget.profileImage!), fit: BoxFit.cover)
+          child: (profileImage != null)
+              ? Image.file(File(profileImage), fit: BoxFit.cover, cacheWidth: 300)
               : Icon(
                   Icons.person,
                   size: screenWidth * 0.109,
@@ -43,30 +51,8 @@ class _MenuState extends State<Menu> {
         Padding(
           padding: EdgeInsets.only(left: screenWidth * 0.049),
           child: Text(
-            '${widget.name} 님',
+            '$name 님',
             style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-        ),
-      ],
-      actions: [
-        OutlinedButton(
-          onPressed: onLogoutButtonPressed,
-          style: OutlinedButton.styleFrom(
-            padding: EdgeInsets.zero,
-            minimumSize: const Size(0, 0),
-            fixedSize: Size(screenWidth * 0.195, 41),
-            side: const BorderSide(width: 0.0, color: Colors.white),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadiusGeometry.circular(screenWidth * 0.024),
-            ),
-            foregroundColor: Colors.white,
-          ),
-          child: Text(
-            '로그아웃',
-            style: TextStyle(
-              fontSize: screenWidth * 0.041,
-              fontWeight: FontWeight.w300,
-            ),
           ),
         ),
       ],
@@ -83,14 +69,14 @@ class _MenuState extends State<Menu> {
                         onProfileAndDetailManagementMenuSelect,
                   ),
                   MenuBody2(
-                    recentlySearchedWorkMenuSelect:
-                        onRecentlySearchedWorkMenuSelect,
-                    participatingWorkMenuSelect: onParticipatingWorkMenuSelect,
-                    findWorkMenuSelect: onFindWorkMenuSelect,
+                    recentlySearchedActivityMenuSelect:
+                        onRecentlySearchedActivityMenuSelect,
+                    participatingActivityMenuSelect: onParticipatingActivityMenuSelect,
+                    findActivityMenuSelect: onFindActivityMenuSelect,
                   ),
-                  MenuBody3(applyingWorkMenuSelect: onApplyingWorkMenuSelect),
+                  MenuBody3(applyingActivityMenuSelect: onApplyingActivityMenuSelect),
                   MenuBody4(
-                    recruitingWorkMenuSelect: onRecruitingWorkMenuSelect,
+                    recruitingActivityMenuSelect: onRecruitingActivityMenuSelect,
                     recruitAnnouncementManagementMenuSelect:
                         onRecruitAnnouncementManagementMenuSelect,
                   ),
@@ -102,32 +88,6 @@ class _MenuState extends State<Menu> {
       ),
       bottomNavigationBar: true,
       menuSelected: true,
-    );
-  }
-
-  void onLogoutButtonPressed() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: const Text('로그아웃 하시겠습니까?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                PageRoutes.login,
-                (route) => false,
-              );
-            },
-            child: const Text('예'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('아니오'),
-          ),
-        ],
-      ),
     );
   }
 
@@ -148,32 +108,23 @@ class _MenuState extends State<Menu> {
     );
   }
 
-  void onRecentlySearchedWorkMenuSelect() {}
-
-  void onParticipatingWorkMenuSelect() {
-    Navigator.pushNamed(
-      context,
-      PageRoutes.participatingParty,
-      arguments: {
-        'workName': '',
-        'workOverview': '',
-        'workDetail': '',
-        'leaderProfile': <String>[],
-        'position': <String>[],
-        'poster': null,
-      },
-    );
+  void onRecentlySearchedActivityMenuSelect() {
+    Navigator.pushNamed(context, PageRoutes.recentSearchedActivity);
   }
 
-  void onFindWorkMenuSelect() {
-    Navigator.pushNamed(context, PageRoutes.findWork);
+  void onParticipatingActivityMenuSelect() {
+    Navigator.pushNamed(context, PageRoutes.participatingList);
   }
 
-  void onApplyingWorkMenuSelect() {
+  void onFindActivityMenuSelect() {
+    Navigator.pushNamed(context, PageRoutes.findActivity);
+  }
+
+  void onApplyingActivityMenuSelect() {
     Navigator.pushNamed(context, PageRoutes.applyList);
   }
 
-  void onRecruitingWorkMenuSelect() {
+  void onRecruitingActivityMenuSelect() {
     Navigator.pushNamed(context, PageRoutes.recruitList);
   }
 

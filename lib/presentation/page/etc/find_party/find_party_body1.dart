@@ -3,15 +3,15 @@ import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/models/find_data_structures.dart';
 
 class FindPartyBody1 extends StatelessWidget {
-  final VoidCallback onWorkSearch;
-  final String workName;
+  final VoidCallback onActivitySearch;
+  final String activityName;
   final List<PartyItem> partyList;
   final TextEditingController searchController;
   final FocusNode searchFocusNode;
   const FindPartyBody1({
     super.key,
-    required this.onWorkSearch,
-    required this.workName,
+    required this.onActivitySearch,
+    required this.activityName,
     required this.partyList,
     required this.searchController,
     required this.searchFocusNode,
@@ -26,27 +26,25 @@ class FindPartyBody1 extends StatelessWidget {
         Row(
           children: [
             ElevatedButton.icon(
-              onPressed: onWorkSearch,
-              label: Expanded(
-                child: TextField(
-                  controller: searchController,
-                  focusNode: searchFocusNode,
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.041,
-                    color: Colors.black,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: '활동 검색',
-                    hintStyle: TextStyle(
-                      color: const Color(0xFF636370),
-                      fontSize: screenWidth * 0.041,
-                    ),
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  onSubmitted: (_) => onWorkSearch(),
+              onPressed: onActivitySearch,
+              label: TextField(
+                controller: searchController,
+                focusNode: searchFocusNode,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.041,
+                  color: Colors.black,
                 ),
+                decoration: InputDecoration(
+                  hintText: '활동 검색',
+                  hintStyle: TextStyle(
+                    color: const Color(0xFF636370),
+                    fontSize: screenWidth * 0.041,
+                  ),
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                onSubmitted: (_) => onActivitySearch(),
               ),
               icon: Padding(
                 padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
@@ -68,7 +66,11 @@ class FindPartyBody1 extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 13),
-          child: Text('$workName에 대한 파티 ${partyList.length}팀'),
+          child: Text(
+            activityName.isEmpty
+                ? '전체 파티 ${partyList.length}팀'
+                : '$activityName에 대한 파티 ${partyList.length}팀',
+          ),
         ),
       ],
     );

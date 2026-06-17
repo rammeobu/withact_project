@@ -1,26 +1,32 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/future&component/layout/basic_layout.dart';
+import 'package:party_maker/presentation/page/future&component/component/no_scale.dart';
 
-class _SignUpPasswordMatchNotifier extends Notifier<bool> {
+class SignUpPasswordMatchNotifier extends Notifier<bool> {
   @override
   bool build() => true;
+
+  void setMatch(bool match) {
+    state = match;
+  }
 }
 
 final signUpPasswordMatchProvider =
-    NotifierProvider.autoDispose<_SignUpPasswordMatchNotifier, bool>(
-      _SignUpPasswordMatchNotifier.new,
+    NotifierProvider.autoDispose<SignUpPasswordMatchNotifier, bool>(
+      SignUpPasswordMatchNotifier.new,
     );
 
 class SignUp extends ConsumerStatefulWidget {
   const SignUp({super.key});
 
   @override
-  ConsumerState<SignUp> createState() => _SignUpState();
+  ConsumerState<SignUp> createState() => SignUpState();
 }
 
-class _SignUpState extends ConsumerState<SignUp> {
+class SignUpState extends ConsumerState<SignUp> {
   late TextEditingController emailTextController;
   late TextEditingController passwordTextController;
   late TextEditingController confirmPasswordTextController;
@@ -31,6 +37,10 @@ class _SignUpState extends ConsumerState<SignUp> {
   late List<TextEditingController> interestTextControllers;
   late TextEditingController introTextController;
   late TextEditingController specTextController;
+  bool obscurePassword = true;
+  bool obscureConfirmPassword = true;
+  bool isSubmitting = false;
+  bool isSendingCode = false;
 
   @override
   void initState() {
@@ -50,12 +60,12 @@ class _SignUpState extends ConsumerState<SignUp> {
     specTextController = TextEditingController();
 
     passwordTextController.addListener(() {
-      ref.read(signUpPasswordMatchProvider.notifier).state =
-          passwordTextController.text == confirmPasswordTextController.text;
+      ref.read(signUpPasswordMatchProvider.notifier).setMatch(
+          passwordTextController.text == confirmPasswordTextController.text);
     });
     confirmPasswordTextController.addListener(() {
-      ref.read(signUpPasswordMatchProvider.notifier).state =
-          passwordTextController.text == confirmPasswordTextController.text;
+      ref.read(signUpPasswordMatchProvider.notifier).setMatch(
+          passwordTextController.text == confirmPasswordTextController.text);
     });
   }
 
@@ -97,26 +107,35 @@ class _SignUpState extends ConsumerState<SignUp> {
               additionalButton: Padding(
                 padding: EdgeInsets.only(right: screenWidth * 0.019),
                 child: OutlinedButton(
-                  onPressed: onEmailAuthButtonPressed,
+                  onPressed: isSendingCode ? null : onEmailAuthButtonPressed,
                   style: OutlinedButton.styleFrom(
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(
                       horizontal: screenWidth * 0.019,
                     ),
-                    fixedSize: Size(screenWidth * 0.22, 41),
+                    fixedSize: Size(screenWidth * 0.22, 44),
                     side: const BorderSide(width: 0.4),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(screenWidth * 0.024),
                     ),
                   ),
-                  child: Text(
-                    '이메일 인증',
-                    style: TextStyle(
-                      color: const Color(0xFF3F3F3F),
-                      fontSize: screenWidth * 0.032,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  child: isSendingCode
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Color(0xFF3F3F3F),
+                          ),
+                        )
+                      : Text(
+                          '이메일 인증',
+                          style: TextStyle(
+                            color: const Color(0xFF3F3F3F),
+                            fontSize: screenWidth * 0.032,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                 ),
               ),
             ),
@@ -126,7 +145,9 @@ class _SignUpState extends ConsumerState<SignUp> {
               '비밀번호를 입력해 주세요.',
               screenWidth,
               isRequired: true,
-              isObscure: true,
+              isObscure: obscurePassword,
+              onToggleObscure: () =>
+                  setState(() => obscurePassword = !obscurePassword),
             ),
             membershipInformationWriteFieldBuilder(
               '비밀번호 확인',
@@ -134,7 +155,10 @@ class _SignUpState extends ConsumerState<SignUp> {
               '비밀번호를 다시 한 번 입력해 주세요.',
               screenWidth,
               isRequired: true,
-              isObscure: true,
+              isObscure: obscureConfirmPassword,
+              onToggleObscure: () => setState(
+                () => obscureConfirmPassword = !obscureConfirmPassword,
+              ),
             ),
 
             if (!passwordMatch && confirmPasswordTextController.text.isNotEmpty)
@@ -223,16 +247,18 @@ class _SignUpState extends ConsumerState<SignUp> {
                   bottom: BorderSide(color: Colors.grey, width: 0.2),
                 ),
               ),
-              child: TextField(
-                controller: introTextController,
-                maxLines: 5,
-                decoration: InputDecoration(
-                  hintText: '자신을 간단히 소개해 주세요.',
-                  hintStyle: TextStyle(
-                    fontSize: screenWidth * 0.034,
-                    color: Colors.grey,
+              child: NoScale(
+                child: TextField(
+                  controller: introTextController,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    hintText: '자신을 간단히 소개해 주세요.',
+                    hintStyle: TextStyle(
+                      fontSize: screenWidth * 0.034,
+                      color: Colors.grey,
+                    ),
+                    border: InputBorder.none,
                   ),
-                  border: InputBorder.none,
                 ),
               ),
             ),
@@ -249,16 +275,18 @@ class _SignUpState extends ConsumerState<SignUp> {
                   bottom: BorderSide(color: Colors.grey, width: 0.2),
                 ),
               ),
-              child: TextField(
-                controller: specTextController,
-                maxLines: 5,
-                decoration: InputDecoration(
-                  hintText: '자신의 주요 경력을 적어주세요.',
-                  hintStyle: TextStyle(
-                    fontSize: screenWidth * 0.034,
-                    color: Colors.grey,
+              child: NoScale(
+                child: TextField(
+                  controller: specTextController,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    hintText: '자신의 주요 경력을 적어주세요.',
+                    hintStyle: TextStyle(
+                      fontSize: screenWidth * 0.034,
+                      color: Colors.grey,
+                    ),
+                    border: InputBorder.none,
                   ),
-                  border: InputBorder.none,
                 ),
               ),
             ),
@@ -269,7 +297,7 @@ class _SignUpState extends ConsumerState<SignUp> {
                 vertical: 42,
               ),
               child: OutlinedButton(
-                onPressed: onSignUpCompleteButtonPressed,
+                onPressed: isSubmitting ? null : onSignUpCompleteButtonPressed,
                 style: OutlinedButton.styleFrom(
                   backgroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 63),
@@ -278,13 +306,22 @@ class _SignUpState extends ConsumerState<SignUp> {
                     borderRadius: BorderRadius.circular(screenWidth * 0.024),
                   ),
                 ),
-                child: Text(
-                  '가입 완료',
-                  style: TextStyle(
-                    color: const Color(0xFF3F3F3F),
-                    fontSize: screenWidth * 0.044,
-                  ),
-                ),
+                child: isSubmitting
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xFF3F3F3F),
+                        ),
+                      )
+                    : Text(
+                        '가입 완료',
+                        style: TextStyle(
+                          color: const Color(0xFF3F3F3F),
+                          fontSize: screenWidth * 0.044,
+                        ),
+                      ),
               ),
             ),
           ],
@@ -318,6 +355,7 @@ class _SignUpState extends ConsumerState<SignUp> {
     double width, {
     bool isRequired = false,
     bool isObscure = false,
+    VoidCallback? onToggleObscure,
     Widget? additionalButton,
   }) {
     return Container(
@@ -336,12 +374,19 @@ class _SignUpState extends ConsumerState<SignUp> {
             ),
             child: Row(
               children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: const Color(0xFF3F3F3F),
-                    fontSize: width * 0.036,
-                    fontWeight: FontWeight.w600,
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: const Color(0xFF3F3F3F),
+                        fontSize: width * 0.036,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
                 if (isRequired)
@@ -359,6 +404,16 @@ class _SignUpState extends ConsumerState<SignUp> {
                   fontSize: width * 0.034,
                   color: Colors.grey,
                 ),
+                suffixIcon: onToggleObscure != null
+                    ? IconButton(
+                        onPressed: onToggleObscure,
+                        icon: Icon(
+                          isObscure ? Icons.visibility_off : Icons.visibility,
+                          size: width * 0.05,
+                          color: Colors.grey,
+                        ),
+                      )
+                    : null,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(horizontal: width * 0.024),
               ),
@@ -371,6 +426,7 @@ class _SignUpState extends ConsumerState<SignUp> {
   }
 
   Future<void> onEmailAuthButtonPressed() async {
+    if (isSendingCode) return;
     final email = emailTextController.text.trim();
     if (email.isEmpty) {
       ScaffoldMessenger.of(context)
@@ -378,16 +434,24 @@ class _SignUpState extends ConsumerState<SignUp> {
         ..showSnackBar(const SnackBar(content: Text('이메일을 입력해 주세요.')));
       return;
     }
+    setState(() => isSendingCode = true);
+    HapticFeedback.lightImpact();
     try {
       await ref.read(accountRepositoryProvider).postEmailRequest(email);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(e.toString())));
+          ..showSnackBar(
+            const SnackBar(
+              content: Text('인증번호 발송에 실패했습니다. 대학 이메일(.ac.kr)인지 확인해 주세요.'),
+            ),
+          );
+        setState(() => isSendingCode = false);
       }
       return;
     }
+    if (mounted) setState(() => isSendingCode = false);
     if (!mounted) return;
     final codeController = TextEditingController();
     final code = await showDialog<String>(
@@ -413,7 +477,7 @@ class _SignUpState extends ConsumerState<SignUp> {
     codeController.dispose();
     if (code == null || code.isEmpty) return;
     try {
-      await ref.read(accountRepositoryProvider).postEmailVerify(email, code);
+      await ref.read(accountRepositoryProvider).postEmailAuth(email, code);
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
@@ -423,12 +487,15 @@ class _SignUpState extends ConsumerState<SignUp> {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(e.toString())));
+          ..showSnackBar(
+            const SnackBar(content: Text('인증번호가 올바르지 않습니다.')),
+          );
       }
     }
   }
 
   Future<void> onSignUpCompleteButtonPressed() async {
+    if (isSubmitting) return;
     final requiredFields = [
       (emailTextController, '이메일'),
       (passwordTextController, '비밀번호'),
@@ -446,7 +513,7 @@ class _SignUpState extends ConsumerState<SignUp> {
         return;
       }
     }
-    final emailRegex = RegExp(r'^[\w.+-]+@[\w-]+\.[a-zA-Z]{2,}$');
+    final emailRegex = RegExp(r'^[\w.+-]+@[\w.-]+\.[a-zA-Z]{2,}$');
     if (!emailRegex.hasMatch(emailTextController.text.trim())) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -459,6 +526,8 @@ class _SignUpState extends ConsumerState<SignUp> {
         ..showSnackBar(const SnackBar(content: Text('비밀번호가 일치하지 않습니다.')));
       return;
     }
+    setState(() => isSubmitting = true);
+    HapticFeedback.lightImpact();
     try {
       await ref.read(accountRepositoryProvider).postSignUp(
         emailTextController.text.trim(),
@@ -478,8 +547,12 @@ class _SignUpState extends ConsumerState<SignUp> {
       if (mounted) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(e.toString())));
+          ..showSnackBar(
+            const SnackBar(content: Text('회원가입에 실패했습니다. 잠시 후 다시 시도해 주세요.')),
+          );
       }
+    } finally {
+      if (mounted) setState(() => isSubmitting = false);
     }
   }
 }

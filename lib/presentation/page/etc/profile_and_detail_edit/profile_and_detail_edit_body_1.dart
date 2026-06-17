@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../future&component/component/no_scale.dart';
 import '../../future&component/layout/default_container.dart';
 
 class ProfileAndDetailEditBody1 extends StatelessWidget {
@@ -34,22 +35,24 @@ class ProfileAndDetailEditBody1 extends StatelessWidget {
               height: 150,
               child: Padding(
                 padding: EdgeInsets.all(screenWidth * 0.019),
-                child: TextField(
-                  controller: controller,
-                  maxLines: null,
-                  expands: true,
-                  textAlignVertical: TextAlignVertical.top,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                    hintText: '$section 내용 입력 혹은 불러오기',
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                      fontSize: screenWidth * 0.041,
+                child: NoScale(
+                  child: TextField(
+                    controller: controller,
+                    maxLines: null,
+                    expands: true,
+                    textAlignVertical: TextAlignVertical.top,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                      hintText: '$section 내용 입력 혹은 불러오기',
+                      hintStyle: TextStyle(
+                        color: Colors.grey,
+                        fontSize: screenWidth * 0.041,
+                      ),
                     ),
+                    style: TextStyle(fontSize: screenWidth * 0.041),
                   ),
-                  style: TextStyle(fontSize: screenWidth * 0.041),
                 ),
               ),
             ),

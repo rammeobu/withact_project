@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
 import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 import 'package:party_maker/presentation/page/etc/participating_party/participating_part_body2.dart';
 import 'package:party_maker/presentation/page/etc/participating_party/participating_party_body1.dart';
 import 'package:party_maker/presentation/page/etc/participating_party/participating_party_footer.dart';
@@ -8,48 +10,37 @@ import '../../future&component/layout/default_container.dart';
 import '../../future&component/layout/basic_layout.dart';
 import '../../future&component/profile/profile_card_leader.dart';
 
-class Work {
-  final String workName;
-  final String workOverview;
-  final String workDetail;
-  final String? poster;
-
-  Work({
-    required this.workName,
-    required this.workOverview,
-    required this.workDetail,
-    this.poster,
-  });
-}
-
-class ParticipatingParty extends StatefulWidget {
-  final String workName;
-  final String workOverview;
-  final String workDetail;
+class ParticipatingParty extends ConsumerStatefulWidget {
+  final String activityName;
+  final String activityOverview;
+  final String activityDetail;
   final String? poster;
   final List<String> leaderProfile;
   final List<String> position;
   final List<bool>? positionOccupy;
+  final int? partyId;
 
   const ParticipatingParty({
     super.key,
-    required this.workName,
-    required this.workOverview,
-    required this.workDetail,
+    required this.activityName,
+    required this.activityOverview,
+    required this.activityDetail,
     required this.leaderProfile,
     required this.position,
     this.poster,
     this.positionOccupy,
+    this.partyId,
   });
 
   @override
-  State<ParticipatingParty> createState() => _ParticipatingPartyState();
+  ConsumerState<ParticipatingParty> createState() => ParticipatingPartyState();
 }
 
-class _ParticipatingPartyState extends State<ParticipatingParty> {
+class ParticipatingPartyState extends ConsumerState<ParticipatingParty> {
   late ScrollController detailScrollController;
   late ScrollController detailScrollController2;
   late ScrollController body1ScrollController;
+  String activityDetail = '';
 
   @override
   void initState() {
@@ -57,6 +48,26 @@ class _ParticipatingPartyState extends State<ParticipatingParty> {
     detailScrollController = ScrollController();
     detailScrollController2 = ScrollController();
     body1ScrollController = ScrollController();
+    activityDetail = widget.activityDetail;
+    fetchActivityDetail();
+  }
+
+  Future<void> fetchActivityDetail() async {
+    final partyId = widget.partyId;
+    if (partyId == null) return;
+    try {
+      final announcement =
+          await ref.read(recruitRepositoryProvider).getAnnouncement('$partyId');
+      final activityId = announcement.activityId;
+      if (activityId == null) return;
+      final data = await ref
+          .read(findRepositoryProvider)
+          .getActivityDetail('$activityId');
+      final detail = data['description']?.toString() ?? '';
+      if (mounted && detail.isNotEmpty) {
+        setState(() => activityDetail = detail);
+      }
+    } catch (_) {}
   }
 
   @override
@@ -88,7 +99,7 @@ class _ParticipatingPartyState extends State<ParticipatingParty> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     ParticipatingPartyBody1(
-                      workOverview: widget.workName,
+                      activityOverview: widget.activityName,
                       poster: widget.poster,
                       scrollController: body1ScrollController,
                     ),
@@ -108,7 +119,7 @@ class _ParticipatingPartyState extends State<ParticipatingParty> {
                           padding: EdgeInsets.all(screenWidth * 0.029),
                           child: SingleChildScrollView(
                             child: Text(
-                              widget.workOverview,
+                              widget.activityOverview,
                               style: TextStyle(
                                 fontSize: screenWidth * 0.034,
                                 color: Colors.black87,
@@ -137,7 +148,7 @@ class _ParticipatingPartyState extends State<ParticipatingParty> {
                             child: SingleChildScrollView(
                               controller: detailScrollController,
                               child: Text(
-                                widget.workDetail,
+                                activityDetail,
                                 style: TextStyle(
                                   fontSize: screenWidth * 0.036,
                                   height: 1.6,
@@ -197,6 +208,10 @@ class _ParticipatingPartyState extends State<ParticipatingParty> {
   }
 
   void onPartyExitButtonPressed() {
-    Navigator.pushNamed(context, PageRoutes.partyExitDoubleCheck);
+    Navigator.pushNamed(
+      context,
+      PageRoutes.partyExitDoubleCheck,
+      arguments: {'partyId': widget.partyId},
+    );
   }
 }

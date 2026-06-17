@@ -3,6 +3,13 @@ class NotificationItem {
   final String content;
 
   const NotificationItem({required this.title, required this.content});
+
+  factory NotificationItem.fromJson(Map<String, dynamic> json) {
+    return NotificationItem(
+      title: json['title'] ?? '',
+      content: json['content'] ?? '',
+    );
+  }
 }
 
 class NotifyDataStructure {

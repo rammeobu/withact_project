@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import '../../future&component/component/no_scale.dart';
 import '../../future&component/layout/default_container.dart';
 
 class AnnouncementEditBody extends StatelessWidget {
@@ -47,7 +48,7 @@ class AnnouncementEditBody extends StatelessWidget {
                       style: OutlinedButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: const Size(0, 0),
-                        fixedSize: Size(screenWidth * 0.195, 41),
+                        fixedSize: Size(screenWidth * 0.195, 44),
                         side: const BorderSide(width: 0.5),
                         shape: const StadiumBorder(),
                         backgroundColor: Colors.white,
@@ -72,27 +73,29 @@ class AnnouncementEditBody extends StatelessWidget {
               height: (section == '활동 이름') ? 59 : 186,
               child: Padding(
                 padding: EdgeInsets.all(screenWidth * 0.019),
-                child: TextField(
-                  controller: textEditingController,
-                  selectionControls: EmptyTextSelectionControls(),
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  maxLines: null,
-                  expands: true,
-                  textAlignVertical: TextAlignVertical.top,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                    hintText: (section == '활동 이름')
-                        ? '$section을 검색하거나 직접 작성하세요.'
-                        : '$section를 작성하세요.',
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                      fontSize: screenWidth * 0.041,
+                child: NoScale(
+                  child: TextField(
+                    controller: textEditingController,
+                    selectionControls: EmptyTextSelectionControls(),
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    maxLines: null,
+                    expands: true,
+                    textAlignVertical: TextAlignVertical.top,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                      hintText: (section == '활동 이름')
+                          ? '$section을 검색하거나 직접 작성하세요.'
+                          : '$section를 작성하세요.',
+                      hintStyle: TextStyle(
+                        color: Colors.grey,
+                        fontSize: screenWidth * 0.041,
+                      ),
                     ),
+                    style: TextStyle(fontSize: screenWidth * 0.041),
                   ),
-                  style: TextStyle(fontSize: screenWidth * 0.041),
                 ),
               ),
             ),

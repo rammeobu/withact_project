@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
 
-class DisbandDoubleCheck extends ConsumerWidget {
+class DisbandDoubleCheck extends ConsumerStatefulWidget {
   final int partyId;
   const DisbandDoubleCheck({super.key, required this.partyId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DisbandDoubleCheck> createState() => DisbandDoubleCheckState();
+}
+
+class DisbandDoubleCheckState extends ConsumerState<DisbandDoubleCheck> {
+  bool isSubmitting = false;
+
+  @override
+  Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -51,7 +59,8 @@ class DisbandDoubleCheck extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 23),
                   child: OutlinedButton(
-                    onPressed: () => onDisbandConfirmButtonPressed(context, ref),
+                    onPressed:
+                        isSubmitting ? null : onDisbandConfirmButtonPressed,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.black,
                       minimumSize: Size(screenWidth * 0.365, 69),
@@ -61,19 +70,29 @@ class DisbandDoubleCheck extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    child: Text(
-                      '예',
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.058,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                    child: isSubmitting
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.black,
+                            ),
+                          )
+                        : Text(
+                            '예',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.058,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 23),
                   child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed:
+                        isSubmitting ? null : () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.black,
                       minimumSize: Size(screenWidth * 0.365, 69),
@@ -100,20 +119,22 @@ class DisbandDoubleCheck extends ConsumerWidget {
     );
   }
 
-  Future<void> onDisbandConfirmButtonPressed(
-      BuildContext context, WidgetRef ref) async {
+  Future<void> onDisbandConfirmButtonPressed() async {
+    if (isSubmitting) return;
+    setState(() => isSubmitting = true);
+    HapticFeedback.lightImpact();
     bool succeeded = false;
     try {
       await ref
           .read(recruitRepositoryProvider)
-          .deleteParty(partyId.toString());
+          .deleteParty(widget.partyId.toString());
       succeeded = true;
     } catch (_) {}
-    if (context.mounted) {
-      Navigator.pushNamed(
-        context,
-        succeeded ? PageRoutes.disbandSuccess : PageRoutes.disbandFail,
-      );
-    }
+    if (!mounted) return;
+    setState(() => isSubmitting = false);
+    Navigator.pushNamed(
+      context,
+      succeeded ? PageRoutes.disbandSuccess : PageRoutes.disbandFail,
+    );
   }
 }

@@ -7,19 +7,25 @@ import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/models/home_screen_data_structure.dart';
 import 'package:party_maker/data/models/notify_data_structure.dart';
 import 'package:party_maker/data/models/find_data_structures.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 
+import '../../future&component/component/load_failed_view.dart';
 import '../../future&component/layout/basic_layout.dart';
 import '../../future&component/profile/profile_card.dart';
-import '../../future&component/work/work_card/work_card.dart';
+import '../../future&component/activity/activity_card/activity_card.dart';
 
-class _HomeSelectedModeNotifier extends Notifier<String> {
+class HomeSelectedModeNotifier extends Notifier<String> {
   @override
   String build() => '모집';
+
+  void setMode(String mode) {
+    state = mode;
+  }
 }
 
 final homeSelectedModeProvider =
-    NotifierProvider.autoDispose<_HomeSelectedModeNotifier, String>(
-      _HomeSelectedModeNotifier.new,
+    NotifierProvider.autoDispose<HomeSelectedModeNotifier, String>(
+      HomeSelectedModeNotifier.new,
     );
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -32,14 +38,154 @@ class HomeScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class HomeScreenState extends ConsumerState<HomeScreen> {
   final ScrollController scrollController = ScrollController();
-  List<WorkCardItem> _recruitCard = [];
-  List<WorkCardItem> _participateCard = [];
-  List<ApplyCardItem> _applyCard = [];
+  List<ActivityCardItem> recruitCard = [];
+  List<ActivityCardItem> participateCard = [];
+  List<ApplyCardItem> applyCard = [];
+  bool recruitLoading = true;
+  bool recruitFailed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchHomeCards();
+  }
+
+  Future<void> fetchHomeCards() async {
+    for (int attempt = 0; attempt < 3; attempt++) {
+      try {
+        final recruits =
+            await ref.read(recruitRepositoryProvider).getRecruitList();
+        if (!mounted) return;
+        setState(() {
+          recruitCard = recruits
+              .map(
+                (recruit) => ActivityCardItem(
+                  id: recruit.id,
+                  name: recruit.name,
+                  timePlace: recruit.timePlace ?? [],
+                  position: const [],
+                  poster: recruit.poster,
+                ),
+              )
+              .toList();
+          recruitLoading = false;
+          recruitFailed = false;
+        });
+        final withRoles = await Future.wait(
+          recruits.map((recruit) async {
+            List<String> position = const [];
+            try {
+              final roles = await ref
+                  .read(findRepositoryProvider)
+                  .getPartyRoles(recruit.id);
+              position = roles.map((role) => role.roleName).toList();
+            } catch (_) {}
+            return ActivityCardItem(
+              id: recruit.id,
+              name: recruit.name,
+              timePlace: recruit.timePlace ?? [],
+              position: position,
+              poster: recruit.poster,
+            );
+          }),
+        );
+        if (mounted) setState(() => recruitCard = withRoles);
+        break;
+      } catch (_) {
+        await Future.delayed(const Duration(milliseconds: 600));
+      }
+    }
+    if (mounted && recruitLoading) {
+      setState(() {
+        recruitLoading = false;
+        recruitFailed = true;
+      });
+    }
+    if (!mounted) return;
+    final userId = ref.read(currentUserProvider);
+    if (userId != null) {
+      await Future.wait([
+        (() async {
+          try {
+            final profile =
+                await ref.read(accountRepositoryProvider).getProfile('$userId');
+            if (mounted) ref.read(profileProvider.notifier).setProfile(profile);
+          } catch (_) {}
+        })(),
+        (() async {
+          try {
+            final applies =
+                await ref.read(applyRepositoryProvider).getApplyList(userId);
+            if (mounted) setState(() {
+              applyCard = applies
+                  .map(
+                    (apply) => ApplyCardItem(
+                      name: apply.name,
+                      timePlace: apply.timePlace ?? [],
+                      applyStatus: apply.applyStatus,
+                    ),
+                  )
+                  .toList();
+            });
+          } catch (_) {}
+        })(),
+        (() async {
+          try {
+            final participating = await ref
+                .read(recruitRepositoryProvider)
+                .getParticipatingList(userId);
+            if (mounted) {
+              setState(() {
+                participateCard = participating
+                    .map(
+                      (recruit) => ActivityCardItem(
+                        id: recruit.id,
+                        name: recruit.name,
+                        timePlace: recruit.timePlace ?? [],
+                        position: const [],
+                        poster: recruit.poster,
+                      ),
+                    )
+                    .toList();
+              });
+            }
+            final withRoles = await Future.wait(
+              participating.map((recruit) async {
+                List<String> position = const [];
+                try {
+                  final roles = await ref
+                      .read(findRepositoryProvider)
+                      .getPartyRoles(recruit.id);
+                  position = roles.map((role) => role.roleName).toList();
+                } catch (_) {}
+                return ActivityCardItem(
+                  id: recruit.id,
+                  name: recruit.name,
+                  timePlace: recruit.timePlace ?? [],
+                  position: position,
+                  poster: recruit.poster,
+                );
+              }),
+            );
+            if (mounted) setState(() => participateCard = withRoles);
+          } catch (_) {}
+        })(),
+      ]);
+    }
+  }
+
+  void retryRecruit() {
+    setState(() {
+      recruitLoading = true;
+      recruitFailed = false;
+    });
+    fetchHomeCards();
+  }
 
   @override
   void dispose() {
@@ -47,25 +193,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.dispose();
   }
 
+  List<String> get currentProfileContent {
+    final profile = ref.read(profileProvider);
+    return profile.hasData ? profile.profileContent : widget.profileContent;
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final selectedMode = ref.watch(homeSelectedModeProvider);
+    final savedProfile = ref.watch(profileProvider);
+    final profileContent = savedProfile.hasData
+        ? savedProfile.profileContent
+        : widget.profileContent;
     final activeCards =
-        selectedMode == '모집' ? _recruitCard : _participateCard;
+        selectedMode == '모집' ? recruitCard : participateCard;
 
     return BasicLayout(
       needTitleExpand: true,
       needWidget: [
-        (widget.logo != null) ? Image.file(File(widget.logo!)) : Container(),
+        (widget.logo != null)
+            ? Image.file(File(widget.logo!), cacheWidth: 300)
+            : Container(),
       ],
       actions: [
         ElevatedButton.icon(
-          onPressed: onWorkSearchButtonPressed,
+          onPressed: onActivitySearchButtonPressed,
           label: Text('활동 검색', style: TextStyle(fontSize: screenWidth * 0.036)),
           icon: Icon(Icons.search, size: screenWidth * 0.073),
           style: ElevatedButton.styleFrom(
-            fixedSize: Size(screenWidth * 0.547, 23),
+            fixedSize: Size(screenWidth * 0.547, 44),
             foregroundColor: Colors.white,
             backgroundColor: const Color(0xFF8D6E63),
           ),
@@ -88,7 +245,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ProfileCardBasic(
-                profileContent: widget.profileContent,
+                profileContent: profileContent,
                 onProfileEditButtonPressed: onProfileEditButtonPressed,
               ),
               Padding(
@@ -111,8 +268,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: PopupMenuButton<String>(
                         icon: const Icon(Icons.more_horiz_outlined),
                         onSelected: (mode) {
-                          ref.read(homeSelectedModeProvider.notifier).state =
-                              mode;
+                          ref.read(homeSelectedModeProvider.notifier).setMode(
+                              mode);
                           scrollController.jumpTo(0.0);
                         },
                         itemBuilder: (BuildContext context) => [
@@ -130,13 +287,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Padding(
                       padding: EdgeInsets.only(right: screenWidth * 0.024),
                       child: ElevatedButton(
-                        onPressed: addWork,
+                        onPressed: addActivity,
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.zero,
                           minimumSize: const Size(10, 10),
                           fixedSize: Size(
-                            screenWidth * 0.085,
-                            screenWidth * 0.085,
+                            screenWidth * 0.107,
+                            screenWidth * 0.107,
                           ),
                           backgroundColor: appPrimaryColor,
                           foregroundColor: Colors.white,
@@ -152,7 +309,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
               ),
-              activeCards.isEmpty
+              (selectedMode == '모집' && recruitLoading)
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 40),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : (selectedMode == '모집' &&
+                        recruitFailed &&
+                        recruitCard.isEmpty)
+                  ? LoadFailedView(onRetry: retryRecruit)
+                  : activeCards.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 40),
                       child: Center(
@@ -171,15 +337,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Row(
                         children: activeCards
                             .map<Widget>(
-                              (work) => RepaintBoundary(
+                              (activity) => RepaintBoundary(
                                 child: Container(
                                   width: screenWidth * 0.85,
-                                  child: WorkCardBasic(
-                                    name: work.name,
-                                    timePlace: work.timePlace,
-                                    position: work.position,
-                                    poster: work.poster,
-                                    onTap: () => workCardTap(work),
+                                  child: ActivityCardBasic(
+                                    name: activity.name,
+                                    timePlace: activity.timePlace,
+                                    position: activity.position,
+                                    poster: activity.poster,
+                                    onTap: () => activityCardTap(activity),
                                   ),
                                 ),
                               ),
@@ -195,7 +361,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 child: Text('현재 신청한 대외활동', style: sectionTitleFont),
               ),
-              _applyCard.isEmpty
+              applyCard.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 40),
                       child: Center(
@@ -211,19 +377,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   : SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: _applyCard
+                        children: applyCard
                             .map(
-                              (work) => RepaintBoundary(
+                              (activity) => RepaintBoundary(
                                 child: Container(
                                   width: screenWidth * 0.85,
-                                  child: WorkCardApply(
-                                    name: work.name,
-                                    timePlace: work.timePlace,
-                                    applyStatus: work.applyStatus,
+                                  child: ActivityCardApply(
+                                    name: activity.name,
+                                    timePlace: activity.timePlace,
+                                    applyStatus: activity.applyStatus,
                                     onProfileCheckPressed: () =>
-                                        onProfileCheckPressed(work),
+                                        onProfileCheckPressed(activity),
                                     onDetailButtonPressed: () =>
-                                        onDetailButtonPressed(work),
+                                        onDetailButtonPressed(activity),
                                   ),
                                 ),
                               ),
@@ -248,11 +414,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  void onWorkSearchButtonPressed() {
+  void onActivitySearchButtonPressed() {
     Navigator.pushNamed(
       context,
-      PageRoutes.findWork,
-      arguments: {'workList': <WorkItem>[]},
+      PageRoutes.findActivity,
+      arguments: {'activityList': <ActivityItem>[]},
     );
   }
 
@@ -264,7 +430,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         'profileContent': List.generate(
           4,
           (i) =>
-              i < widget.profileContent.length ? widget.profileContent[i] : '',
+              i < currentProfileContent.length ? currentProfileContent[i] : '',
         ),
         'introduction': '',
         'spec': '',
@@ -273,69 +439,69 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  void addWork() {
+  void addActivity() {
     final selectedMode = ref.read(homeSelectedModeProvider);
     if (selectedMode == '모집') {
-      Navigator.pushNamed(context, PageRoutes.workRecruit);
+      Navigator.pushNamed(context, PageRoutes.activityRecruit);
     } else {
       Navigator.pushNamed(
         context,
-        PageRoutes.findParty,
-        arguments: {'partyList': <PartyItem>[]},
+        PageRoutes.findActivity,
+        arguments: {'activityList': <ActivityItem>[]},
       );
     }
   }
 
-  void workCardTap(WorkCardItem work) {
+  void activityCardTap(ActivityCardItem activity) {
     final selectedMode = ref.read(homeSelectedModeProvider);
     if (selectedMode == '모집') {
       Navigator.pushNamed(
         context,
-        PageRoutes.workInformation,
+        PageRoutes.activityInformation,
         arguments: {
-          'workName': work.name,
-          'workOverview': '',
-          'workDetail': '',
-          'leaderProfile': List.generate(
-            2,
-            (i) => i < widget.profileContent.length
-                ? widget.profileContent[i]
-                : '',
-          ),
-          'position': work.position,
-          'poster': work.poster,
+          'activityName': activity.name,
+          'activityOverview': '',
+          'activityDetail': '',
+          'leaderProfile': <String>[],
+          'position': activity.position,
+          'poster': activity.poster,
+          'partyId': activity.id,
         },
       );
     } else {
       Navigator.pushNamed(
         context,
-        PageRoutes.findParty,
-        arguments: {'partyList': <PartyItem>[]},
+        PageRoutes.participatingParty,
+        arguments: {
+          'activityName': activity.name,
+          'activityOverview': '',
+          'activityDetail': '',
+          'leaderProfile': <String>[],
+          'position': activity.position,
+          'poster': activity.poster,
+          'partyId': activity.id,
+        },
       );
     }
   }
 
-  void onProfileCheckPressed(ApplyCardItem work) {
+  void onProfileCheckPressed(ApplyCardItem activity) {
     Navigator.pushNamed(
       context,
-      PageRoutes.applyingWork,
-      arguments: {'workName': work.name, 'profile': <String>[], 'poster': null},
+      PageRoutes.applyingActivity,
+      arguments: {'activityName': activity.name, 'profile': <String>[], 'poster': null},
     );
   }
 
-  void onDetailButtonPressed(ApplyCardItem work) {
+  void onDetailButtonPressed(ApplyCardItem activity) {
     Navigator.pushNamed(
       context,
-      PageRoutes.applyWork,
+      PageRoutes.activityInformation,
       arguments: {
-        'workName': work.name,
-        'workOverview': '',
-        'workDetail': '',
-        'leaderProfile': List.generate(
-          2,
-          (i) =>
-              i < widget.profileContent.length ? widget.profileContent[i] : '',
-        ),
+        'activityName': activity.name,
+        'activityOverview': '',
+        'activityDetail': '',
+        'leaderProfile': <String>[],
         'position': <String>[],
         'poster': null,
       },

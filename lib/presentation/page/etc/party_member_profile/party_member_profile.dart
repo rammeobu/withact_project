@@ -24,10 +24,10 @@ class PartyMemberProfile extends StatefulWidget {
   });
 
   @override
-  State<PartyMemberProfile> createState() => _PartyMemberProfileState();
+  State<PartyMemberProfile> createState() => PartyMemberProfileState();
 }
 
-class _PartyMemberProfileState extends State<PartyMemberProfile> {
+class PartyMemberProfileState extends State<PartyMemberProfile> {
   late List<ScrollController> scrollControllers;
 
   @override
@@ -55,63 +55,71 @@ class _PartyMemberProfileState extends State<PartyMemberProfile> {
           top: 13,
           right: screenWidth * 0.036,
         ),
-        child: Expanded(
-          child: SingleChildScrollView(
-            controller: scrollControllers[0],
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                PartyMemberProfileBody1(
-                  name: widget.profileContent[0],
-                  role: widget.profileContent[1],
-                  onCallButtonPressed: onCallButtonPressed,
-                ),
-                PartyMemberProfileBody2(
-                  section: '소개',
-                  content: widget.introduction,
-                  scrollController: scrollControllers[1],
-                ),
-                PartyMemberProfileBody2(
-                  section: '스펙',
-                  content: widget.spec,
-                  scrollController: scrollControllers[2],
-                ),
+        child: SingleChildScrollView(
+          controller: scrollControllers[0],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PartyMemberProfileBody1(
+                name: widget.profileContent.isNotEmpty
+                    ? widget.profileContent[0]
+                    : '',
+                role: widget.profileContent.length > 1
+                    ? widget.profileContent[1]
+                    : '',
+                onCallButtonPressed: onCallButtonPressed,
+              ),
+              PartyMemberProfileBody2(
+                section: '소개',
+                content: widget.introduction,
+                scrollController: scrollControllers[1],
+              ),
+              PartyMemberProfileBody2(
+                section: '스펙',
+                content: widget.spec,
+                scrollController: scrollControllers[2],
+              ),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(
-                    '선호 활동 정보',
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.041,
-                      fontWeight: FontWeight.w600,
-                    ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  '선호 활동 정보',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.041,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
+              ),
 
-                PartyMemberProfileBody3(
-                  favoriteRole: widget.favorites[0],
-                  favoriteField: widget.favorites[1],
-                  favoriteDomain: widget.favorites[2],
-                ),
-                // 1~3까지 dialog로 한 화면 내에서 띄우고 해당 페이지는 제거될 수도 있음.
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text(
-                    '파티원 목록',
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.041,
-                      fontWeight: FontWeight.w600,
-                    ),
+              PartyMemberProfileBody3(
+                favoriteRole: widget.favorites.isNotEmpty
+                    ? widget.favorites[0]
+                    : '',
+                favoriteField: widget.favorites.length > 1
+                    ? widget.favorites[1]
+                    : '',
+                favoriteDomain: widget.favorites.length > 2
+                    ? widget.favorites[2]
+                    : '',
+              ),
+              // 1~3까지 dialog로 한 화면 내에서 띄우고 해당 페이지는 제거될 수도 있음.
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  '파티원 목록',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.041,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
+              ),
 
-                PartyMemberProfileBody4(
-                  position: widget.positions,
-                  onPersonPressed: onPersonPressed,
-                  scrollController: scrollControllers[3],
-                ),
-              ],
-            ),
+              PartyMemberProfileBody4(
+                position: widget.positions,
+                onPersonPressed: onPersonPressed,
+                scrollController: scrollControllers[3],
+              ),
+            ],
           ),
         ),
       ),

@@ -8,7 +8,7 @@ import 'find_party_filter_footer.dart';
 
 class FindPartyFilterNotifier
     extends Notifier<({List<String> current, List<List<String>> filter})> {
-  Map<String, List<String>> _detailCategory = {};
+  Map<String, List<String>> detailCategory = {};
 
   @override
   ({List<String> current, List<List<String>> filter}) build() =>
@@ -19,7 +19,7 @@ class FindPartyFilterNotifier
     List<FilterItem> filterData,
     Map<String, List<String>> detailCategory,
   ) {
-    _detailCategory = detailCategory;
+    detailCategory = detailCategory;
     final filter = List.generate(filterSectionCount, (i) {
       if (i < filterData.length) return ['전체', ...filterData[i].option];
       return ['전체'];
@@ -40,7 +40,7 @@ class FindPartyFilterNotifier
       newCurrent[1] = '전체';
       final detailOptions = (value == '전체')
           ? <String>[]
-          : (_detailCategory[value] ?? <String>[]);
+          : (detailCategory[value] ?? <String>[]);
       newFilter[1] = ['전체', ...detailOptions];
     }
     state = (current: newCurrent, filter: newFilter);
@@ -64,10 +64,10 @@ class FindPartyFilter extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<FindPartyFilter> createState() => _FindPartyFilterState();
+  ConsumerState<FindPartyFilter> createState() => FindPartyFilterState();
 }
 
-class _FindPartyFilterState extends ConsumerState<FindPartyFilter> {
+class FindPartyFilterState extends ConsumerState<FindPartyFilter> {
   late List<String> filterTitle;
   late List<ScrollController> rowScrollControllers;
 

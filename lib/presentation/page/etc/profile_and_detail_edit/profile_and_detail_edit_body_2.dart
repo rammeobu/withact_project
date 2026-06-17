@@ -38,7 +38,7 @@ class ProfileAndDetailEditBody2 extends StatelessWidget {
             style: OutlinedButton.styleFrom(
               backgroundColor: const Color(0xFF10B880),
               foregroundColor: Colors.white,
-              fixedSize: Size(screenWidth * 0.316, 34),
+              fixedSize: Size(screenWidth * 0.316, 44),
               side: BorderSide.none,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(screenWidth * 0.024),

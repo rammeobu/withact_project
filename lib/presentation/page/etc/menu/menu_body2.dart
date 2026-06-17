@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:party_maker/presentation/page/etc/menu/menu_item.dart';
 
 class MenuBody2 extends StatelessWidget {
-  final VoidCallback recentlySearchedWorkMenuSelect;
-  final VoidCallback participatingWorkMenuSelect;
-  final VoidCallback findWorkMenuSelect;
+  final VoidCallback recentlySearchedActivityMenuSelect;
+  final VoidCallback participatingActivityMenuSelect;
+  final VoidCallback findActivityMenuSelect;
   const MenuBody2({
     super.key,
-    required this.recentlySearchedWorkMenuSelect,
-    required this.participatingWorkMenuSelect,
-    required this.findWorkMenuSelect,
+    required this.recentlySearchedActivityMenuSelect,
+    required this.participatingActivityMenuSelect,
+    required this.findActivityMenuSelect,
   });
 
   @override
@@ -35,9 +35,9 @@ class MenuBody2 extends StatelessWidget {
             ),
           ),
         ),
-        menuItem('최근 검색한 활동', screenWidth, recentlySearchedWorkMenuSelect),
-        menuItem('참여중인 활동', screenWidth, participatingWorkMenuSelect),
-        menuItem('활동 찾기', screenWidth, findWorkMenuSelect),
+        menuItem('최근 검색한 활동', screenWidth, recentlySearchedActivityMenuSelect),
+        menuItem('참여중인 활동', screenWidth, participatingActivityMenuSelect),
+        menuItem('활동 찾기', screenWidth, findActivityMenuSelect),
       ],
     );
   }

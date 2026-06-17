@@ -15,19 +15,24 @@ class ApplyItem {
 
   factory ApplyItem.fromJson(Map<String, dynamic> json) {
     return ApplyItem(
-      id: json['id'],
+      id: json['id'] ?? 0,
       name: json['partyName'] ?? '',
-      applyStatus: json['status']?.toString() ?? '',
+      applyStatus: switch (json['status']?.toString()) {
+        'PENDING' => '대기 중',
+        'APPROVED' => '합격',
+        'REJECTED' => '불합격',
+        final status => status ?? '',
+      },
     );
   }
 }
 
 class ApplyDataStructure {
-  final String workName;
+  final String activityName;
   final List<String>? profile;
   final String? poster;
 
-  const ApplyDataStructure({required this.workName, this.profile, this.poster});
+  const ApplyDataStructure({required this.activityName, this.profile, this.poster});
 }
 
 class ApplyListDataStructure {
@@ -36,13 +41,13 @@ class ApplyListDataStructure {
   const ApplyListDataStructure({required this.apply});
 }
 
-class ApplyingWorkDataStructure {
-  final String workName;
+class ApplyingActivityDataStructure {
+  final String activityName;
   final List<String> profile;
   final String? poster;
 
-  const ApplyingWorkDataStructure({
-    required this.workName,
+  const ApplyingActivityDataStructure({
+    required this.activityName,
     required this.profile,
     this.poster,
   });

@@ -1,8 +1,20 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 
-class PartyExitDoubleCheck extends StatelessWidget {
-  const PartyExitDoubleCheck({super.key});
+class PartyExitDoubleCheck extends ConsumerStatefulWidget {
+  final int partyId;
+  const PartyExitDoubleCheck({super.key, this.partyId = 0});
+
+  @override
+  ConsumerState<PartyExitDoubleCheck> createState() =>
+      PartyExitDoubleCheckState();
+}
+
+class PartyExitDoubleCheckState extends ConsumerState<PartyExitDoubleCheck> {
+  bool isSubmitting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +60,8 @@ class PartyExitDoubleCheck extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 23),
                   child: OutlinedButton(
-                    onPressed: () => onPartyExitConfirmButtonPressed(context),
+                    onPressed:
+                        isSubmitting ? null : onPartyExitConfirmButtonPressed,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.black,
                       minimumSize: Size(screenWidth * 0.365, 69),
@@ -58,19 +71,29 @@ class PartyExitDoubleCheck extends StatelessWidget {
                         ),
                       ),
                     ),
-                    child: Text(
-                      '예',
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.058,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                    child: isSubmitting
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.black,
+                            ),
+                          )
+                        : Text(
+                            '예',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.058,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 23),
                   child: OutlinedButton(
-                    onPressed: () => onPartyExitCancelButtonPressed(context),
+                    onPressed:
+                        isSubmitting ? null : () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.black,
                       minimumSize: Size(screenWidth * 0.365, 69),
@@ -97,15 +120,25 @@ class PartyExitDoubleCheck extends StatelessWidget {
     );
   }
 
-  void onPartyExitConfirmButtonPressed(BuildContext context) {
-    const bool succeeded = true;
+  Future<void> onPartyExitConfirmButtonPressed() async {
+    if (isSubmitting) return;
+    setState(() => isSubmitting = true);
+    HapticFeedback.lightImpact();
+    bool succeeded = false;
+    final userId = ref.read(currentUserProvider);
+    if (userId != null) {
+      try {
+        await ref
+            .read(recruitRepositoryProvider)
+            .leaveParty(widget.partyId, userId);
+        succeeded = true;
+      } catch (_) {}
+    }
+    if (!mounted) return;
+    setState(() => isSubmitting = false);
     Navigator.pushNamed(
       context,
       succeeded ? PageRoutes.partyExitSuccess : PageRoutes.partyExitFail,
     );
-  }
-
-  void onPartyExitCancelButtonPressed(BuildContext context) {
-    Navigator.pop(context);
   }
 }

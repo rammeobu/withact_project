@@ -1,0 +1,224 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../../future&component/component/person.dart';
+
+class ActivityRecruitBody3 extends StatelessWidget {
+  final ScrollController primaryScrollController;
+  final ScrollController horizontalScrollController;
+  final List<TextEditingController> textEditingControllers;
+  final VoidCallback onAddPositionButtonPressed;
+  final void Function(int) onDeletePositionButtonPressed;
+  final void Function(int) onIncrementCountButtonPressed;
+  final void Function(int) onDecrementCountButtonPressed;
+  final List<String> positions;
+  final List<int> counts;
+  const ActivityRecruitBody3({
+    super.key,
+    required this.primaryScrollController,
+    required this.horizontalScrollController,
+    required this.textEditingControllers,
+    required this.onAddPositionButtonPressed,
+    required this.onDeletePositionButtonPressed,
+    required this.onIncrementCountButtonPressed,
+    required this.onDecrementCountButtonPressed,
+    required this.positions,
+    required this.counts,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Text(
+                  '모집역할/인원',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.058,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const Text(' *', style: TextStyle(color: Colors.red)),
+              ],
+            ),
+            IconButton(
+              onPressed: onAddPositionButtonPressed,
+              icon: Icon(Icons.add_circle_outline, size: screenWidth * 0.073),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 9),
+          child: SingleChildScrollView(
+            controller: horizontalScrollController,
+            scrollDirection: Axis.horizontal,
+            child: positions.isEmpty
+                ? SizedBox(
+                    height: 150,
+                    width: screenWidth * 0.927,
+                    child: const Center(
+                      child: Text(
+                        '모집 역할을 추가해주세요.',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  )
+                : Row(
+                    children: positions.asMap().entries.map((entry) {
+                      final int i = entry.key;
+
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.012,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Center(
+                              child: SizedBox(
+                                width: screenWidth * 0.2,
+                                child: TextField(
+                                  controller: textEditingControllers[i],
+                                  textAlign: TextAlign.center,
+                                  decoration: InputDecoration(
+                                    hintText: '직군',
+                                    hintStyle: TextStyle(
+                                      fontSize: screenWidth * 0.036,
+                                      color: Colors.grey,
+                                    ),
+                                    border: const UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    isDense: true,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 10,
+                                    ),
+                                  ),
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.036,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 6),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      HapticFeedback.selectionClick();
+                                      onDecrementCountButtonPressed(i);
+                                    },
+                                    customBorder: const CircleBorder(),
+                                    child: Container(
+                                      width: screenWidth * 0.107,
+                                      height: screenWidth * 0.107,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                          width: 0.8,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.remove,
+                                        size: screenWidth * 0.041,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: screenWidth * 0.016,
+                                    ),
+                                    child: AnimatedSwitcher(
+                                      duration: const Duration(
+                                        milliseconds: 200,
+                                      ),
+                                      transitionBuilder: (child, animation) =>
+                                          FadeTransition(
+                                            opacity: animation,
+                                            child: child,
+                                          ),
+                                      child: Text(
+                                        '${i < counts.length ? counts[i] : 1}명',
+                                        key: ValueKey(
+                                          i < counts.length ? counts[i] : 1,
+                                        ),
+                                        style: TextStyle(
+                                          fontSize: screenWidth * 0.036,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      HapticFeedback.selectionClick();
+                                      onIncrementCountButtonPressed(i);
+                                    },
+                                    customBorder: const CircleBorder(),
+                                    child: Container(
+                                      width: screenWidth * 0.107,
+                                      height: screenWidth * 0.107,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                          width: 0.8,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.add,
+                                        size: screenWidth * 0.041,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Person(size: screenWidth * 0.122),
+                            OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(width: 0.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadiusGeometry.circular(
+                                    screenWidth * 0.049,
+                                  ),
+                                ),
+                                backgroundColor: const Color(0xFFF34343),
+                                foregroundColor: Colors.white,
+                              ),
+                              onPressed: () => onDeletePositionButtonPressed(i),
+                              child: Text(
+                                '제거',
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.036,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+          ),
+        ),
+      ],
+    );
+  }
+}

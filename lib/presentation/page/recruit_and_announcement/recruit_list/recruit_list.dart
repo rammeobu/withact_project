@@ -12,36 +12,36 @@ class RecruitList extends ConsumerStatefulWidget {
   const RecruitList({super.key, this.apply});
 
   @override
-  ConsumerState<RecruitList> createState() => _RecruitListState();
+  ConsumerState<RecruitList> createState() => RecruitListState();
 }
 
-class _RecruitListState extends ConsumerState<RecruitList> {
-  List<RecruitItem> _recruitList = [];
-  bool _isLoading = true;
-  final ScrollController _listScrollController = ScrollController();
+class RecruitListState extends ConsumerState<RecruitList> {
+  List<RecruitItem> recruitList = [];
+  bool isLoading = true;
+  final ScrollController listScrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _recruitList = widget.apply ?? [];
-    _fetchRecruitList();
+    recruitList = widget.apply ?? [];
+    fetchRecruitList();
   }
 
   @override
   void dispose() {
-    _listScrollController.dispose();
+    listScrollController.dispose();
     super.dispose();
   }
 
-  Future<void> _fetchRecruitList() async {
+  Future<void> fetchRecruitList() async {
     try {
       final result = await ref.read(recruitRepositoryProvider).getRecruitList();
       if (mounted) setState(() {
-        _recruitList = result;
-        _isLoading = false;
+        recruitList = result;
+        isLoading = false;
       });
     } catch (_) {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) setState(() => isLoading = false);
     }
   }
 
@@ -52,11 +52,11 @@ class _RecruitListState extends ConsumerState<RecruitList> {
       title: '모집 목록',
       body: Padding(
         padding: const EdgeInsets.only(top: 13),
-        child: _isLoading
+        child: isLoading
             ? const Center(
                 child: CircularProgressIndicator(color: appPrimaryColor),
               )
-            : _recruitList.isEmpty
+            : recruitList.isEmpty
                 ? Center(
                     child: Text(
                       '모집 내역이 없습니다.',
@@ -70,13 +70,13 @@ class _RecruitListState extends ConsumerState<RecruitList> {
                     height: 506,
                     child: Scrollbar(
                       thumbVisibility: true,
-                      controller: _listScrollController,
+                      controller: listScrollController,
                       child: ListView.builder(
-                        controller: _listScrollController,
+                        controller: listScrollController,
                         scrollDirection: Axis.horizontal,
-                        itemCount: _recruitList.length,
+                        itemCount: recruitList.length,
                         itemBuilder: (context, index) {
-                          final apply = _recruitList[index];
+                          final apply = recruitList[index];
                           return RepaintBoundary(
                             child: Padding(
                               padding: EdgeInsets.symmetric(
@@ -95,7 +95,7 @@ class _RecruitListState extends ConsumerState<RecruitList> {
                                       onAnnouncementManageButtonPressed(
                                           apply.name, apply.id),
                                   onCheckApplicantButtonPressed: () =>
-                                      onCheckApplicantButtonPressed(apply.name),
+                                      onCheckApplicantButtonPressed(apply.id),
                                 ),
                               ),
                             ),
@@ -112,11 +112,11 @@ class _RecruitListState extends ConsumerState<RecruitList> {
   void onDetailButtonPressed(String name) {
     Navigator.pushNamed(
       context,
-      PageRoutes.workInformation,
+      PageRoutes.activityInformation,
       arguments: {
-        'workName': name,
-        'workOverview': '',
-        'workDetail': '',
+        'activityName': name,
+        'activityOverview': '',
+        'activityDetail': '',
         'leaderProfile': <String>[],
         'position': <String>[],
         'poster': null,
@@ -129,7 +129,7 @@ class _RecruitListState extends ConsumerState<RecruitList> {
       context,
       PageRoutes.recruitAnnouncement,
       arguments: {
-        'workName': name,
+        'activityName': name,
         'partyNameIntroduction': '',
         'position': <String>[],
         'preferences': null,
@@ -138,11 +138,11 @@ class _RecruitListState extends ConsumerState<RecruitList> {
     );
   }
 
-  void onCheckApplicantButtonPressed(String name) {
+  void onCheckApplicantButtonPressed(int partyId) {
     Navigator.pushNamed(
       context,
       PageRoutes.applicantCheck,
-      arguments: {'position': <String>[]},
+      arguments: {'position': <String>[], 'partyId': partyId},
     );
   }
 }

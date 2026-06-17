@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'no_scale.dart';
 
-class _WhenToMeetTimesNotifier extends Notifier<List<bool>> {
+class WhenToMeetTimesNotifier extends Notifier<List<bool>> {
   @override
   List<bool> build() => [];
+
+  void setTimes(List<bool> times) {
+    state = times;
+  }
 }
 
 final whenToMeetAvailableTimesProvider =
-    NotifierProvider.autoDispose<_WhenToMeetTimesNotifier, List<bool>>(
-      _WhenToMeetTimesNotifier.new,
+    NotifierProvider.autoDispose<WhenToMeetTimesNotifier, List<bool>>(
+      WhenToMeetTimesNotifier.new,
     );
 
 class WhenToMeet extends ConsumerStatefulWidget {
@@ -32,11 +37,57 @@ class WhenToMeet extends ConsumerStatefulWidget {
     required this.timeTextController,
   });
 
+  static Map<String, List<String>> toSchedule(
+    List<bool> times, {
+    List<String> days = const ['월', '화', '수', '목', '금', '토', '일'],
+    int begin = 8,
+  }) {
+    final Map<String, List<String>> schedule = {};
+    if (days.isEmpty) return schedule;
+    final int rowCount = times.length ~/ days.length;
+    for (int row = 0; row < rowCount; row++) {
+      final int hour = begin + row ~/ 2;
+      final String label =
+          '${hour.toString().padLeft(2, '0')}:${row % 2 == 1 ? '30' : '00'}';
+      for (int d = 0; d < days.length; d++) {
+        if (times[row * days.length + d]) {
+          schedule.putIfAbsent(days[d], () => <String>[]).add(label);
+        }
+      }
+    }
+    return schedule;
+  }
+
+  static List<bool> fromSchedule(
+    Map<String, List<String>> schedule, {
+    List<String> days = const ['월', '화', '수', '목', '금', '토', '일'],
+    int begin = 8,
+    int end = 23,
+  }) {
+    final int rowCount = (end - begin) * 2;
+    final List<bool> times = List<bool>.filled(rowCount * days.length, false);
+    schedule.forEach((day, labels) {
+      final int d = days.indexOf(day);
+      if (d == -1) return;
+      for (final String label in labels) {
+        final List<String> parts = label.split(':');
+        if (parts.length != 2) continue;
+        final int? hour = int.tryParse(parts[0]);
+        final int? minute = int.tryParse(parts[1]);
+        if (hour == null || minute == null) continue;
+        final int row = (hour - begin) * 2 + (minute == 30 ? 1 : 0);
+        if (row < 0 || row >= rowCount) continue;
+        times[row * days.length + d] = true;
+      }
+    });
+    return times;
+  }
+
   @override
-  ConsumerState<WhenToMeet> createState() => _WhenToMeetState();
+  ConsumerState<WhenToMeet> createState() => WhenToMeetState();
 }
 
-class _WhenToMeetState extends ConsumerState<WhenToMeet> {
+class WhenToMeetState extends ConsumerState<WhenToMeet> {
   late int rowCount;
   late List<String> timeOptions;
 
@@ -57,7 +108,7 @@ class _WhenToMeetState extends ConsumerState<WhenToMeet> {
     }
 
     Future.microtask(() {
-      ref.read(whenToMeetAvailableTimesProvider.notifier).state = initialTimes;
+      ref.read(whenToMeetAvailableTimesProvider.notifier).setTimes(initialTimes);
     });
   }
 
@@ -87,50 +138,52 @@ class _WhenToMeetState extends ConsumerState<WhenToMeet> {
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 17),
-            child: !widget.readOnly
-                ? TextField(
-                    controller: widget.timeTextController,
-                    maxLines: 5,
-                    onChanged: (_) => timeParse(),
-                    decoration: InputDecoration(
-                      hintText:
-                          '요일 별 활동 가능한 시간과 특이사항을 작성해주세요.\n\n'
-                          '입력 예시)\n'
-                          ' - 월 - 09:00 ~ 13:00 / 특이사항: 19시부터 비대면 참여 가능\n'
-                          ' - 화요일 - 오전 9시 ~ 오후 4시 30분 / 특이사항: 없음',
-                      hintStyle: TextStyle(
-                        fontSize: screenWidth * 0.029,
-                        color: Colors.grey,
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: EdgeInsets.all(screenWidth * 0.029),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          screenWidth * 0.019,
+            child: NoScale(
+              child: !widget.readOnly
+                  ? TextField(
+                      controller: widget.timeTextController,
+                      maxLines: 5,
+                      onChanged: (_) => timeParse(),
+                      decoration: InputDecoration(
+                        hintText:
+                            '요일 별 활동 가능한 시간과 특이사항을 작성해주세요.\n\n'
+                            '입력 예시)\n'
+                            ' - 월 - 09:00 ~ 13:00 / 특이사항: 19시부터 비대면 참여 가능\n'
+                            ' - 화요일 - 오전 9시 ~ 오후 4시 30분 / 특이사항: 없음',
+                        hintStyle: TextStyle(
+                          fontSize: screenWidth * 0.029,
+                          color: Colors.grey,
                         ),
-                        borderSide: BorderSide.none,
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: EdgeInsets.all(screenWidth * 0.029),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            screenWidth * 0.019,
+                          ),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(screenWidth * 0.029),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffebedf0),
+                        borderRadius: BorderRadius.circular(screenWidth * 0.019),
+                      ),
+                      child: Text(
+                        widget.timeTextController.text.isEmpty
+                            ? '입력된 활동 가능 시간 정보가 없습니다.'
+                            : widget.timeTextController.text,
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.034,
+                          color: Colors.black,
+                          height: 1.4,
+                        ),
                       ),
                     ),
-                  )
-                : Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(screenWidth * 0.029),
-                    decoration: BoxDecoration(
-                      color: const Color(0xffebedf0),
-                      borderRadius: BorderRadius.circular(screenWidth * 0.019),
-                    ),
-                    child: Text(
-                      widget.timeTextController.text.isEmpty
-                          ? '입력된 활동 가능 시간 정보가 없습니다.'
-                          : widget.timeTextController.text,
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.034,
-                        color: Colors.black,
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
+            ),
           ),
           SizedBox(
             height: 289,
@@ -291,7 +344,7 @@ class _WhenToMeetState extends ConsumerState<WhenToMeet> {
       }
     }
 
-    ref.read(whenToMeetAvailableTimesProvider.notifier).state =
-        newAvailableTimes;
+    ref.read(whenToMeetAvailableTimesProvider.notifier).setTimes(
+        newAvailableTimes);
   }
 }
