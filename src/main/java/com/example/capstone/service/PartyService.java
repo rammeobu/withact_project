@@ -62,11 +62,9 @@ public class PartyService {
     public Party updateParty(Long id, PartyDto partyDto) {
         Party party = partyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Party not found"));
-
         party.setTitle(partyDto.getTitle());
         party.setContent(partyDto.getContent());
         return partyRepository.save(party);
-
     }
     public PartyDto findByPartyIdWithActivityTitle(Long partyId) {
         Party party = partyRepository.findById(partyId)
@@ -101,6 +99,12 @@ public class PartyService {
         // 3. Application 삭제
         applicationRepository.delete(application);
     }
-
+    @Transactional
+    public PartyRole updateRoleTargetCount(Long roleId, Integer targetCount) {
+        PartyRole role = partyRoleRepository.findById(roleId)
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+        role.setTargetCount(targetCount);
+        return partyRoleRepository.save(role);
+    }
 }
 

@@ -88,4 +88,12 @@ public class PartyController {
         partyService.leaveParty(partyId, userId);
         return ResponseEntity.ok("파티에서 탈퇴했습니다.");
     }
+    @PatchMapping("/{partyId}/roles/{roleId}")
+    public ResponseEntity<PartyRoleDto> updateRoleCount(
+            @PathVariable("partyId") Long partyId,
+            @PathVariable("roleId") Long roleId,
+            @RequestParam("targetCount") Integer targetCount) {
+        PartyRole updated = partyService.updateRoleTargetCount(roleId, targetCount);
+        return ResponseEntity.ok(PartyRoleDto.from(updated));
+    }
 }
