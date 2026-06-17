@@ -22,6 +22,7 @@ public class Member {
     private String address;
     private String major;
     private String belong;
+    private String city;
     private String preference;
     private String introduction;
 }

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -44,5 +45,15 @@ public class MemberController {
     public MemberDto getPersonal(@PathVariable Long id) {
         return memberService.findbymemberid(id);
     }
+    @PostMapping
+    @Operation(summary = "사용자 생성", description = "사용자 정보 생성")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "생성 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청")
+    })
+    public ResponseEntity<MemberDto> createMember(@RequestBody MemberDto memberDto) {
+        return ResponseEntity.status(201).body(memberService.createMember(memberDto));
+    }
+
 }
 

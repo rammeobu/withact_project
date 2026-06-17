@@ -36,5 +36,20 @@ public class MemberService {
         memberRepository.save(member);
         return MemberDto.from(member);
     }
+    @Transactional
+    public MemberDto createMember(MemberDto memberDto) {
+        Member member = new Member();
+        member.setName(memberDto.getName());
+        member.setEmail(memberDto.getEmail());
+        member.setIntroduction(memberDto.getIntroduction());
+        member.setMajor(memberDto.getMajor());
+        member.setAddress(memberDto.getAddress());
+        member.setBelong(memberDto.getBelong());
+        member.setCity(memberDto.getCity());
+        member.setPreference(memberDto.getPreference());
+        member.setSpec(memberDto.getSpec());
+        memberRepository.save(member);
+        return MemberDto.from(member);
+    }
 
 }

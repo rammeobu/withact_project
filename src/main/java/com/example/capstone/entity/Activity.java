@@ -17,12 +17,10 @@ public class Activity {
     private String category;
     @Column(columnDefinition = "MEDIUMTEXT")
     private String description;
-    @Column(name = "start_date")
     private LocalDate startDate;
-    @Column(name = "end_date")
     private LocalDate endDate;
     private String location;
-    @Column(name = "source_url")
     private String sourceUrl;
+    private String imageUrl;
 
 }

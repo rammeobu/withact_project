@@ -10,7 +10,6 @@ public class MemberDto {
     private String name;
     private String spec;
     private String email;
-    private String phone;
     private String introduction;
     private String major;
     private String city;
@@ -25,6 +24,11 @@ public class MemberDto {
         dto.setSpec(member.getSpec());
         dto.setEmail(member.getEmail());
         dto.setAddress(member.getAddress());
+        dto.setIntroduction(member.getIntroduction());
+        dto.setMajor(member.getMajor());
+        dto.setCity(member.getCity());
+        dto.setBelong(member.getBelong());
+        dto.setPreference(member.getPreference());
         return dto;
     }
     public static MemberDto fromSimple(Member member) {
