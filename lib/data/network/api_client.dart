@@ -58,6 +58,21 @@ class ApiClient {
     throw Exception('PUT $path 실패: ${response.statusCode}');
   }
 
+  Future<dynamic> patch(String path, [Map<String, dynamic>? body]) async {
+    final response = await http
+        .patch(
+          Uri.parse('$baseUrl$path'),
+          headers: headers,
+          body: body == null ? null : jsonEncode(body),
+        )
+        .timeout(timeout, onTimeout: () => throw Exception('PATCH $path 타임아웃'));
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      if (response.body.isEmpty) return null;
+      return _decode(response.body);
+    }
+    throw Exception('PATCH $path 실패: ${response.statusCode}');
+  }
+
   Future<void> delete(String path) async {
     final response = await http
         .delete(Uri.parse('$baseUrl$path'), headers: headers)

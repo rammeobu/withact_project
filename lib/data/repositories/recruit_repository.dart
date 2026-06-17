@@ -88,6 +88,16 @@ class RecruitRepository {
     }
   }
 
+  Future<void> updateRoleCount(int partyId, int roleId, int targetCount) async {
+    try {
+      await client.patch(
+        '/api/party/v1/$partyId/roles/$roleId?targetCount=$targetCount',
+      );
+    } catch (e) {
+      throw Exception('역할 인원 수정 실패');
+    }
+  }
+
   Future<void> putAnnouncement(int partyId, String content) async {
     try {
       await client.post('/api/party/v1/$partyId', {

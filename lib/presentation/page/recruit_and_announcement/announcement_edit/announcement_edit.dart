@@ -8,16 +8,23 @@ import 'package:party_maker/data/providers/repository_providers.dart';
 import '../../../../app.dart';
 import '../../future&component/layout/basic_layout.dart';
 
-class AnnouncementEditNotifier extends Notifier<
-    ({List<String> preference, List<String> position, List<int> count})> {
+typedef AnnouncementEditData = ({
+  List<String> preference,
+  List<String> position,
+  List<int> count,
+  List<int?> roleId,
+});
+
+class AnnouncementEditNotifier extends Notifier<AnnouncementEditData> {
   @override
-  ({List<String> preference, List<String> position, List<int> count})
-  build() => (preference: [], position: [], count: []);
+  AnnouncementEditData build() =>
+      (preference: [], position: [], count: [], roleId: []);
 
   void init({
     required List<String> preferences,
     required List<String> positions,
     List<int>? counts,
+    List<int?>? roleIds,
   }) {
     state = (
       preference: List.from(preferences),
@@ -25,6 +32,9 @@ class AnnouncementEditNotifier extends Notifier<
       count: counts != null && counts.length == positions.length
           ? List.from(counts)
           : List.filled(positions.length, 1),
+      roleId: roleIds != null && roleIds.length == positions.length
+          ? List.from(roleIds)
+          : List.filled(positions.length, null),
     );
   }
 
@@ -33,12 +43,18 @@ class AnnouncementEditNotifier extends Notifier<
       preference: [...state.preference, text],
       position: state.position,
       count: state.count,
+      roleId: state.roleId,
     );
   }
 
   void removePreference(int i) {
     final newPrefs = List<String>.from(state.preference)..removeAt(i);
-    state = (preference: newPrefs, position: state.position, count: state.count);
+    state = (
+      preference: newPrefs,
+      position: state.position,
+      count: state.count,
+      roleId: state.roleId,
+    );
   }
 
   void addPosition() {
@@ -46,16 +62,19 @@ class AnnouncementEditNotifier extends Notifier<
       preference: state.preference,
       position: [...state.position, ''],
       count: [...state.count, 1],
+      roleId: [...state.roleId, null],
     );
   }
 
   void removePosition(int i) {
     final newPositions = List<String>.from(state.position)..removeAt(i);
     final newCounts = List<int>.from(state.count)..removeAt(i);
+    final newRoleIds = List<int?>.from(state.roleId)..removeAt(i);
     state = (
       preference: state.preference,
       position: newPositions,
       count: newCounts,
+      roleId: newRoleIds,
     );
   }
 
@@ -67,6 +86,7 @@ class AnnouncementEditNotifier extends Notifier<
       preference: state.preference,
       position: state.position,
       count: newCounts,
+      roleId: state.roleId,
     );
   }
 
@@ -78,15 +98,15 @@ class AnnouncementEditNotifier extends Notifier<
       preference: state.preference,
       position: state.position,
       count: newCounts,
+      roleId: state.roleId,
     );
   }
 }
 
 final announcementEditProvider =
-    NotifierProvider.autoDispose<
-      AnnouncementEditNotifier,
-      ({List<String> preference, List<String> position, List<int> count})
-    >(AnnouncementEditNotifier.new);
+    NotifierProvider.autoDispose<AnnouncementEditNotifier, AnnouncementEditData>(
+      AnnouncementEditNotifier.new,
+    );
 
 class AnnouncementEdit extends ConsumerStatefulWidget {
   final String activityName;
@@ -124,19 +144,56 @@ class AnnouncementEditState extends ConsumerState<AnnouncementEdit> {
       TextEditingController(),
     ];
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(announcementEditProvider.notifier)
-          .init(
-            preferences: widget.preferences ?? [],
-            positions: widget.positions,
-          );
-    });
-
     dynamicTextControllers = List.generate(
       widget.positions.length,
       (i) => TextEditingController(text: widget.positions[i]),
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => fetchRoles());
+  }
+
+  Future<void> fetchRoles() async {
+    final notifier = ref.read(announcementEditProvider.notifier);
+    if (widget.partyId == 0) {
+      notifier.init(
+        preferences: widget.preferences ?? [],
+        positions: widget.positions,
+      );
+      return;
+    }
+    try {
+      final roles = await ref
+          .read(findRepositoryProvider)
+          .getPartyRoles(widget.partyId);
+      if (!mounted) return;
+      if (roles.isNotEmpty) {
+        for (final controller in dynamicTextControllers) {
+          controller.dispose();
+        }
+        dynamicTextControllers = roles
+            .map((role) => TextEditingController(text: role.roleName))
+            .toList();
+        notifier.init(
+          preferences: widget.preferences ?? [],
+          positions: roles.map((role) => role.roleName).toList(),
+          counts: roles.map((role) => role.targetCount).toList(),
+          roleIds: roles.map<int?>((role) => role.id).toList(),
+        );
+        setState(() {});
+      } else {
+        notifier.init(
+          preferences: widget.preferences ?? [],
+          positions: widget.positions,
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        notifier.init(
+          preferences: widget.preferences ?? [],
+          positions: widget.positions,
+        );
+      }
+    }
   }
 
   @override
@@ -267,11 +324,27 @@ class AnnouncementEditState extends ConsumerState<AnnouncementEdit> {
         );
       return;
     }
+    final recruitRepo = ref.read(recruitRepositoryProvider);
     try {
-      await ref.read(recruitRepositoryProvider).putAnnouncement(
+      await recruitRepo.putAnnouncement(
         widget.partyId,
         staticTextControllers[1].text.trim(),
       );
+      // 기존 역할의 인원 수 변경 반영 (PATCH /roles/{roleId}?targetCount=)
+      if (widget.partyId != 0) {
+        for (int i = 0; i < editState.roleId.length; i++) {
+          final roleId = editState.roleId[i];
+          if (roleId != null) {
+            try {
+              await recruitRepo.updateRoleCount(
+                widget.partyId,
+                roleId,
+                editState.count[i],
+              );
+            } catch (_) {}
+          }
+        }
+      }
     } catch (_) {}
     if (mounted) Navigator.pop(context);
   }
