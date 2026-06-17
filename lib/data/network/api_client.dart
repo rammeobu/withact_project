@@ -1,7 +1,15 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 dynamic parseJson(String body) => jsonDecode(body);
+
+/// 큰 응답은 백그라운드 아이솔레이트에서 디코딩해 메인 스레드 정지(프레임 드랍)를 막는다.
+/// 작은 응답은 아이솔레이트 생성 비용이 더 크므로 메인에서 바로 파싱한다.
+Future<dynamic> _decode(String body) {
+  if (body.length > 20000) return compute(parseJson, body);
+  return Future.value(parseJson(body));
+}
 
 class ApiClient {
   static const String baseUrl = 'https://backend.withact.xyz';
@@ -19,7 +27,7 @@ class ApiClient {
         .timeout(timeout, onTimeout: () => throw Exception('GET $path 타임아웃'));
     if (response.statusCode >= 200 && response.statusCode < 300) {
       if (response.body.isEmpty) return null;
-      return parseJson(response.body);
+      return _decode(response.body);
     }
     throw Exception('GET $path 실패: ${response.statusCode}');
   }
@@ -31,7 +39,7 @@ class ApiClient {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       if (response.body.isEmpty) return null;
       try {
-        return parseJson(response.body);
+        return await _decode(response.body);
       } catch (_) {
         return response.body;
       }
@@ -45,7 +53,7 @@ class ApiClient {
         .timeout(timeout, onTimeout: () => throw Exception('PUT $path 타임아웃'));
     if (response.statusCode >= 200 && response.statusCode < 300) {
       if (response.body.isEmpty) return null;
-      return parseJson(response.body);
+      return _decode(response.body);
     }
     throw Exception('PUT $path 실패: ${response.statusCode}');
   }

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:party_maker/core/constant.dart';
 
@@ -47,10 +48,14 @@ class ActivityMapActivityCard extends StatelessWidget {
                           child: Center(
                             child:
                                 (poster != null && poster!.startsWith('http'))
-                                ? Image.network(
-                                    poster!,
+                                ? CachedNetworkImage(
+                                    imageUrl: poster!,
                                     fit: BoxFit.cover,
-                                    cacheWidth: 300,
+                                    memCacheWidth: 300,
+                                    placeholder: (context, url) =>
+                                        const Text('포스터'),
+                                    errorWidget: (context, url, error) =>
+                                        const Text('포스터'),
                                   )
                                 : const Text('포스터'),
                           ),

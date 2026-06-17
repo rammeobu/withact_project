@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:party_maker/core/constant.dart';
 
@@ -12,21 +13,13 @@ Widget _poster(String? poster, double screenWidth, double height) {
     width: double.infinity,
     color: posterColor,
     child: hasImage
-        ? Image.network(
-            poster,
+        ? CachedNetworkImage(
+            imageUrl: poster,
             fit: BoxFit.cover,
-            cacheWidth: 600,
-            loadingBuilder: (context, child, progress) => progress == null
-                ? child
-                : const Center(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  ),
-            errorBuilder: (context, error, stackTrace) =>
-                _posterEmpty(screenWidth),
+            memCacheWidth: 600,
+            fadeInDuration: const Duration(milliseconds: 200),
+            placeholder: (context, url) => _posterEmpty(screenWidth),
+            errorWidget: (context, url, error) => _posterEmpty(screenWidth),
           )
         : _posterEmpty(screenWidth),
   );

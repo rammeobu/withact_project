@@ -127,7 +127,7 @@ class ProfileState {
     return ProfileState(
       profileContent: [
         json['name'] ?? '',
-        json['skill'] ?? json['spec'] ?? '',
+        json['skill'] ?? '',
         json['belong'] ?? '',
         json['major'] ?? '',
       ],

@@ -132,6 +132,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                       applyStatus: apply.applyStatus,
                       introduction: apply.introduction,
                       spec: apply.spec,
+                      poster: apply.poster,
                     ),
                   )
                   .toList();
@@ -254,6 +255,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               ProfileCardBasic(
                 profileContent: profileContent,
+                profileImage: savedProfile.imagePath,
                 onProfileEditButtonPressed: onProfileEditButtonPressed,
               ),
               Padding(
@@ -265,9 +267,14 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                       flex: 6,
                       child: Padding(
                         padding: EdgeInsets.only(left: screenWidth * 0.036),
-                        child: Text(
-                          '현재 $selectedMode중인 대외활동',
-                          style: sectionTitleFont,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '현재 $selectedMode중인 대외활동',
+                            maxLines: 1,
+                            style: sectionTitleFont,
+                          ),
                         ),
                       ),
                     ),
@@ -394,6 +401,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                                     name: activity.name,
                                     timePlace: activity.timePlace,
                                     applyStatus: activity.applyStatus,
+                                    poster: activity.poster,
                                     onProfileCheckPressed: () =>
                                         onProfileCheckPressed(activity),
                                     onDetailButtonPressed: () =>

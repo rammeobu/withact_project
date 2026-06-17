@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:party_maker/core/constant.dart';
 
@@ -34,20 +35,14 @@ Widget cardPoster(String? poster, double screenWidth, double height) {
     width: double.infinity,
     color: posterColor,
     child: hasImage
-        ? Image.network(
-            poster,
+        ? CachedNetworkImage(
+            imageUrl: poster,
             fit: BoxFit.cover,
-            cacheWidth: 600,
-            loadingBuilder: (context, child, progress) => progress == null
-                ? child
-                : const Center(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  ),
-            errorBuilder: (context, error, stackTrace) =>
+            memCacheWidth: 600,
+            fadeInDuration: const Duration(milliseconds: 200),
+            placeholder: (context, url) =>
+                _empty(screenWidth, screenWidth * 0.12),
+            errorWidget: (context, url, error) =>
                 _empty(screenWidth, screenWidth * 0.12),
           )
         : _empty(screenWidth, screenWidth * 0.12),
@@ -63,11 +58,13 @@ Widget cardThumb(String? poster, double screenWidth, double size) {
       height: size,
       color: posterColor,
       child: hasImage
-          ? Image.network(
-              poster,
+          ? CachedNetworkImage(
+              imageUrl: poster,
               fit: BoxFit.cover,
-              cacheWidth: 300,
-              errorBuilder: (context, error, stackTrace) =>
+              memCacheWidth: 300,
+              fadeInDuration: const Duration(milliseconds: 200),
+              placeholder: (context, url) => _empty(screenWidth, size * 0.4),
+              errorWidget: (context, url, error) =>
                   _empty(screenWidth, size * 0.4),
             )
           : _empty(screenWidth, size * 0.4),
@@ -106,15 +103,13 @@ Widget detailHero(String? poster, String title, double screenWidth) {
         fit: StackFit.expand,
         children: [
           if (hasImage)
-            Image.network(
-              poster,
+            CachedNetworkImage(
+              imageUrl: poster,
               fit: BoxFit.cover,
-              cacheWidth: 800,
-              loadingBuilder: (context, child, progress) => progress == null
-                  ? child
-                  : _heroFallback(screenWidth),
-              errorBuilder: (context, error, stackTrace) =>
-                  _heroFallback(screenWidth),
+              memCacheWidth: 800,
+              fadeInDuration: const Duration(milliseconds: 200),
+              placeholder: (context, url) => _heroFallback(screenWidth),
+              errorWidget: (context, url, error) => _heroFallback(screenWidth),
             )
           else
             _heroFallback(screenWidth),

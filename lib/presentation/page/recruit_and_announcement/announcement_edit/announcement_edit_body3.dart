@@ -1,8 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/presentation/page/future&component/card_ui.dart';
-
-import '../../future&component/component/person.dart';
 
 class AnnouncementEditBody3 extends StatelessWidget {
   final ScrollController primaryScrollController;
@@ -10,7 +9,10 @@ class AnnouncementEditBody3 extends StatelessWidget {
   final List<TextEditingController> textEditingControllers;
   final VoidCallback onAddPositionButtonPressed;
   final void Function(int) onDeletePositionButtonPressed;
+  final void Function(int) onIncrementCountButtonPressed;
+  final void Function(int) onDecrementCountButtonPressed;
   final List<String> positions;
+  final List<int> counts;
   const AnnouncementEditBody3({
     super.key,
     required this.primaryScrollController,
@@ -18,8 +20,28 @@ class AnnouncementEditBody3 extends StatelessWidget {
     required this.textEditingControllers,
     required this.onAddPositionButtonPressed,
     required this.onDeletePositionButtonPressed,
+    required this.onIncrementCountButtonPressed,
+    required this.onDecrementCountButtonPressed,
     required this.positions,
+    required this.counts,
   });
+
+  Widget _counterButton(IconData icon, double screenWidth, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      customBorder: const CircleBorder(),
+      child: Container(
+        width: screenWidth * 0.09,
+        height: screenWidth * 0.09,
+        alignment: Alignment.center,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: cardChipBg,
+        ),
+        child: Icon(icon, size: screenWidth * 0.042, color: appPrimaryColor),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +68,11 @@ class AnnouncementEditBody3 extends StatelessWidget {
             ),
             IconButton(
               onPressed: onAddPositionButtonPressed,
-              color: appPrimaryColor,
-              icon: Icon(Icons.add_circle_outline, size: screenWidth * 0.073),
+              icon: Icon(
+                Icons.add_circle_outline,
+                size: screenWidth * 0.073,
+                color: appPrimaryColor,
+              ),
             ),
           ],
         ),
@@ -58,7 +83,7 @@ class AnnouncementEditBody3 extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: positions.isEmpty
                 ? SizedBox(
-                    height: 150,
+                    height: 120,
                     width: screenWidth * 0.927,
                     child: const Center(
                       child: Text(
@@ -68,62 +93,117 @@ class AnnouncementEditBody3 extends StatelessWidget {
                     ),
                   )
                 : Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: positions.asMap().entries.map((entry) {
                       final int i = entry.key;
                       return Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: screenWidth * 0.012,
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Center(
-                              child: IntrinsicWidth(
-                                child: TextField(
-                                  controller: textEditingControllers[i],
-                                  textAlign: TextAlign.center,
-                                  decoration: InputDecoration(
-                                    hintText: '직군',
-                                    hintStyle: TextStyle(
-                                      fontSize: screenWidth * 0.036,
-                                      color: Colors.grey,
+                        child: Container(
+                          width: screenWidth * 0.42,
+                          padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(screenWidth * 0.04),
+                            border: Border.all(color: const Color(0xFFE0E3E8)),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      controller: textEditingControllers[i],
+                                      decoration: InputDecoration(
+                                        hintText: '직군',
+                                        hintStyle: TextStyle(
+                                          fontSize: screenWidth * 0.036,
+                                          color: Colors.grey,
+                                        ),
+                                        border: const UnderlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: Color(0xFFE0E3E8)),
+                                        ),
+                                        focusedBorder: const UnderlineInputBorder(
+                                          borderSide:
+                                              BorderSide(color: appPrimaryColor),
+                                        ),
+                                        isDense: true,
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(vertical: 8),
+                                      ),
+                                      style: TextStyle(
+                                        fontSize: screenWidth * 0.038,
+                                        fontWeight: FontWeight.w700,
+                                        color: cardInk,
+                                      ),
                                     ),
-                                    border: InputBorder.none,
-                                    isDense: true,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 4,
+                                  ),
+                                  InkWell(
+                                    onTap: () => onDeletePositionButtonPressed(i),
+                                    customBorder: const CircleBorder(),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 4),
+                                      child: Icon(
+                                        Icons.close,
+                                        size: screenWidth * 0.05,
+                                        color: const Color(0xFFB7BDC6),
+                                      ),
                                     ),
                                   ),
-                                  style: TextStyle(
-                                    fontSize: screenWidth * 0.036,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 16),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    _counterButton(
+                                      Icons.remove,
+                                      screenWidth,
+                                      () {
+                                        HapticFeedback.selectionClick();
+                                        onDecrementCountButtonPressed(i);
+                                      },
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: screenWidth * 0.03,
+                                      ),
+                                      child: AnimatedSwitcher(
+                                        duration: const Duration(milliseconds: 200),
+                                        transitionBuilder: (child, animation) =>
+                                            FadeTransition(
+                                              opacity: animation,
+                                              child: child,
+                                            ),
+                                        child: Text(
+                                          '${i < counts.length ? counts[i] : 1}명',
+                                          key: ValueKey(
+                                            i < counts.length ? counts[i] : 1,
+                                          ),
+                                          style: TextStyle(
+                                            fontSize: screenWidth * 0.04,
+                                            fontWeight: FontWeight.w700,
+                                            color: cardInk,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    _counterButton(
+                                      Icons.add,
+                                      screenWidth,
+                                      () {
+                                        HapticFeedback.selectionClick();
+                                        onIncrementCountButtonPressed(i);
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                            Person(size: screenWidth * 0.122),
-                            OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(width: 0.0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadiusGeometry.circular(
-                                    screenWidth * 0.049,
-                                  ),
-                                ),
-                                backgroundColor: const Color(0xFFF34343),
-                                foregroundColor: Colors.white,
-                              ),
-                              onPressed: () => onDeletePositionButtonPressed(i),
-                              child: Text(
-                                '제거',
-                                style: TextStyle(
-                                  fontSize: screenWidth * 0.036,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     }).toList(),

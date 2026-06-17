@@ -2,6 +2,7 @@ class ApplyItem {
   final int id;
   final int partyId;
   final int roleId;
+  final int? activityId;
   final String name;
   final String applyStatus;
   final String introduction;
@@ -13,6 +14,7 @@ class ApplyItem {
     required this.id,
     this.partyId = 0,
     this.roleId = 0,
+    this.activityId,
     required this.name,
     required this.applyStatus,
     this.introduction = '',
@@ -21,11 +23,25 @@ class ApplyItem {
     this.poster,
   });
 
+  ApplyItem copyWith({String? poster}) => ApplyItem(
+        id: id,
+        partyId: partyId,
+        roleId: roleId,
+        activityId: activityId,
+        name: name,
+        applyStatus: applyStatus,
+        introduction: introduction,
+        spec: spec,
+        timePlace: timePlace,
+        poster: poster ?? this.poster,
+      );
+
   factory ApplyItem.fromJson(Map<String, dynamic> json) {
     return ApplyItem(
       id: json['id'] ?? 0,
       partyId: (json['partyId'] as num?)?.toInt() ?? 0,
       roleId: (json['roleId'] as num?)?.toInt() ?? 0,
+      activityId: (json['activityId'] as num?)?.toInt(),
       name: json['partyName'] ?? '',
       applyStatus: switch (json['status']?.toString()) {
         'PENDING' => '대기 중',

@@ -1,30 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:party_maker/app.dart';
 import 'package:party_maker/core/constant.dart';
+import 'package:party_maker/data/providers/repository_providers.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   final String? logo;
   const SplashScreen({super.key, this.logo});
 
   @override
-  State<SplashScreen> createState() => SplashScreenState();
+  ConsumerState<SplashScreen> createState() => SplashScreenState();
 }
 
-class SplashScreenState extends State<SplashScreen> {
+class SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            PageRoutes.login,
-            (route) => false,
-          );
-        }
-      });
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => bootstrap());
+  }
+
+  Future<void> bootstrap() async {
+    int? userId;
+    try {
+      userId = await ref.read(accountRepositoryProvider).restoreSession();
+    } catch (_) {}
+    // 최소 스플래시 노출
+    await Future.delayed(const Duration(milliseconds: 1200));
+    if (!mounted) return;
+    if (userId != null) {
+      // 자동 로그인
+      ref.read(currentUserProvider.notifier).setUserId(userId);
+      ref.read(loggedInProvider.notifier).setLoggedIn(true);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        PageRoutes.home,
+        (route) => false,
+      );
+    } else {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        PageRoutes.login,
+        (route) => false,
+      );
+    }
   }
 
   @override

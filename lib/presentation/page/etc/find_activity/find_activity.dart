@@ -52,9 +52,11 @@ class FindActivityState extends ConsumerState<FindActivity> {
     fetchActivityList();
   }
 
-  Future<void> fetchActivityList() async {
+  Future<void> fetchActivityList({bool force = false}) async {
     try {
-      final result = await ref.read(findRepositoryProvider).getActivityList([]);
+      final result = await ref
+          .read(findRepositoryProvider)
+          .getActivityList([], forceRefresh: force);
       if (mounted) setState(() {
         activityList = result;
         isLoading = false;
@@ -73,7 +75,7 @@ class FindActivityState extends ConsumerState<FindActivity> {
       isLoading = true;
       loadFailed = false;
     });
-    fetchActivityList();
+    fetchActivityList(force: true);
   }
 
   @override
@@ -95,7 +97,7 @@ class FindActivityState extends ConsumerState<FindActivity> {
     return BasicLayout(
       title: '활동 찾기',
       body: RefreshIndicator(
-        onRefresh: fetchActivityList,
+        onRefresh: () => fetchActivityList(force: true),
         color: appPrimaryColor,
         child: ListView.builder(
         controller: scrollController,

@@ -8,45 +8,84 @@ import 'package:party_maker/data/providers/repository_providers.dart';
 import '../../../../app.dart';
 import '../../future&component/layout/basic_layout.dart';
 
-class AnnouncementEditNotifier
-    extends Notifier<({List<String> preference, List<String> position})> {
+class AnnouncementEditNotifier extends Notifier<
+    ({List<String> preference, List<String> position, List<int> count})> {
   @override
-  ({List<String> preference, List<String> position}) build() =>
-      (preference: [], position: []);
+  ({List<String> preference, List<String> position, List<int> count})
+  build() => (preference: [], position: [], count: []);
 
   void init({
     required List<String> preferences,
     required List<String> positions,
+    List<int>? counts,
   }) {
     state = (
       preference: List.from(preferences),
       position: List.from(positions),
+      count: counts != null && counts.length == positions.length
+          ? List.from(counts)
+          : List.filled(positions.length, 1),
     );
   }
 
   void addPreference(String text) {
-    state = (preference: [...state.preference, text], position: state.position);
+    state = (
+      preference: [...state.preference, text],
+      position: state.position,
+      count: state.count,
+    );
   }
 
   void removePreference(int i) {
     final newPrefs = List<String>.from(state.preference)..removeAt(i);
-    state = (preference: newPrefs, position: state.position);
+    state = (preference: newPrefs, position: state.position, count: state.count);
   }
 
   void addPosition() {
-    state = (preference: state.preference, position: [...state.position, '']);
+    state = (
+      preference: state.preference,
+      position: [...state.position, ''],
+      count: [...state.count, 1],
+    );
   }
 
   void removePosition(int i) {
     final newPositions = List<String>.from(state.position)..removeAt(i);
-    state = (preference: state.preference, position: newPositions);
+    final newCounts = List<int>.from(state.count)..removeAt(i);
+    state = (
+      preference: state.preference,
+      position: newPositions,
+      count: newCounts,
+    );
+  }
+
+  void incrementCount(int i) {
+    if (i >= state.count.length) return;
+    final newCounts = List<int>.from(state.count);
+    newCounts[i] = newCounts[i] + 1;
+    state = (
+      preference: state.preference,
+      position: state.position,
+      count: newCounts,
+    );
+  }
+
+  void decrementCount(int i) {
+    if (i >= state.count.length || state.count[i] <= 1) return;
+    final newCounts = List<int>.from(state.count);
+    newCounts[i] = newCounts[i] - 1;
+    state = (
+      preference: state.preference,
+      position: state.position,
+      count: newCounts,
+    );
   }
 }
 
 final announcementEditProvider =
     NotifierProvider.autoDispose<
       AnnouncementEditNotifier,
-      ({List<String> preference, List<String> position})
+      ({List<String> preference, List<String> position, List<int> count})
     >(AnnouncementEditNotifier.new);
 
 class AnnouncementEdit extends ConsumerStatefulWidget {
@@ -158,12 +197,19 @@ class AnnouncementEditState extends ConsumerState<AnnouncementEdit> {
                     const Padding(padding: EdgeInsets.only(top: 23)),
                     AnnouncementEditBody3(
                       positions: editState.position,
+                      counts: editState.count,
                       textEditingControllers: dynamicTextControllers,
                       primaryScrollController: scrollControllers[0],
                       horizontalScrollController: scrollControllers[2],
                       onAddPositionButtonPressed: onAddPositionButtonPressed,
                       onDeletePositionButtonPressed: (i) =>
                           onDeletePositionButtonPressed(i),
+                      onIncrementCountButtonPressed: (i) => ref
+                          .read(announcementEditProvider.notifier)
+                          .incrementCount(i),
+                      onDecrementCountButtonPressed: (i) => ref
+                          .read(announcementEditProvider.notifier)
+                          .decrementCount(i),
                     ),
                   ],
                 ),

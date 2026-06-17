@@ -19,12 +19,17 @@ class AccountRepository {
           client.setAuthToken(token);
           await tokenStorage.write(token);
         }
-        return (data['userId'] ?? data['id']) as int?;
+        final userId = (data['userId'] ?? data['id']) as int?;
+        if (userId != null) await tokenStorage.writeUserId(userId);
+        return userId;
       }
       if (data is int) {
+        await tokenStorage.writeUserId(data);
         return data;
       }
-      return int.tryParse(data?.toString() ?? '');
+      final parsed = int.tryParse(data?.toString() ?? '');
+      if (parsed != null) await tokenStorage.writeUserId(parsed);
+      return parsed;
     } catch (e) {
       throw Exception('로그인 실패');
     }
@@ -33,6 +38,14 @@ class AccountRepository {
   Future<void> logout() async {
     client.clearAuthToken();
     await tokenStorage.clear();
+  }
+
+  /// 저장된 세션 복원(자동 로그인). 저장된 userId가 있으면 반환하고,
+  /// 토큰이 있으면 클라이언트에 다시 적용한다.
+  Future<int?> restoreSession() async {
+    final token = await tokenStorage.read();
+    if (token != null && token.isNotEmpty) client.setAuthToken(token);
+    return tokenStorage.readUserId();
   }
 
   Future<void> postSignUp(
@@ -89,6 +102,7 @@ class AccountRepository {
         'name': profile.profileContent.isNotEmpty ? profile.profileContent[0] : '',
         'belong': profile.profileContent.length > 2 ? profile.profileContent[2] : '',
         'major': profile.profileContent.length > 3 ? profile.profileContent[3] : '',
+        'skill': profile.profileContent.length > 1 ? profile.profileContent[1] : '',
         'spec': profile.spec,
         'introduction': profile.introduction,
         'preference': profile.favorites.where((value) => value.isNotEmpty).join(', '),

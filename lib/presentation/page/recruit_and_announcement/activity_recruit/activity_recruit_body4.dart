@@ -70,7 +70,7 @@ class ActivityRecruitBody4 extends StatelessWidget {
                       color: cardSub,
                     ),
                   ),
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.keyboard_arrow_down_rounded,
                     color: appPrimaryColor,
                   ),

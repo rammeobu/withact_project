@@ -22,6 +22,7 @@ class ApplyCardItem {
   final String applyStatus;
   final String introduction;
   final String spec;
+  final String? poster;
 
   const ApplyCardItem({
     this.applicationId = 0,
@@ -31,6 +32,7 @@ class ApplyCardItem {
     required this.applyStatus,
     this.introduction = '',
     this.spec = '',
+    this.poster,
   });
 }
 

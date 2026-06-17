@@ -291,29 +291,11 @@ class ActivityInformationState extends ConsumerState<ActivityInformation> {
   }
 
   void onCallButtonPressed() {
-    final leaderName = leaderProfile.isNotEmpty ? leaderProfile[0] : '';
-    final leaderSpec = leaderProfile.length > 1 ? leaderProfile[1] : '';
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('파티장 정보'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('이름: ${leaderName.isEmpty ? '-' : leaderName}'),
-            const SizedBox(height: 6),
-            Text('스펙: ${leaderSpec.isEmpty ? '-' : leaderSpec}'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('닫기'),
-          ),
-        ],
-      ),
-    );
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(content: Text('문의 기능은 준비 중입니다.')),
+      );
   }
 
   void onPersonPressed(String positionName) {

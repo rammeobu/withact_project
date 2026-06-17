@@ -87,11 +87,17 @@ final accountRepositoryProvider = Provider<AccountRepository>((ref) {
 });
 
 final applyRepositoryProvider = Provider<ApplyRepository>((ref) {
-  return ApplyRepository(ref.read(apiClientProvider));
+  return ApplyRepository(
+    ref.read(apiClientProvider),
+    ref.read(findRepositoryProvider),
+  );
 });
 
 final recruitRepositoryProvider = Provider<RecruitRepository>((ref) {
-  return RecruitRepository(ref.read(apiClientProvider));
+  return RecruitRepository(
+    ref.read(apiClientProvider),
+    ref.read(findRepositoryProvider),
+  );
 });
 
 final findRepositoryProvider = Provider<FindRepository>((ref) {

@@ -2,16 +2,27 @@ import 'package:party_maker/data/models/applicant_check_data_structure.dart';
 import 'package:party_maker/data/models/apply_data_structures.dart';
 import 'package:party_maker/data/models/profile_data_structures.dart';
 import 'package:party_maker/data/network/api_client.dart';
+import 'package:party_maker/data/repositories/find_repository.dart';
 
 class ApplyRepository {
   final ApiClient client;
-  ApplyRepository(this.client);
+  final FindRepository findRepository;
+  ApplyRepository(this.client, this.findRepository);
 
   Future<List<ApplyItem>> getApplyList(int userId) async {
     try {
       final data = await client.get('/api/application/v1/my?userId=$userId');
-      return (data as List<dynamic>)
+      final list = (data as List<dynamic>)
           .map((item) => ApplyItem.fromJson(item as Map<String, dynamic>))
+          .toList();
+      // 활동 포스터 조인(신청 카드에 활동 포스터 표시)
+      final posters = await findRepository.activityPosterMap();
+      return list
+          .map((a) => (a.poster == null || a.poster!.isEmpty) &&
+                  a.activityId != null &&
+                  posters[a.activityId] != null
+              ? a.copyWith(poster: posters[a.activityId])
+              : a)
           .toList();
     } catch (e) {
       throw Exception('지원 목록 불러오기 실패');
