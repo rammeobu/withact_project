@@ -41,8 +41,10 @@ class AccountRepository {
     String name,
     String belong,
     String major,
-    String skill,
-  ) async {
+    String skill, {
+    String introduction = '',
+    List<String> preference = const [],
+  }) async {
     try {
       await client.post('/api/auth/join', {
         'loginId': id,
@@ -52,6 +54,8 @@ class AccountRepository {
         'belong': belong,
         'major': major,
         'skill': skill,
+        'introduction': introduction,
+        'preference': preference,
       });
     } catch (e) {
       throw Exception('회원가입 실패');

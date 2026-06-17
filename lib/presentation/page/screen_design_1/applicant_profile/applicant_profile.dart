@@ -11,12 +11,16 @@ class ApplicantProfile extends ConsumerStatefulWidget {
   final String introduction;
   final String spec;
   final int applicationId;
+  final int applicantUserId;
+  final int partyId;
   const ApplicantProfile({
     super.key,
     required this.name,
     required this.introduction,
     required this.spec,
     required this.applicationId,
+    this.applicantUserId = 0,
+    this.partyId = 0,
   });
 
   @override
@@ -29,6 +33,7 @@ class ApplicantProfileState extends ConsumerState<ApplicantProfile> {
   late ScrollController whenToMeetScrollController;
   late List<ScrollController> body1ScrollControllers;
   late TextEditingController timeTextController;
+  bool isSubmitting = false;
 
   @override
   void initState() {
@@ -38,6 +43,26 @@ class ApplicantProfileState extends ConsumerState<ApplicantProfile> {
     whenToMeetOuterScrollController = ScrollController();
     timeTextController = TextEditingController();
     whenToMeetScrollController = ScrollController();
+    fetchAvailableTime();
+  }
+
+  Future<void> fetchAvailableTime() async {
+    if (widget.applicantUserId == 0 || widget.partyId == 0) return;
+    try {
+      final announcement = await ref
+          .read(recruitRepositoryProvider)
+          .getAnnouncement('${widget.partyId}');
+      final activityId = announcement.activityId;
+      if (activityId == null) return;
+      final schedule = await ref
+          .read(applyRepositoryProvider)
+          .getAvailableTime(widget.applicantUserId, activityId);
+      if (mounted) {
+        ref
+            .read(whenToMeetAvailableTimesProvider.notifier)
+            .setTimes(WhenToMeet.fromSchedule(schedule));
+      }
+    } catch (_) {}
   }
 
   @override
@@ -114,8 +139,8 @@ class ApplicantProfileState extends ConsumerState<ApplicantProfile> {
               ),
             ),
             ApplicantProfileFooter(
-              onAcceptButtonPressed: onAcceptButtonPressed,
-              onRejectButtonPressed: onRejectButtonPressed,
+              onAcceptButtonPressed: isSubmitting ? null : onAcceptButtonPressed,
+              onRejectButtonPressed: isSubmitting ? null : onRejectButtonPressed,
               onTextButtonPressed: onGoBackApplicantListButtonPressed,
             ),
           ],
@@ -126,6 +151,8 @@ class ApplicantProfileState extends ConsumerState<ApplicantProfile> {
   }
 
   Future<void> onAcceptButtonPressed() async {
+    if (isSubmitting) return;
+    setState(() => isSubmitting = true);
     try {
       await ref.read(applyRepositoryProvider).putAccept(widget.applicationId);
       if (mounted) {
@@ -146,11 +173,14 @@ class ApplicantProfileState extends ConsumerState<ApplicantProfile> {
           ..showSnackBar(
             const SnackBar(content: Text('승인 처리에 실패했습니다.')),
           );
+        setState(() => isSubmitting = false);
       }
     }
   }
 
   Future<void> onRejectButtonPressed() async {
+    if (isSubmitting) return;
+    setState(() => isSubmitting = true);
     try {
       await ref.read(applyRepositoryProvider).putDeny(widget.applicationId);
       if (mounted) {
@@ -171,6 +201,7 @@ class ApplicantProfileState extends ConsumerState<ApplicantProfile> {
           ..showSnackBar(
             const SnackBar(content: Text('거절 처리에 실패했습니다.')),
           );
+        setState(() => isSubmitting = false);
       }
     }
   }

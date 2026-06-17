@@ -536,6 +536,11 @@ class SignUpState extends ConsumerState<SignUp> {
         belongTextController.text.trim(),
         majorTextController.text.trim(),
         techTextController.text.trim(),
+        introduction: introTextController.text.trim(),
+        preference: interestTextControllers
+            .map((controller) => controller.text.trim())
+            .where((text) => text.isNotEmpty)
+            .toList(),
       );
       if (mounted) {
         ScaffoldMessenger.of(context)

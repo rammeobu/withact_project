@@ -322,7 +322,29 @@ class ActivityInformationState extends ConsumerState<ActivityInformation> {
   }
 
   void onCallButtonPressed() {
-    // TODO: 백엔드와 협의 후 문의하기 기능에 대한 구체화 이후 문의하기 기능에 대한 페이지 구현 후 해당 페이지로의 라우팅 수행
+    final leaderName = leaderProfile.isNotEmpty ? leaderProfile[0] : '';
+    final leaderSpec = leaderProfile.length > 1 ? leaderProfile[1] : '';
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('파티장 정보'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('이름: ${leaderName.isEmpty ? '-' : leaderName}'),
+            const SizedBox(height: 6),
+            Text('스펙: ${leaderSpec.isEmpty ? '-' : leaderSpec}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('닫기'),
+          ),
+        ],
+      ),
+    );
   }
 
   void onPersonPressed(String positionName) {

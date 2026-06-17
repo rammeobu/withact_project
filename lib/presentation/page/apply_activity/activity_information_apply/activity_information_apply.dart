@@ -47,6 +47,7 @@ class ActivityInformationApplyState
   late ScrollController body1ScrollController;
   late String activityOverview;
   late String activityDetail;
+  late List<String> leaderProfile;
   List<PartyRole> roles = [];
   bool rolesExpanded = false;
   bool isLoading = true;
@@ -58,8 +59,23 @@ class ActivityInformationApplyState
     body1ScrollController = ScrollController();
     activityOverview = widget.activityOverview;
     activityDetail = widget.activityDetail;
+    leaderProfile = widget.leaderProfile;
     fetchRoles();
     fetchActivityDetail();
+    fetchLeader();
+  }
+
+  Future<void> fetchLeader() async {
+    final partyId = widget.partyId;
+    if (partyId == null || leaderProfile.isNotEmpty) return;
+    try {
+      final announcement = await ref
+          .read(recruitRepositoryProvider)
+          .getAnnouncement('$partyId');
+      if (mounted && announcement.leaderProfile.isNotEmpty) {
+        setState(() => leaderProfile = announcement.leaderProfile);
+      }
+    } catch (_) {}
   }
 
   Future<void> fetchActivityDetail() async {
@@ -71,9 +87,22 @@ class ActivityInformationApplyState
           .getActivityDetail('$activityId');
       final detail = data['description']?.toString() ?? '';
       if (mounted && detail.isNotEmpty) {
-        setState(() => activityDetail = detail);
+        setState(() {
+          activityDetail = detail;
+          if (activityOverview.trim().isEmpty) {
+            activityOverview = summarize(detail);
+          }
+        });
       }
     } catch (_) {}
+  }
+
+  String summarize(String text) {
+    final firstLine = text
+        .split('\n')
+        .map((line) => line.trim())
+        .firstWhere((line) => line.isNotEmpty, orElse: () => text.trim());
+    return firstLine.length > 100 ? '${firstLine.substring(0, 100)}...' : firstLine;
   }
 
   Future<void> fetchRoles() async {
@@ -198,7 +227,7 @@ class ActivityInformationApplyState
                     ),
 
                     ProfileCardLeader(
-                      profileContent: widget.leaderProfile,
+                      profileContent: leaderProfile,
                       onCallButtonPressed: onCallButtonPressed,
                     ),
 
@@ -340,7 +369,29 @@ class ActivityInformationApplyState
   }
 
   void onCallButtonPressed() {
-    // TODO: 백엔드와 협의 후 문의하기 기능에 대한 구체화 이후 문의하기 기능에 대한 페이지 구현 후 해당 페이지로의 라우팅 수행
+    final leaderName = leaderProfile.isNotEmpty ? leaderProfile[0] : '';
+    final leaderSpec = leaderProfile.length > 1 ? leaderProfile[1] : '';
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('파티장 정보'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('이름: ${leaderName.isEmpty ? '-' : leaderName}'),
+            const SizedBox(height: 6),
+            Text('스펙: ${leaderSpec.isEmpty ? '-' : leaderSpec}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('닫기'),
+          ),
+        ],
+      ),
+    );
   }
 
   void onPersonPressed(String positionName) {

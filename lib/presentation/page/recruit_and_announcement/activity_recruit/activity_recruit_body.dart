@@ -76,6 +76,7 @@ class ActivityRecruitBody extends StatelessWidget {
                 child: NoScale(
                   child: TextField(
                     controller: textEditingController,
+                    readOnly: section == '활동 이름',
                     selectionControls: EmptyTextSelectionControls(),
                     enableSuggestions: false,
                     autocorrect: false,
@@ -87,7 +88,7 @@ class ActivityRecruitBody extends StatelessWidget {
                       isDense: true,
                       contentPadding: EdgeInsets.zero,
                       hintText: (section == '활동 이름')
-                          ? '$section을 검색하거나 직접 작성하세요.'
+                          ? '검색으로 활동을 선택하세요.'
                           : '$section를 작성하세요.',
                       hintStyle: TextStyle(
                         color: Colors.grey,

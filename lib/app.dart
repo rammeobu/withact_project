@@ -205,6 +205,8 @@ class App extends ConsumerWidget {
           introduction: getArg(args, 'introduction', ''),
           spec: getArg(args, 'spec', ''),
           applicationId: getArg(args, 'applicationId', 0),
+          applicantUserId: getArg(args, 'userId', 0),
+          partyId: getArg(args, 'partyId', 0),
         );
 
       case PageRoutes.apply:

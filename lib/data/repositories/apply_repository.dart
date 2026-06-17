@@ -90,6 +90,21 @@ class ApplyRepository {
     }
   }
 
+  Future<void> putApplication(
+    int applicationId, {
+    String? motivation,
+    String? introduction,
+  }) async {
+    try {
+      await client.put('/api/application/v1/$applicationId', {
+        if (motivation != null) 'motivation': motivation,
+        if (introduction != null) 'introduction': introduction,
+      });
+    } catch (e) {
+      throw Exception('지원서 수정 실패');
+    }
+  }
+
   Future<void> submitAvailableTime(
     int userId,
     int activityId,

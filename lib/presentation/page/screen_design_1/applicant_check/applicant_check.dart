@@ -122,9 +122,11 @@ class ApplicantCheckState extends ConsumerState<ApplicantCheck> {
                               PageRoutes.applicantProfile,
                               arguments: {
                                 'name': applicantData.name,
-                                'introduction': '',
+                                'introduction': applicantData.introduction,
                                 'spec': applicantData.skill ?? '',
                                 'applicationId': applicantData.id,
+                                'userId': applicantData.userId,
+                                'partyId': widget.partyId,
                               },
                             );
                           },

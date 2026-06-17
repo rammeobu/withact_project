@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:party_maker/app.dart';
 import 'package:party_maker/core/constant.dart';
 import 'package:party_maker/data/models/notify_data_structure.dart';
 import 'package:party_maker/data/providers/repository_providers.dart';
@@ -185,7 +186,8 @@ class NotifyState extends ConsumerState<Notify> {
                                   },
                                   child: NotifyBody1(
                                     notification: notificationItem,
-                                    onNotificationTap: onNotificationTap,
+                                    onNotificationTap: () =>
+                                        onNotificationTap(notificationItem),
                                   ),
                                 ),
                               );
@@ -206,8 +208,29 @@ class NotifyState extends ConsumerState<Notify> {
     );
   }
 
-  void onNotificationTap() {
-    // TODO: 알림의 종류를 분석[아마 파싱?]하고, 해당 일림 종류에 맞는 라우트로 라우팅이 이루어져야 함.
+  void onNotificationTap(NotificationItem item) {
+    final relatedId = item.relatedId;
+    if (relatedId == null) return;
+    if (item.type == 'APPLICATION_RECEIVED') {
+      Navigator.pushNamed(
+        context,
+        PageRoutes.applicantCheck,
+        arguments: {'position': widget.position, 'partyId': relatedId},
+      );
+    } else if (item.type == 'APPLICATION_RESULT') {
+      Navigator.pushNamed(
+        context,
+        PageRoutes.activityInformation,
+        arguments: {
+          'activityName': '',
+          'activityOverview': '',
+          'activityDetail': '',
+          'leaderProfile': <String>[],
+          'position': <String>[],
+          'partyId': relatedId,
+        },
+      );
+    }
   }
   void onReadAndDeleteButtonPressed() {
     ref.read(notifyListProvider.notifier).clearAll();

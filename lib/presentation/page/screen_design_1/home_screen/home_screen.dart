@@ -125,6 +125,8 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
               applyCard = applies
                   .map(
                     (apply) => ApplyCardItem(
+                      applicationId: apply.id,
+                      partyId: apply.partyId,
                       name: apply.name,
                       timePlace: apply.timePlace ?? [],
                       applyStatus: apply.applyStatus,
@@ -489,7 +491,12 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     Navigator.pushNamed(
       context,
       PageRoutes.applyingActivity,
-      arguments: {'activityName': activity.name, 'profile': <String>[], 'poster': null},
+      arguments: {
+        'activityName': activity.name,
+        'profile': <String>[],
+        'poster': null,
+        'applicationId': activity.applicationId,
+      },
     );
   }
 
@@ -504,6 +511,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
         'leaderProfile': <String>[],
         'position': <String>[],
         'poster': null,
+        'partyId': activity.partyId,
       },
     );
   }

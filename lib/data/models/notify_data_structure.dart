@@ -1,13 +1,22 @@
 class NotificationItem {
   final String title;
   final String content;
+  final String? type;
+  final int? relatedId;
 
-  const NotificationItem({required this.title, required this.content});
+  const NotificationItem({
+    required this.title,
+    required this.content,
+    this.type,
+    this.relatedId,
+  });
 
   factory NotificationItem.fromJson(Map<String, dynamic> json) {
     return NotificationItem(
       title: json['title'] ?? '',
       content: json['content'] ?? '',
+      type: json['type']?.toString(),
+      relatedId: (json['relatedId'] as num?)?.toInt(),
     );
   }
 }

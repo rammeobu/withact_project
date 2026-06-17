@@ -41,6 +41,8 @@ class ParticipatingPartyState extends ConsumerState<ParticipatingParty> {
   late ScrollController detailScrollController2;
   late ScrollController body1ScrollController;
   String activityDetail = '';
+  String activityOverview = '';
+  List<String> leaderProfile = [];
 
   @override
   void initState() {
@@ -49,6 +51,8 @@ class ParticipatingPartyState extends ConsumerState<ParticipatingParty> {
     detailScrollController2 = ScrollController();
     body1ScrollController = ScrollController();
     activityDetail = widget.activityDetail;
+    activityOverview = widget.activityOverview;
+    leaderProfile = widget.leaderProfile;
     fetchActivityDetail();
   }
 
@@ -58,6 +62,11 @@ class ParticipatingPartyState extends ConsumerState<ParticipatingParty> {
     try {
       final announcement =
           await ref.read(recruitRepositoryProvider).getAnnouncement('$partyId');
+      if (mounted &&
+          leaderProfile.isEmpty &&
+          announcement.leaderProfile.isNotEmpty) {
+        setState(() => leaderProfile = announcement.leaderProfile);
+      }
       final activityId = announcement.activityId;
       if (activityId == null) return;
       final data = await ref
@@ -65,9 +74,22 @@ class ParticipatingPartyState extends ConsumerState<ParticipatingParty> {
           .getActivityDetail('$activityId');
       final detail = data['description']?.toString() ?? '';
       if (mounted && detail.isNotEmpty) {
-        setState(() => activityDetail = detail);
+        setState(() {
+          activityDetail = detail;
+          if (activityOverview.trim().isEmpty) {
+            activityOverview = summarize(detail);
+          }
+        });
       }
     } catch (_) {}
+  }
+
+  String summarize(String text) {
+    final firstLine = text
+        .split('\n')
+        .map((line) => line.trim())
+        .firstWhere((line) => line.isNotEmpty, orElse: () => text.trim());
+    return firstLine.length > 100 ? '${firstLine.substring(0, 100)}...' : firstLine;
   }
 
   @override
@@ -119,7 +141,7 @@ class ParticipatingPartyState extends ConsumerState<ParticipatingParty> {
                           padding: EdgeInsets.all(screenWidth * 0.029),
                           child: SingleChildScrollView(
                             child: Text(
-                              widget.activityOverview,
+                              activityOverview,
                               style: TextStyle(
                                 fontSize: screenWidth * 0.034,
                                 color: Colors.black87,
@@ -161,7 +183,7 @@ class ParticipatingPartyState extends ConsumerState<ParticipatingParty> {
                     ),
 
                     ProfileCardLeader(
-                      profileContent: widget.leaderProfile,
+                      profileContent: leaderProfile,
                       onCallButtonPressed: onCallButtonPressed,
                     ),
 
@@ -190,7 +212,29 @@ class ParticipatingPartyState extends ConsumerState<ParticipatingParty> {
   }
 
   void onCallButtonPressed() {
-    // TODO: 백엔드와 협의 후 문의하기 기능에 대한 구체화 이후 문의하기 기능에 대한 페이지 구현 후 해당 페이지로의 라우팅 수행
+    final leaderName = leaderProfile.isNotEmpty ? leaderProfile[0] : '';
+    final leaderSpec = leaderProfile.length > 1 ? leaderProfile[1] : '';
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('파티장 정보'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('이름: ${leaderName.isEmpty ? '-' : leaderName}'),
+            const SizedBox(height: 6),
+            Text('스펙: ${leaderSpec.isEmpty ? '-' : leaderSpec}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('닫기'),
+          ),
+        ],
+      ),
+    );
   }
 
   void onPersonPressed(String positionName) {

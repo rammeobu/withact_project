@@ -1,5 +1,7 @@
 class ApplyItem {
   final int id;
+  final int partyId;
+  final int roleId;
   final String name;
   final String applyStatus;
   final List<String>? timePlace;
@@ -7,6 +9,8 @@ class ApplyItem {
 
   const ApplyItem({
     required this.id,
+    this.partyId = 0,
+    this.roleId = 0,
     required this.name,
     required this.applyStatus,
     this.timePlace,
@@ -16,6 +20,8 @@ class ApplyItem {
   factory ApplyItem.fromJson(Map<String, dynamic> json) {
     return ApplyItem(
       id: json['id'] ?? 0,
+      partyId: (json['partyId'] as num?)?.toInt() ?? 0,
+      roleId: (json['roleId'] as num?)?.toInt() ?? 0,
       name: json['partyName'] ?? '',
       applyStatus: switch (json['status']?.toString()) {
         'PENDING' => '대기 중',

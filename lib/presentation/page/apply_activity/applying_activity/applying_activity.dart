@@ -246,6 +246,12 @@ class ApplyingActivityState extends ConsumerState<ApplyingActivity> {
         ? bodyTextControllers[i].text
         : '';
     ref.read(applyingActivityProvider.notifier).toggleEdit(i, textContent);
+    if (wasEditing && i == 0 && widget.applicationId != 0) {
+      ref
+          .read(applyRepositoryProvider)
+          .putApplication(widget.applicationId, introduction: textContent.trim())
+          .catchError((_) {});
+    }
     if (wasEditing && i < 2) {
       if (bodyScrollControllers[i + 1].hasClients) {
         bodyScrollControllers[i + 1].jumpTo(0.0);

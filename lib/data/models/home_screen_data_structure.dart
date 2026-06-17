@@ -15,11 +15,15 @@ class ActivityCardItem {
 }
 
 class ApplyCardItem {
+  final int applicationId;
+  final int partyId;
   final String name;
   final List<String> timePlace;
   final String applyStatus;
 
   const ApplyCardItem({
+    this.applicationId = 0,
+    this.partyId = 0,
     required this.name,
     required this.timePlace,
     required this.applyStatus,
