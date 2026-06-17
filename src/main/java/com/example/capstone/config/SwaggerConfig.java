@@ -3,6 +3,7 @@ package com.example.capstone.config;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,9 +12,9 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
     @Bean
-    public OpenAPI openAPI() {
+    public OpenAPI openAPI(@Value("${server.port:8080}") String serverPort) {
         Server localServer = new Server();
-        localServer.setUrl("http://localhost:9090");
+        localServer.setUrl("http://localhost:" + serverPort);
         localServer.setDescription("Local Server");
 
         Server prodServer = new Server();
