@@ -80,6 +80,6 @@ Raspberry Pi 5
 
 | 이름 | 역할 |
 |------|------|
-| 익명1 (대표) | Spring Boot REST API 설계 및 구현, DB 설계, 서버 구축 및 운영, Python 크롤러 개발, Swagger 문서화, 배포 |
+| ._cloudhigh (팀장) | Spring Boot REST API 설계 및 구현, DB 설계, 서버 구축 및 운영, Python 크롤러 개발, Swagger 문서화, 배포 |
 | 익명2 | Spring Boot 인증 및 보안 구현, 사용자 관리 API, 서비스 디자인 및 UI 가이드 |
 | 익명3 | Flutter 모바일 앱 개발, 화면 구현, REST API 연동, UI/UX 설계 |
